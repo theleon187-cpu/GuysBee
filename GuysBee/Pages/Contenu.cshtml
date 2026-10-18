@@ -1,0 +1,10 @@
+@page "/p/{slug}"
+@model GuysBee.Pages.ContenuModel
+@{
+    ViewData["Title"] = Model.PageData.MetaTitle ?? Model.PageData.Title;
+    ViewData["Description"] = Model.PageData.MetaDescription;
+}
+<article class="gb-prose">
+    <h1>@Model.PageData.Title</h1>
+    @Html.Raw(Model.PageData.BodyHtml)
+</article>

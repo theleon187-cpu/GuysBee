@@ -1,0 +1,17 @@
+@page
+@model GuysBee.Areas.Admin.Pages.Reglages.IndexModel
+@{
+    ViewData["Title"] = "Réglages";
+}
+<h1 class="h3 mb-3">Réglages du site</h1>
+<form method="post" class="gb-admin-card">
+    @foreach (var (key, label, help) in GuysBee.Areas.Admin.Pages.Reglages.IndexModel.Known)
+    {
+        <div class="mb-3">
+            <label class="form-label" for="s-@key">@label</label>
+            <input id="s-@key" name="values[@key]" class="form-control" value="@(Model.Values.TryGetValue(key, out var v) ? v : "")" />
+            @if (!string.IsNullOrEmpty(help)) { <div class="gb-admin-help">@help</div> }
+        </div>
+    }
+    <button type="submit" class="btn btn-warning">Enregistrer</button>
+</form>

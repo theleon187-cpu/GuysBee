@@ -1,0 +1,23 @@
+@page
+@model GuysBee.Pages.CalendrierModel
+@{
+    ViewData["Title"] = "La ruche au fil des saisons";
+    ViewData["Description"] = "Ce que font les abeilles et l'apiculteur, mois après mois.";
+    var current = DateTime.Now.Month;
+}
+<h1 class="gb-page-title">La ruche au fil des saisons</h1>
+<section class="gb-section">
+    <div class="gb-container">
+        <p class="gb-lead">Suivez la vie de la ruche tout au long de l'année.</p>
+        <div class="gb-calendar">
+            @foreach (var e in Model.Entries)
+            {
+                <article class="gb-calendar-item @(e.Month == current ? "gb-calendar-item-current" : "")">
+                    <h2>@e.Title</h2>
+                    <p><strong>Les abeilles :</strong> @e.WhatBeesDo</p>
+                    <p><strong>L'apiculteur :</strong> @e.WhatBeekeeperDoes</p>
+                </article>
+            }
+        </div>
+    </div>
+</section>

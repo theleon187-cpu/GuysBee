@@ -1,0 +1,88 @@
+@page
+@using GuysBee.Services
+@model GuysBee.Areas.Admin.Pages.Miels.IndexModel
+@{
+    ViewData["Title"] = "Miels et prix";
+}
+<h1 class="h3 mb-3">Miels et prix</h1>
+<p class="gb-admin-help">Modifiez les textes, les prix, le stock et le poids d'expédition. Un pot à 0 en stock s'affiche « momentanément indisponible » sur le site.</p>
+
+@foreach (var p in Model.Products)
+{
+    <div class="gb-admin-card">
+        <h2 class="h5">@p.Name</h2>
+        <form method="post" asp-page-handler="SaveProduct">
+            <input type="hidden" name="id" value="@p.Id" />
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label class="form-label" for="name-@p.Id">Nom</label>
+                    <input id="name-@p.Id" name="name" class="form-control" value="@p.Name" maxlength="120" required />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="origin-@p.Id">Origine florale / récolte</label>
+                    <input id="origin-@p.Id" name="origin" class="form-control" value="@p.Origin" maxlength="200" />
+                </div>
+                <div class="col-12">
+                    <label class="form-label" for="short-@p.Id">Description courte</label>
+                    <input id="short-@p.Id" name="shortDescription" class="form-control" value="@p.ShortDescription" maxlength="250" required />
+                </div>
+                <div class="col-12">
+                    <label class="form-label" for="long-@p.Id">Description détaillée</label>
+                    <textarea id="long-@p.Id" name="longDescription" class="form-control" rows="3">@p.LongDescription</textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label" for="tips-@p.Id">Conseils de dégustation</label>
+                    <textarea id="tips-@p.Id" name="usageTips" class="form-control" rows="2">@p.UsageTips</textarea>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label" for="media-@p.Id">Photo principale</label>
+                    <select id="media-@p.Id" name="mainMediaId" class="form-select">
+                        <option value="">(aucune)</option>
+                        @foreach (var m in Model.Medias)
+                        {
+                            <option value="@m.Id" selected="@(p.MainMediaId == m.Id)">@(string.IsNullOrWhiteSpace(m.Caption) ? m.SourceFileName : m.Caption)</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <div class="form-check">
+                        <input id="active-@p.Id" name="isActive" type="checkbox" value="true" class="form-check-input" checked="@p.IsActive" />
+                        <input type="hidden" name="isActive" value="false" />
+                        <label class="form-check-label" for="active-@p.Id">Visible sur le site</label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-warning btn-sm mt-2">Enregistrer le miel</button>
+        </form>
+
+        <hr />
+        <h3 class="h6">Pots et prix</h3>
+        @foreach (var v in p.Variants)
+        {
+            <form method="post" asp-page-handler="SaveVariant" class="row g-2 align-items-end mb-2">
+                <input type="hidden" name="id" value="@v.Id" />
+                <div class="col-md-2"><strong>@v.Label</strong></div>
+                <div class="col-md-2">
+                    <label class="form-label" for="price-@v.Id">Prix TTC (€)</label>
+                    <input id="price-@v.Id" name="price" class="form-control" inputmode="decimal" value="@v.Price.ToString("0.00")" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label" for="stock-@v.Id">Stock</label>
+                    <input id="stock-@v.Id" name="stock" class="form-control" inputmode="numeric" value="@v.Stock" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" for="weight-@v.Id">Poids d'expédition (g)</label>
+                    <input id="weight-@v.Id" name="weight" class="form-control" inputmode="numeric" value="@v.ShippingWeightGrams" />
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check">
+                        <input id="vactive-@v.Id" name="isActive" type="checkbox" value="true" class="form-check-input" checked="@v.IsActive" />
+                        <input type="hidden" name="isActive" value="false" />
+                        <label class="form-check-label" for="vactive-@v.Id">Proposé</label>
+                    </div>
+                </div>
+                <div class="col-md-1"><button type="submit" class="btn btn-outline-dark btn-sm">OK</button></div>
+            </form>
+        }
+    </div>
+}

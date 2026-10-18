@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "defaultProvider": "unpkg",
+  "libraries": [
+    {
+      "library": "tinymce@7.6.0",
+      "destination": "wwwroot/lib/tinymce/"
+    }
+  ]
+}

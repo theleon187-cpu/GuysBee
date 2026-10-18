@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>guysbee-site-secrets</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.*" />
+    <PackageReference Include="HtmlSanitizer" Version="9.*" />
+    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Sources brutes : non publiées, non servies par le site. -->
+    <Content Remove="posts\**" />
+    <None Include="posts\**" CopyToPublishDirectory="Never" />
+    <Content Remove="img\**" />
+    <None Include="img\**" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,96 @@
+@page
+@using GuysBee.Data.Entities
+@using GuysBee.Services
+@model GuysBee.Areas.Admin.Pages.Photos.IndexModel
+@{
+    ViewData["Title"] = "Photos";
+}
+<h1 class="h3 mb-3">Photos</h1>
+
+<div class="gb-admin-card">
+    <h2 class="h5">Ajouter des photos</h2>
+    <div class="row g-3">
+        <div class="col-lg-6">
+            <form method="post" asp-page-handler="Import">
+                <p class="gb-admin-help">Importe les photos du dossier fourni (<code>@Model.SourceFolder</code>). Les doublons sont ignorés. Les photos arrivent en brouillon.</p>
+                <button type="submit" class="btn btn-warning">Importer le dossier des photos</button>
+            </form>
+        </div>
+        <div class="col-lg-6">
+            <form method="post" asp-page-handler="Upload" enctype="multipart/form-data">
+                <label for="files" class="form-label">Envoyer de nouvelles photos (JPG, PNG, WebP)</label>
+                <input id="files" name="files" type="file" class="form-control mb-2" accept=".jpg,.jpeg,.png,.webp" multiple />
+                <button type="submit" class="btn btn-outline-dark">Envoyer</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<form method="post" asp-page-handler="PublishAll" class="mb-3">
+    <button type="submit" class="btn btn-success">Publier toutes les photos en brouillon</button>
+    <span class="gb-admin-help ms-2">Pensez à ajouter une description (texte alternatif) pour l'accessibilité.</span>
+</form>
+
+@if (Model.Items.Count == 0)
+{
+    <p>Aucune photo pour le moment.</p>
+}
+
+@foreach (var m in Model.Items)
+{
+    <div class="gb-admin-card">
+        <div class="row g-3">
+            <div class="col-auto">
+                <img class="gb-admin-thumb" src="@MediaUrls.Src(m, 480)" alt="@MediaUrls.Alt(m)" loading="lazy" />
+            </div>
+            <div class="col">
+                <form method="post" asp-page-handler="Save">
+                    <input type="hidden" name="id" value="@m.Id" />
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label class="form-label" for="caption-@m.Id">Légende (affichée sous la photo)</label>
+                            <input id="caption-@m.Id" name="caption" class="form-control" value="@m.Caption" maxlength="200" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="alt-@m.Id">Description pour malvoyants</label>
+                            <input id="alt-@m.Id" name="alt" class="form-control" value="@m.AltText" maxlength="200" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="theme-@m.Id">Thème</label>
+                            <select id="theme-@m.Id" name="theme" class="form-select">
+                                @foreach (var t in GuysBee.Areas.Admin.Pages.Photos.IndexModel.Themes)
+                                {
+                                    <option value="@t" selected="@(t == (m.Theme ?? ""))">@(t == "" ? "(aucun)" : t)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="season-@m.Id">Saison</label>
+                            <select id="season-@m.Id" name="season" class="form-select">
+                                @foreach (var s in GuysBee.Areas.Admin.Pages.Photos.IndexModel.Seasons)
+                                {
+                                    <option value="@s" selected="@(s == (m.Season ?? ""))">@(s == "" ? "(aucune)" : s)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="status-@m.Id">État</label>
+                            <select id="status-@m.Id" name="status" class="form-select">
+                                <option value="@((int)MediaStatus.Draft)" selected="@(m.Status == MediaStatus.Draft)">Brouillon</option>
+                                <option value="@((int)MediaStatus.Published)" selected="@(m.Status == MediaStatus.Published)">Publiée</option>
+                                <option value="@((int)MediaStatus.Hidden)" selected="@(m.Status == MediaStatus.Hidden)">Masquée</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-warning btn-sm">Enregistrer</button>
+                    </div>
+                </form>
+                <form method="post" asp-page-handler="Delete" class="mt-2">
+                    <input type="hidden" name="id" value="@m.Id" />
+                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Supprimer définitivement cette photo ?');">Supprimer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,89 @@
+@page
+@using GuysBee.Services
+@model IndexModel
+@{
+    ViewData["Title"] = "Apiculteur à Saint-Julien-sur-Bibost";
+}
+
+@foreach (var block in Model.Sections)
+{
+    switch (block.Kind)
+    {
+        case "Hero":
+            <section class="gb-hero" aria-labelledby="hero-title">
+                @if (Model.HeroMedia is { } hero)
+                {
+                    <img class="gb-hero-media" src="@MediaUrls.Src(hero, 1200)" srcset="@MediaUrls.SrcSet(hero)" sizes="100vw" alt="" />
+                }
+                <div class="gb-container gb-hero-inner">
+                    <h1 id="hero-title" class="gb-hero-title">@block.Title</h1>
+                    <p class="gb-hero-text">@block.Subtitle</p>
+                    @if (!string.IsNullOrEmpty(block.ButtonUrl))
+                    {
+                        <a class="gb-btn" href="@block.ButtonUrl">@block.ButtonLabel</a>
+                    }
+                </div>
+            </section>
+            <div class="gb-hex-divider" aria-hidden="true"></div>
+            break;
+
+        case "Etapes":
+            <section class="gb-section">
+                <div class="gb-container">
+                    <h2 class="gb-section-title">@block.Title</h2>
+                    <ol class="gb-steps">
+                        <li class="gb-step"><h3>La fleur</h3><p>Les abeilles butinent les floraisons de nos environs.</p></li>
+                        <li class="gb-step"><h3>La ruche</h3><p>Le nectar devient miel, au rythme des saisons.</p></li>
+                        <li class="gb-step"><h3>La récolte</h3><p>L'apiculteur récolte quand le miel est mûr.</p></li>
+                        <li class="gb-step"><h3>Le pot</h3><p>Mise en pots et étiquetage, prêt pour votre table.</p></li>
+                    </ol>
+                </div>
+            </section>
+            break;
+
+        case "ProduitsDeSaison":
+            <section class="gb-section gb-section-alt">
+                <div class="gb-container">
+                    <h2 class="gb-section-title">@block.Title</h2>
+                    <div class="gb-grid">
+                        @foreach (var p in Model.Products)
+                        {
+                            var minPrice = p.Variants.Where(v => v.IsActive).Select(v => v.Price).DefaultIfEmpty(0m).Min();
+                            <article class="gb-card">
+                                <h3 class="gb-card-title"><a href="/Produits/@p.Slug">@p.Name</a></h3>
+                                <p class="gb-card-text">@p.ShortDescription</p>
+                                <p class="gb-price">à partir de @minPrice.ToString("0.00") €</p>
+                            </article>
+                        }
+                    </div>
+                </div>
+            </section>
+            break;
+
+        case "Calendrier":
+            if (Model.CurrentMonth is { } c)
+            {
+                <section class="gb-section">
+                    <div class="gb-container">
+                        <h2 class="gb-section-title">@block.Title</h2>
+                        <article class="gb-calendar-item gb-calendar-item-current">
+                            <h3>@c.Title</h3>
+                            <p><strong>Les abeilles :</strong> @c.WhatBeesDo</p>
+                            <p><strong>L'apiculteur :</strong> @c.WhatBeekeeperDoes</p>
+                            <p><a href="/Calendrier">Voir toute l'année</a></p>
+                        </article>
+                    </div>
+                </section>
+            }
+            break;
+
+        default:
+            <section class="gb-section">
+                <div class="gb-container gb-prose">
+                    <h2>@block.Title</h2>
+                    @Html.Raw(block.BodyHtml)
+                </div>
+            </section>
+            break;
+    }
+}

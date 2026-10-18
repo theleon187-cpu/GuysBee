@@ -1,0 +1,32 @@
+## Visual Studio / .NET
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+TestResults/
+*.log
+.vscode/
+
+## Base de données locale et secrets
+*.db
+*.db-shm
+*.db-wal
+secrets.json
+appsettings.Production.json
+
+## Bibliothèques restaurées par LibMan (voir GuysBee/libman.json)
+GuysBee/wwwroot/lib/tinymce/
+
+## Photos optimisées générées par le site
+GuysBee/wwwroot/media/*
+!GuysBee/wwwroot/media/.gitignore
+
+## Médias sources de l'apiculteur (non publiés dans le dépôt)
+## Retirez ces lignes si vous souhaitez versionner les photos d'origine.
+GuysBee/posts/
+GuysBee/img/
+
+## Rapports générés
+Content/analyse-techniques.md

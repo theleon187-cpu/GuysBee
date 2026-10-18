@@ -1,0 +1,22 @@
+@page
+@model GuysBee.Areas.Admin.Pages.IndexModel
+@{
+    ViewData["Title"] = "Tableau de bord";
+}
+<h1 class="h3 mb-3">Tableau de bord</h1>
+<div class="row g-3">
+    <div class="col-6 col-lg-3"><div class="gb-admin-card"><div class="gb-admin-stat">@Model.UnreadMessages</div><a href="/Admin/Messages">Messages non lus</a></div></div>
+    <div class="col-6 col-lg-3"><div class="gb-admin-card"><div class="gb-admin-stat">@Model.DraftPhotos</div><a href="/Admin/Photos">Photos à publier</a></div></div>
+    <div class="col-6 col-lg-3"><div class="gb-admin-card"><div class="gb-admin-stat">@Model.OutOfStock</div><a href="/Admin/Miels">Conditionnements en rupture</a></div></div>
+    <div class="col-6 col-lg-3"><div class="gb-admin-card"><div class="gb-admin-stat">@Model.PublishedPhotos</div><a href="/Admin/Photos">Photos publiées</a></div></div>
+</div>
+
+<div class="gb-admin-card mt-3">
+    <h2 class="h5">Pour bien démarrer</h2>
+    <ol class="mb-0">
+        <li>Rubrique <strong>Photos</strong> : importez les photos, ajoutez une légende, puis publiez-les.</li>
+        <li>Rubrique <strong>Miels et prix</strong> : indiquez le stock de chaque pot.</li>
+        <li>Rubrique <strong>Textes du site</strong> : rédigez « Notre histoire » et relisez les pages légales.</li>
+        <li>Rubrique <strong>Réglages</strong> : ajoutez un bandeau d'annonce si besoin.</li>
+    </ol>
+</div>

@@ -1,0 +1,25 @@
+@page
+@model GuysBee.Areas.Admin.Pages.Messages.IndexModel
+@{
+    ViewData["Title"] = "Messages";
+}
+<h1 class="h3 mb-3">Messages reçus</h1>
+@if (Model.Items.Count == 0)
+{
+    <p>Aucun message.</p>
+}
+@foreach (var m in Model.Items)
+{
+    <div class="gb-admin-card">
+        <h2 class="h6">
+            @m.Subject
+            @if (!m.IsRead) { <span class="badge bg-warning text-dark">Nouveau</span> }
+        </h2>
+        <p class="gb-admin-help mb-1">@m.Name · <a href="mailto:@m.Email">@m.Email</a> · @m.CreatedUtc.ToLocalTime().ToString("g")</p>
+        <p class="mb-2">@m.Body</p>
+        <form method="post" class="d-inline"><input type="hidden" name="id" value="@m.Id" />
+            <button type="submit" asp-page-handler="Read" class="btn btn-outline-dark btn-sm">Marquer comme lu</button>
+            <button type="submit" asp-page-handler="Archive" class="btn btn-outline-secondary btn-sm">Archiver</button>
+        </form>
+    </div>
+}

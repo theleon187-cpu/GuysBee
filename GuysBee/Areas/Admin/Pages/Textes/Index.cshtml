@@ -1,0 +1,18 @@
+@page
+@model GuysBee.Areas.Admin.Pages.Textes.IndexModel
+@{
+    ViewData["Title"] = "Textes du site";
+}
+<h1 class="h3 mb-3">Textes du site</h1>
+<p class="gb-admin-help">Modifiez le contenu des pages (histoire, conditions de vente, mentions légales...). Les pages légales sont des modèles à relire attentivement.</p>
+@foreach (var p in Model.Items)
+{
+    <div class="gb-admin-card d-flex justify-content-between align-items-center">
+        <div>
+            <strong>@p.Title</strong>
+            @if (!p.IsPublished) { <span class="badge bg-secondary">Non publiée</span> }
+            <div class="gb-admin-help">Adresse : /p/@p.Slug · modifiée le @p.UpdatedUtc.ToLocalTime().ToString("d")</div>
+        </div>
+        <a class="btn btn-warning btn-sm" asp-page="Edit" asp-route-id="@p.Id">Modifier</a>
+    </div>
+}

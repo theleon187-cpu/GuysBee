@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>@ViewData["Title"] - Administration GUY's Bee</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+</head>
+<body class="gb-admin">
+    <header class="navbar navbar-expand-lg gb-admin-nav">
+        <div class="container-fluid">
+            <a class="navbar-brand gb-admin-brand" href="/Admin">GUY's Bee : administration</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminMenu" aria-controls="adminMenu" aria-expanded="false" aria-label="Menu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="adminMenu">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item"><a class="nav-link" href="/Admin">Tableau de bord</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Admin/Photos">Photos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Admin/Miels">Miels et prix</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Admin/Textes">Textes du site</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Admin/Messages">Messages</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/Admin/Reglages">Réglages</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/" target="_blank" rel="noopener">Voir le site</a></li>
+                    </ul>
+                    <form method="post" asp-area="Admin" asp-page="/Logout" class="d-flex">
+                        <button type="submit" class="btn btn-outline-dark btn-sm">Se déconnecter</button>
+                    </form>
+                </div>
+            }
+        </div>
+    </header>
+
+    <main class="container py-4">
+        @if (TempData["Message"] is string message)
+        {
+            <div class="alert alert-success" role="status">@message</div>
+        }
+        @if (TempData["Error"] is string error)
+        {
+            <div class="alert alert-danger" role="alert">@error</div>
+        }
+        @RenderBody()
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

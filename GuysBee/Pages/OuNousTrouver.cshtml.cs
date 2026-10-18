@@ -1,0 +1,17 @@
+using GuysBee.Data;
+using GuysBee.Data.Entities;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+
+namespace GuysBee.Pages;
+
+public class OuNousTrouverModel : PageModel
+{
+    private readonly AppDbContext _db;
+    public OuNousTrouverModel(AppDbContext db) => _db = db;
+
+    public List<SalePoint> SalePoints { get; private set; } = new();
+
+    public async Task OnGetAsync() =>
+        SalePoints = await _db.SalePoints.AsNoTracking().Where(s => s.IsActive).OrderBy(s => s.Name).ToListAsync();
+}

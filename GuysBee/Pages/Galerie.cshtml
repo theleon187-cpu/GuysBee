@@ -1,0 +1,31 @@
+@page
+@using GuysBee.Services
+@model GuysBee.Pages.GalerieModel
+@{
+    ViewData["Title"] = "Galerie";
+    ViewData["Description"] = "Les ruches, les abeilles et les miels de GUY's Bee en images.";
+}
+<h1 class="gb-page-title">Galerie</h1>
+<section class="gb-section">
+    <div class="gb-container">
+        @if (Model.Items.Count == 0)
+        {
+            <p class="gb-lead">Les photos arrivent bientôt.</p>
+        }
+        else
+        {
+            <div class="gb-gallery">
+                @foreach (var m in Model.Items)
+                {
+                    <figure class="gb-gallery-item">
+                        <img src="@MediaUrls.Src(m, 480)" srcset="@MediaUrls.SrcSet(m)" sizes="(min-width: 900px) 25vw, 50vw" alt="@MediaUrls.Alt(m)" loading="lazy" width="480" height="480" />
+                        @if (!string.IsNullOrWhiteSpace(m.Caption))
+                        {
+                            <figcaption class="gb-gallery-caption">@m.Caption</figcaption>
+                        }
+                    </figure>
+                }
+            </div>
+        }
+    </div>
+</section>

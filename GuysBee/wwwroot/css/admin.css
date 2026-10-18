@@ -1,0 +1,7 @@
+.gb-admin { background: #F7F4EA; }
+.gb-admin-nav { background: #F5B700; border-bottom: 4px solid #1E1A14; }
+.gb-admin-brand { font-weight: 700; color: #1E1A14; }
+.gb-admin-thumb { width: 96px; height: 96px; object-fit: cover; border-radius: 8px; background: #eee; }
+.gb-admin-card { background: #fff; border-radius: 12px; padding: 1rem 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,.08); margin-bottom: 1rem; }
+.gb-admin-stat { font-size: 2rem; font-weight: 700; }
+.gb-admin-help { color: #5E5648; font-size: .9rem; }

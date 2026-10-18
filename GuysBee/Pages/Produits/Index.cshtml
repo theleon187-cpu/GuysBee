@@ -1,0 +1,35 @@
+@page
+@using GuysBee.Services
+@model GuysBee.Pages.Produits.IndexModel
+@{
+    ViewData["Title"] = "Nos miels";
+    ViewData["Description"] = "Miel de printemps, d'acacia, de montagne et de fleurs sauvages, récoltés par GUY's Bee.";
+}
+<h1 class="gb-page-title">Nos miels</h1>
+<section class="gb-section">
+    <div class="gb-container">
+        <div class="gb-grid">
+            @foreach (var p in Model.Products)
+            {
+                <article class="gb-card">
+                    @if (p.MainMedia is { } img)
+                    {
+                        <img src="@MediaUrls.Src(img, 480)" alt="@MediaUrls.Alt(img)" loading="lazy" width="480" height="480" />
+                    }
+                    <h2 class="gb-card-title"><a href="/Produits/@p.Slug">@p.Name</a></h2>
+                    <p class="gb-card-text">@p.ShortDescription</p>
+                    <ul class="gb-variants">
+                        @foreach (var v in p.Variants.Where(v => v.IsActive))
+                        {
+                            <li>
+                                <span>@v.Label</span>
+                                <span class="gb-price">@v.Price.ToString("0.00") €</span>
+                            </li>
+                        }
+                    </ul>
+                    <a class="gb-btn gb-btn-secondary" href="/Produits/@p.Slug">Voir le détail</a>
+                </article>
+            }
+        </div>
+    </div>
+</section>

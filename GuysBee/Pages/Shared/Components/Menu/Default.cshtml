@@ -1,0 +1,7 @@
+@model IEnumerable<GuysBee.Data.Entities.MenuItem>
+<ul class="gb-menu">
+    @foreach (var item in Model)
+    {
+        <li class="gb-menu-item"><a class="gb-menu-link" href="@item.Url">@item.Label</a></li>
+    }
+</ul>

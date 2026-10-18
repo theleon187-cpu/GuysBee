@@ -1,0 +1,27 @@
+@page
+@model GuysBee.Pages.OuNousTrouverModel
+@{
+    ViewData["Title"] = "Où nous trouver";
+    ViewData["Description"] = "Points de vente et retrait des miels GUY's Bee.";
+}
+<h1 class="gb-page-title">Où nous trouver</h1>
+<section class="gb-section">
+    <div class="gb-container">
+        <div class="gb-grid">
+            <article class="gb-card">
+                <h2 class="gb-card-title">À la miellerie</h2>
+                <p>69690 Saint-Julien-sur-Bibost</p>
+                <p>Retrait sur rendez-vous : <a href="tel:0650511236">06 50 51 12 36</a></p>
+            </article>
+            @foreach (var sp in Model.SalePoints)
+            {
+                <article class="gb-card">
+                    <h2 class="gb-card-title">@sp.Name</h2>
+                    <p>@sp.Address<br />@sp.PostalCode @sp.City</p>
+                    @if (!string.IsNullOrWhiteSpace(sp.Schedule)) { <p>@sp.Schedule</p> }
+                    @if (!string.IsNullOrWhiteSpace(sp.Phone)) { <p>@sp.Phone</p> }
+                </article>
+            }
+        </div>
+    </div>
+</section>

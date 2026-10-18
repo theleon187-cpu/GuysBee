@@ -1,0 +1,69 @@
+@using Microsoft.EntityFrameworkCore
+@inject GuysBee.Data.AppDbContext Db
+@{
+    var s = await Db.SiteSettings.AsNoTracking().ToDictionaryAsync(x => x.Key, x => x.Value);
+    string Setting(string key) => s.TryGetValue(key, out var v) ? v : "";
+    var title = ViewData["Title"] as string;
+    var description = ViewData["Description"] as string
+        ?? "GUY's Bee, apiculteur à Saint-Julien-sur-Bibost : miels de printemps, d'acacia, de montagne et de fleurs sauvages.";
+    var banner = Setting("site.banner");
+}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(string.IsNullOrEmpty(title) ? "GUY's Bee" : $"{title} - GUY's Bee")</title>
+    <meta name="description" content="@description" />
+    <meta property="og:title" content="@(string.IsNullOrEmpty(title) ? "GUY's Bee" : title)" />
+    <meta property="og:description" content="@description" />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="~/favicon.ico" />
+    <link rel="stylesheet" href="~/css/guysbee.css" asp-append-version="true" />
+</head>
+<body class="gb-body">
+    <a class="gb-skip" href="#contenu">Aller au contenu</a>
+    @if (!string.IsNullOrWhiteSpace(banner))
+    {
+        <div class="gb-banner" role="status">@banner</div>
+    }
+    <header class="gb-header">
+        <div class="gb-container gb-header-inner">
+            <a class="gb-brand" href="/" aria-label="GUY's Bee, retour à l'accueil">
+                <img class="gb-logo" src="~/img/logo.png" alt="" width="48" height="48" />
+                <span class="gb-brand-name">GUY's Bee</span>
+            </a>
+            <button class="gb-nav-toggle" type="button" aria-expanded="false" aria-controls="gb-nav">Menu</button>
+            <nav id="gb-nav" class="gb-nav" aria-label="Navigation principale">
+                <vc:menu footer="false" />
+            </nav>
+        </div>
+    </header>
+
+    <main id="contenu" class="gb-main">
+        @RenderBody()
+    </main>
+
+    <footer class="gb-footer">
+        <div class="gb-container gb-footer-inner">
+            <div>
+                <p class="gb-footer-title">GUY's Bee</p>
+                <p>@Setting("business.postalCode") @Setting("business.city")</p>
+                <p><a href="tel:@Setting("business.phone").Replace(" ", "")">@Setting("business.phone")</a></p>
+                <p><a href="mailto:@Setting("business.email")">@Setting("business.email")</a></p>
+            </div>
+            <div>
+                <p class="gb-footer-title">Suivez la ruche</p>
+                <p><a href="https://www.instagram.com/@Setting("social.instagram")" rel="noopener" target="_blank">Instagram</a></p>
+            </div>
+            <nav aria-label="Informations légales">
+                <vc:menu footer="true" />
+            </nav>
+        </div>
+        <p class="gb-footer-note">&copy; @DateTime.Now.Year GUY's Bee</p>
+    </footer>
+
+    <script src="~/js/site-public.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

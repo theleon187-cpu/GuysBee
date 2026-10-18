@@ -1,0 +1,5 @@
+@* Éditeur de texte visuel (TinyMCE, hébergé en local). Usage :
+   <textarea asp-for="Page.BodyHtml" class="gb-richtext"></textarea>
+   @await Html.PartialAsync("_RichTextEditor")  (dans la section Scripts des pages admin) *@
+<script src="~/lib/tinymce/tinymce.min.js"></script>
+<script src="~/js/admin-editor.js" asp-append-version="true"></script>
