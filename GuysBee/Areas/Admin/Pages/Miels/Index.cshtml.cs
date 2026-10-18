@@ -1,5 +1,6 @@
 using GuysBee.Data;
 using GuysBee.Data.Entities;
+using GuysBee.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -103,9 +104,7 @@ public class IndexModel : PageModel
             TempData["Error"] = "Indiquez le nom de la gamme.";
             return RedirectToPage();
         }
-        var slug = new string(name.ToLowerInvariant().Normalize(System.Text.NormalizationForm.FormD)
-            .Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark)
-            .Select(c => char.IsLetterOrDigit(c) ? c : '-').ToArray()).Trim('-');
+        var slug = TextTools.Slugify(name);
         if (slug.Length == 0 || await _db.Categories.AnyAsync(c => c.Slug == slug))
         {
             TempData["Error"] = "Cette gamme existe déjà.";
@@ -128,9 +127,7 @@ public class IndexModel : PageModel
             TempData["Error"] = "Le nom, la description courte et un prix valide sont obligatoires.";
             return RedirectToPage();
         }
-        var baseSlug = new string(name.ToLowerInvariant().Normalize(System.Text.NormalizationForm.FormD)
-            .Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark)
-            .Select(c => char.IsLetterOrDigit(c) ? c : '-').ToArray()).Trim('-');
+        var baseSlug = TextTools.Slugify(name);
         if (baseSlug.Length == 0) baseSlug = "produit";
         var slug = baseSlug;
         for (var n = 2; await _db.Products.AnyAsync(x => x.Slug == slug); n++) slug = $"{baseSlug}-{n}";
@@ -174,6 +171,11 @@ public class IndexModel : PageModel
     {
         var p = await _db.Products.FindAsync(id);
         if (p is null) return NotFound();
+        if (categoryId is not null && !await _db.Categories.AnyAsync(c => c.Id == categoryId))
+        {
+            TempData["Error"] = "Cette gamme n'existe plus.";
+            return RedirectToPage();
+        }
         p.CategoryId = categoryId;
         await _db.SaveChangesAsync();
         TempData["Message"] = $"Gamme de « {p.Name} » enregistrée.";
@@ -183,7 +185,7 @@ public class IndexModel : PageModel
     public async Task OnGetAsync()
     {
         Categories = await _db.Categories.AsNoTracking().OrderBy(c => c.SortOrder).ToListAsync();
-        Products = await _db.Products.Include(p => p.Variants).OrderBy(p => p.SortOrder).ToListAsync();
+        Products = await _db.Products.AsNoTracking().Include(p => p.Variants).OrderBy(p => p.SortOrder).ToListAsync();
         Medias = await _db.MediaAssets.AsNoTracking().OrderBy(m => m.SortOrder).ToListAsync();
     }
 
@@ -195,6 +197,11 @@ public class IndexModel : PageModel
         if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(shortDescription))
         {
             TempData["Error"] = "Le nom et la description courte sont obligatoires.";
+            return RedirectToPage();
+        }
+        if (mainMediaId is not null && !await _db.MediaAssets.AnyAsync(m => m.Id == mainMediaId))
+        {
+            TempData["Error"] = "La photo choisie n'existe plus.";
             return RedirectToPage();
         }
         p.Name = name.Trim();

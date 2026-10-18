@@ -55,6 +55,16 @@ public class IndexModel : PageModel
     {
         var s = await _db.HomeSections.FindAsync(id);
         if (s is null) return NotFound();
+        if (s.Kind != "ProduitsDeSaison" && !string.IsNullOrWhiteSpace(buttonUrl) && !TextTools.IsSafeUrl(buttonUrl))
+        {
+            TempData["Error"] = "Le lien du bouton doit commencer par / ou https://.";
+            return RedirectToPage();
+        }
+        if (s.Kind == "ProduitsDeSaison" && !string.IsNullOrEmpty(categorySlug) && !await _db.Categories.AnyAsync(c => c.Slug == categorySlug))
+        {
+            TempData["Error"] = "Cette gamme n'existe plus.";
+            return RedirectToPage();
+        }
         s.Title = title?.Trim();
         s.Subtitle = subtitle?.Trim();
         if (s.Kind == "Texte") s.BodyHtml = _cleaner.Clean(bodyHtml);

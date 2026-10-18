@@ -38,11 +38,17 @@ public class IndexModel : PageModel
     public async Task<IActionResult> OnPostUploadAsync(List<IFormFile> files)
     {
         var added = 0;
+        var errors = new List<string>();
         foreach (var f in files.Where(f => f.Length > 0))
         {
             try { if (await _media.AddUploadAsync(f) is not null) added++; }
-            catch (Exception ex) { TempData["Error"] = ex.Message; }
+            catch (InvalidOperationException ex) { errors.Add($"{f.FileName} : {ex.Message}"); }
+            catch (Exception ex) when (ex is SixLabors.ImageSharp.ImageFormatException or SixLabors.ImageSharp.UnknownImageFormatException)
+            {
+                errors.Add($"{f.FileName} : ce fichier n'est pas une image lisible.");
+            }
         }
+        if (errors.Count > 0) TempData["Error"] = string.Join(" ", errors);
         TempData["Message"] = $"{added} photo(s) ajoutée(s).";
         return RedirectToPage();
     }
@@ -76,6 +82,12 @@ public class IndexModel : PageModel
     {
         var m = await _db.MediaAssets.FindAsync(id);
         if (m is null) return NotFound();
+        if (showInHero && !m.ShowInHero
+            && await _db.MediaAssets.CountAsync(x => x.ShowInHero && x.Status == MediaStatus.Published) >= 5)
+        {
+            TempData["Error"] = "Le carrousel est limité à 5 photos. Retirez-en une avant d'en ajouter.";
+            return RedirectToPage();
+        }
         m.Caption = caption?.Trim();
         m.AltText = alt?.Trim();
         m.Theme = theme;

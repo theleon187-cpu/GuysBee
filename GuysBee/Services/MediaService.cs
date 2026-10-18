@@ -94,7 +94,8 @@ public class MediaService
         var hash = Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
         if (await _db.MediaAssets.AnyAsync(m => m.ContentHash == hash, ct)) return null;
 
-        using var image = await Image.LoadAsync(new MemoryStream(bytes), ct);
+        using var source = new MemoryStream(bytes, writable: false);
+        using var image = await Image.LoadAsync(source, ct);
         var width = image.Width;
         var height = image.Height;
 
@@ -121,10 +122,18 @@ public class MediaService
             Status = MediaStatus.Draft,
             Width = width,
             Height = height,
-            SortOrder = await _db.MediaAssets.CountAsync(ct) + 1
+            SortOrder = (await _db.MediaAssets.MaxAsync(m => (int?)m.SortOrder, ct) ?? 0) + 1
         };
         _db.MediaAssets.Add(asset);
-        await _db.SaveChangesAsync(ct);
+        try
+        {
+            await _db.SaveChangesAsync(ct);
+        }
+        catch
+        {
+            DeleteFiles(baseName);
+            throw;
+        }
         return asset;
     }
 
@@ -133,12 +142,17 @@ public class MediaService
         var asset = await _db.MediaAssets.FindAsync([id], ct);
         if (asset is null) return;
 
-        foreach (var w in MediaUrls.Widths)
-        {
-            var path = Path.Combine(OutputDir, $"{asset.BaseName}-{w}.webp");
-            if (File.Exists(path)) File.Delete(path);
-        }
         _db.MediaAssets.Remove(asset);
         await _db.SaveChangesAsync(ct);
+        DeleteFiles(asset.BaseName);
+    }
+
+    private void DeleteFiles(string baseName)
+    {
+        foreach (var w in MediaUrls.Widths)
+        {
+            var path = Path.Combine(OutputDir, $"{baseName}-{w}.webp");
+            if (File.Exists(path)) File.Delete(path);
+        }
     }
 }

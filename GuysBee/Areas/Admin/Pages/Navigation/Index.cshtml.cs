@@ -1,5 +1,6 @@
 using GuysBee.Data;
 using GuysBee.Data.Entities;
+using GuysBee.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -30,8 +31,7 @@ public class IndexModel : PageModel
             Links.Add(("Pages de contenu", p.Title, "/p/" + p.Slug));
     }
 
-    private static bool ValidUrl(string url) =>
-        url.StartsWith('/') || url.StartsWith("https://", StringComparison.OrdinalIgnoreCase) || url.StartsWith("http://", StringComparison.OrdinalIgnoreCase);
+    private static bool ValidUrl(string url) => TextTools.IsSafeUrl(url);
 
     public async Task<IActionResult> OnPostSaveAsync(int id, string label, string url, bool isVisible)
     {

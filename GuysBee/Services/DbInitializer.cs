@@ -16,25 +16,28 @@ public static class DbInitializer
 
         // Tant qu'aucune migration n'existe, on crée le schéma directement.
         if (db.Database.GetMigrations().Any())
+        {
             await db.Database.MigrateAsync();
-        else
-            await db.Database.EnsureCreatedAsync();
-
-        if (!db.Database.GetMigrations().Any())
-        {
-            try { await db.Database.ExecuteSqlRawAsync("ALTER TABLE MediaAssets ADD COLUMN ShowInHero INTEGER NOT NULL DEFAULT 0"); }
-            catch (Exception) { /* colonne déjà présente */ }
         }
-
-        if (!db.Database.GetMigrations().Any())
+        else
         {
-            try { await db.Database.ExecuteSqlRawAsync("ALTER TABLE Categories ADD COLUMN MenuLabel TEXT NULL"); }
-            catch (Exception) { /* colonne déjà présente */ }
+            await db.Database.EnsureCreatedAsync();
+            await AddColumnIfMissingAsync(db, "MediaAssets", "ShowInHero", "INTEGER NOT NULL DEFAULT 0");
+            await AddColumnIfMissingAsync(db, "Categories", "MenuLabel", "TEXT NULL");
         }
 
         await DbSeeder.SeedAsync(db);
         await ContentSeeder.SeedAsync(db);
         await SeedAdminAsync(services, logger);
+    }
+
+    private static async Task AddColumnIfMissingAsync(AppDbContext db, string table, string column, string definition)
+    {
+        var exists = await db.Database
+            .SqlQueryRaw<int>($"SELECT COUNT(*) AS Value FROM pragma_table_info('{table}') WHERE name = '{column}'")
+            .SingleAsync() > 0;
+        if (!exists)
+            await db.Database.ExecuteSqlRawAsync($"ALTER TABLE {table} ADD COLUMN {column} {definition}");
     }
 
     private static async Task SeedAdminAsync(IServiceProvider services, ILogger logger)
