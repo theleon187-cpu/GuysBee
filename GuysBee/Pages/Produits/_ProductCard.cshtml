@@ -1,0 +1,21 @@
+@using GuysBee.Services
+@using GuysBee.Data.Entities
+@model Product
+<article class="gb-card">
+    @if (Model.MainMedia is { } img)
+    {
+        <img src="@MediaUrls.Src(img, 480)" alt="@MediaUrls.Alt(img)" loading="lazy" width="480" height="480" />
+    }
+    <h2 class="gb-card-title"><a href="/Produits/@Model.Slug">@Model.Name</a></h2>
+    <p class="gb-card-text">@Model.ShortDescription</p>
+    <ul class="gb-variants">
+        @foreach (var v in Model.Variants.Where(v => v.IsActive))
+        {
+            <li>
+                <span>@v.Label</span>
+                <span class="gb-price">@v.Price.ToString("0.00") €</span>
+            </li>
+        }
+    </ul>
+    <a class="gb-btn gb-btn-secondary" href="/Produits/@Model.Slug">Voir le détail</a>
+</article>

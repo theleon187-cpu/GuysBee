@@ -1,0 +1,74 @@
+@page
+@model GuysBee.Areas.Admin.Pages.Navigation.IndexModel
+@{
+    ViewData["Title"] = "Menu du site";
+}
+<header class="gb-admin-head">
+    <h1>Menu du site</h1>
+    <p class="gb-admin-help">Les liens affich&eacute;s en haut du site et dans le bas de page. Utilisez les fl&egrave;ches pour changer l'ordre.</p>
+</header>
+
+@foreach (var group in Model.Items.GroupBy(i => i.IsFooter))
+{
+    <section class="gb-admin-card">
+        <h2>@(group.Key ? "Bas de page" : "Menu principal")</h2>
+        @foreach (var m in group)
+        {
+            <div class="gb-row">
+                <form method="post" asp-page-handler="Save" class="gb-row-form">
+                    <input type="hidden" name="id" value="@m.Id" />
+                    <input name="label" class="form-control" value="@m.Label" maxlength="60" aria-label="Nom du lien" required />
+                    <select name="url" class="form-select" aria-label="Page du lien">
+                        @if (!Model.Links.Any(l => l.Url == m.Url))
+                        {
+                            <option value="@m.Url" selected>Autre : @m.Url</option>
+                        }
+                        @foreach (var g in Model.Links.GroupBy(l => l.Group))
+                        {
+                            <optgroup label="@g.Key">
+                                @foreach (var l in g)
+                                {
+                                    <option value="@l.Url" selected="@(l.Url == m.Url)">@l.Label</option>
+                                }
+                            </optgroup>
+                        }
+                    </select>
+                    <span class="form-check">
+                        <input id="vis-@m.Id" name="isVisible" type="checkbox" value="true" class="form-check-input" checked="@m.IsVisible" />
+                        <input type="hidden" name="isVisible" value="false" />
+                        <label class="form-check-label" for="vis-@m.Id">Visible</label>
+                    </span>
+                    <button type="submit" class="btn btn-warning btn-sm">Enregistrer</button>
+                </form>
+                <div class="gb-card-actions">
+                    <form method="post" asp-page-handler="Move"><input type="hidden" name="id" value="@m.Id" /><input type="hidden" name="direction" value="-1" /><button class="btn btn-sm btn-outline-dark" aria-label="Monter">&uarr;</button></form>
+                    <form method="post" asp-page-handler="Move"><input type="hidden" name="id" value="@m.Id" /><input type="hidden" name="direction" value="1" /><button class="btn btn-sm btn-outline-dark" aria-label="Descendre">&darr;</button></form>
+                    <form method="post" asp-page-handler="Delete"><input type="hidden" name="id" value="@m.Id" /><button class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer ce lien ?');">Supprimer</button></form>
+                </div>
+            </div>
+        }
+    </section>
+}
+
+<section class="gb-admin-card">
+    <h2>Ajouter un lien</h2>
+    <form method="post" asp-page-handler="Add" class="gb-row-form">
+        <input name="label" class="form-control" placeholder="Nom (ex. Actualit&eacute;s)" maxlength="60" aria-label="Nom du lien" required />
+        <select name="url" class="form-select" aria-label="Page du lien">
+            @foreach (var g in Model.Links.GroupBy(l => l.Group))
+            {
+                <optgroup label="@g.Key">
+                    @foreach (var l in g)
+                    {
+                        <option value="@l.Url">@l.Label</option>
+                    }
+                </optgroup>
+            }
+        </select>
+        <select name="isFooter" class="form-select" aria-label="Emplacement">
+            <option value="false">Menu principal</option>
+            <option value="true">Bas de page</option>
+        </select>
+        <button type="submit" class="btn btn-warning btn-sm">Ajouter</button>
+    </form>
+</section>

@@ -26,6 +26,28 @@
     </div>
 </div>
 
+<div class="gb-admin-card">
+    <h2 class="h5">Carrousel de la page d'accueil (5 photos maximum)</h2>
+    @{ var heroItems = Model.Items.Where(x => x.ShowInHero && x.Status == MediaStatus.Published).ToList(); }
+    @if (heroItems.Count == 0)
+    {
+        <p class="gb-admin-help">Aucune photo choisie : le site affiche une photo par défaut. Cliquez sur « Ajouter au carrousel » sous une photo ci-dessous.</p>
+    }
+    else
+    {
+        <div class="gb-card-actions flex-wrap">
+            @foreach (var h in heroItems)
+            {
+                <form method="post" asp-page-handler="ToggleHero" class="text-center">
+                    <input type="hidden" name="id" value="@h.Id" />
+                    <img class="gb-admin-thumb" src="@MediaUrls.Src(h, 480)" alt="@MediaUrls.Alt(h)" loading="lazy" />
+                    <div><button type="submit" class="btn btn-outline-danger btn-sm mt-1">Retirer</button></div>
+                </form>
+            }
+        </div>
+    }
+</div>
+
 <form method="post" asp-page-handler="PublishAll" class="mb-3">
     <button type="submit" class="btn btn-success">Publier toutes les photos en brouillon</button>
     <span class="gb-admin-help ms-2">Pensez à ajouter une description (texte alternatif) pour l'accessibilité.</span>
@@ -81,10 +103,27 @@
                                 <option value="@((int)MediaStatus.Hidden)" selected="@(m.Status == MediaStatus.Hidden)">Masquée</option>
                             </select>
                         </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="hero-@m.Id" name="showInHero" value="true" checked="@m.ShowInHero" />
+                                <label class="form-check-label" for="hero-@m.Id">Afficher dans le bandeau d'accueil (la photo doit être publiée)</label>
+                            </div>
+                        </div>
                     </div>
                     <div class="mt-2 d-flex gap-2">
                         <button type="submit" class="btn btn-warning btn-sm">Enregistrer</button>
                     </div>
+                </form>
+                <form method="post" asp-page-handler="ToggleHero" class="mt-2">
+                    <input type="hidden" name="id" value="@m.Id" />
+                    @if (m.ShowInHero)
+                    {
+                        <button type="submit" class="btn btn-dark btn-sm">Dans le carrousel : retirer</button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-outline-dark btn-sm">Ajouter au carrousel</button>
+                    }
                 </form>
                 <form method="post" asp-page-handler="Delete" class="mt-2">
                     <input type="hidden" name="id" value="@m.Id" />

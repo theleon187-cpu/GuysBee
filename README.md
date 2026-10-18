@@ -9,7 +9,8 @@ Le site est **administrable sans toucher au code** : textes, photos, prix et sto
 ### Site public
 - **Accueil** : bandeau d'accueil, étapes « de la fleur au pot », miels, ruche du mois (blocs pilotés par la base de données).
 - **Nos miels** : miel de printemps, d'acacia, de montagne, de fleurs sauvages (pots de 500 g et 1 kg).
-- **La ruche au fil des saisons** : calendrier mensuel de la vie des abeilles et de l'apiculteur.
+- **Boutique** : produits regroupés par **gamme** (miels, cire, propolis...), barre de gammes et page par gamme (`/Produits?gamme=slug`) avec libellé et introduction.
+- **La ruche au fil des saisons**
 - **Galerie** photos, **Où nous trouver**, **Contact** (anti-spam intégré).
 - **Pages éditables** : histoire, conditions de vente, mentions légales, confidentialité.
 - Thème jaune et noir inspiré du logo, accessible (contrastes, navigation clavier, `alt` sur les images), responsive.
@@ -17,7 +18,9 @@ Le site est **administrable sans toucher au code** : textes, photos, prix et sto
 ### Administration (`/Admin`)
 - Connexion sécurisée (ASP.NET Core Identity, verrouillage après 5 échecs).
 - **Photos** : import du dossier d'origine, envoi de nouvelles photos, conversion automatique en WebP (480 / 800 / 1200 px), détection des doublons, légendes, thèmes, saisons, publication.
-- **Miels et prix** : textes, prix, stock, poids d'expédition.
+- **Gammes et produits** : création/modification/suppression des gammes (libellé, introduction, ordre), création de produits et de formats (pots), prix, stock, poids d'expédition. Chaque gamme possède un **libellé de menu** : le renseigner crée/renomme automatiquement son lien dans le menu, le vider le retire.
+- **Menu du site** : liens du menu principal et du bas de page, choisis dans une **liste déroulante** (pages du site, gammes, pages de contenu), ordre, visibilité.
+- **Page d'accueil** : blocs, photos du carrousel (jusqu'à 5, depuis Photos), blocs produits liés à une gamme.
 - **Textes du site** avec éditeur visuel (TinyMCE), HTML assaini côté serveur.
 - **Messages** reçus par le formulaire de contact, **Réglages** (coordonnées, bandeau d'annonce).
 
@@ -99,7 +102,7 @@ dotnet user-secrets set "Admin:Password" "UnMotDePasseSolide!"
 Si aucun mot de passe n'est configuré en production, un mot de passe aléatoire est généré et affiché une seule fois dans les journaux.
 
 ### Migrations de base de données
-Tant qu'aucune migration n'existe, le schéma est créé automatiquement. Pour passer aux migrations :
+Tant qu'aucune migration n'existe, le schéma est créé automatiquement et les colonnes ajoutées ensuite (`MediaAssets.ShowInHero`, `Categories.MenuLabel`) le sont par `ALTER TABLE` au démarrage (`DbInitializer`). Pour passer aux migrations :
 
 ```powershell
 dotnet tool install --global dotnet-ef

@@ -20,6 +20,18 @@ public static class DbInitializer
         else
             await db.Database.EnsureCreatedAsync();
 
+        if (!db.Database.GetMigrations().Any())
+        {
+            try { await db.Database.ExecuteSqlRawAsync("ALTER TABLE MediaAssets ADD COLUMN ShowInHero INTEGER NOT NULL DEFAULT 0"); }
+            catch (Exception) { /* colonne déjà présente */ }
+        }
+
+        if (!db.Database.GetMigrations().Any())
+        {
+            try { await db.Database.ExecuteSqlRawAsync("ALTER TABLE Categories ADD COLUMN MenuLabel TEXT NULL"); }
+            catch (Exception) { /* colonne déjà présente */ }
+        }
+
         await DbSeeder.SeedAsync(db);
         await ContentSeeder.SeedAsync(db);
         await SeedAdminAsync(services, logger);

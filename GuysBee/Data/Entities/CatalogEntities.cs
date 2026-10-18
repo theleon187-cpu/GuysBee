@@ -6,6 +6,7 @@ public class Category
     public string Name { get; set; } = "";
     public string Slug { get; set; } = "";
     public string? Description { get; set; }
+    public string? MenuLabel { get; set; }
     public int SortOrder { get; set; }
     public List<Product> Products { get; set; } = new();
 }
@@ -69,6 +70,8 @@ public class MediaAsset
     public string? Season { get; set; }
     public DateTime? TakenOn { get; set; }
     public int SortOrder { get; set; }
+    /// <summary>Afficher cette photo dans le bandeau d'accueil (gb-hero).</summary>
+    public bool ShowInHero { get; set; }
     public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
 }
 

@@ -1,0 +1,97 @@
+@page
+@model GuysBee.Areas.Admin.Pages.Accueil.IndexModel
+@using GuysBee.Areas.Admin.Pages.Accueil
+@{
+    ViewData["Title"] = "Page d'accueil";
+}
+<header class="gb-admin-head">
+    <h1>Page d'accueil</h1>
+    <p class="gb-admin-help">Chaque bloc est une bande de la page d'accueil. Changez l'ordre avec les fl&egrave;ches, masquez un bloc ou modifiez ses textes.</p>
+</header>
+
+@foreach (var s in Model.Sections)
+{
+    <div class="gb-admin-card @(s.IsVisible ? "" : "gb-muted-card")">
+        <div class="gb-card-head">
+            <h2>@IndexModel.KindLabel(s.Kind)</h2>
+            <div class="gb-card-actions">
+                <form method="post" asp-page-handler="Move"><input type="hidden" name="id" value="@s.Id" /><input type="hidden" name="direction" value="-1" /><button class="btn btn-sm btn-outline-dark" aria-label="Monter">&uarr;</button></form>
+                <form method="post" asp-page-handler="Move"><input type="hidden" name="id" value="@s.Id" /><input type="hidden" name="direction" value="1" /><button class="btn btn-sm btn-outline-dark" aria-label="Descendre">&darr;</button></form>
+            </div>
+        </div>
+        <form method="post" asp-page-handler="Save">
+            <input type="hidden" name="id" value="@s.Id" />
+            <input type="hidden" name="sortOrder" value="@s.SortOrder" />
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label class="form-label" for="t-@s.Id">Titre</label>
+                    <input id="t-@s.Id" name="title" class="form-control" value="@s.Title" maxlength="150" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="st-@s.Id">Sous-titre</label>
+                    <input id="st-@s.Id" name="subtitle" class="form-control" value="@s.Subtitle" maxlength="250" />
+                </div>
+                @if (s.Kind == "Hero")
+                {
+                    <div class="col-md-6">
+                        <label class="form-label" for="bl-@s.Id">Texte du bouton</label>
+                        <input id="bl-@s.Id" name="buttonLabel" class="form-control" value="@s.ButtonLabel" maxlength="60" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="bu-@s.Id">Lien du bouton</label>
+                        <input id="bu-@s.Id" name="buttonUrl" class="form-control" value="@s.ButtonUrl" maxlength="200" />
+                    </div>
+                    <div class="col-12 gb-admin-help">Les photos du bandeau se choisissent dans la rubrique Photos.</div>
+                }
+                @if (s.Kind == "ProduitsDeSaison")
+                {
+                    var slug = IndexModel.SlugOf(s.ButtonUrl);
+                    <div class="col-md-6">
+                        <label class="form-label" for="cat-@s.Id">Gamme affichée dans ce bloc</label>
+                        <select id="cat-@s.Id" name="categorySlug" class="form-select">
+                            <option value="">Tous les produits</option>
+                            @foreach (var c in Model.Categories)
+                            {
+                                <option value="@c.Slug" selected="@(c.Slug == slug)">@c.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="bl-@s.Id">Texte du bouton</label>
+                        <input id="bl-@s.Id" name="buttonLabel" class="form-control" value="@s.ButtonLabel" maxlength="60" />
+                    </div>
+                    <div class="col-12 gb-admin-help">Le titre du bloc mène à la gamme choisie ; le bouton aussi.</div>
+                }
+                @if (s.Kind == "Texte")
+                {
+                    <div class="col-12">
+                        <label class="form-label" for="b-@s.Id">Texte (HTML simple autoris&eacute;)</label>
+                        <textarea id="b-@s.Id" name="bodyHtml" class="form-control" rows="5">@s.BodyHtml</textarea>
+                    </div>
+                }
+                <div class="col-12">
+                    <div class="form-check">
+                        <input id="v-@s.Id" name="isVisible" type="checkbox" value="true" class="form-check-input" checked="@s.IsVisible" />
+                        <input type="hidden" name="isVisible" value="false" />
+                        <label class="form-check-label" for="v-@s.Id">Afficher ce bloc sur le site</label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-warning btn-sm mt-2">Enregistrer</button>
+        </form>
+        @if (s.Kind == "Texte" || (s.Kind == "ProduitsDeSaison" && Model.Sections.Count(x => x.Kind == "ProduitsDeSaison") > 1))
+        {
+            <form method="post" asp-page-handler="Delete" class="mt-2">
+                <input type="hidden" name="id" value="@s.Id" />
+                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Supprimer ce bloc ?');">Supprimer</button>
+            </form>
+        }
+    </div>
+}
+
+<form method="post" asp-page-handler="AddRange" class="d-inline">
+    <button type="submit" class="btn btn-outline-dark">+ Ajouter un bloc de produits (gamme)</button>
+</form>
+<form method="post" asp-page-handler="AddText" class="d-inline">
+    <button type="submit" class="btn btn-outline-dark">+ Ajouter un bloc de texte</button>
+</form>

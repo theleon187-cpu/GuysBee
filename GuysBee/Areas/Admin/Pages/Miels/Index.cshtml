@@ -2,15 +2,77 @@
 @using GuysBee.Services
 @model GuysBee.Areas.Admin.Pages.Miels.IndexModel
 @{
-    ViewData["Title"] = "Miels et prix";
+    ViewData["Title"] = "Gammes et produits";
 }
-<h1 class="h3 mb-3">Miels et prix</h1>
+<h1 class="h3 mb-3">Gammes et produits</h1>
 <p class="gb-admin-help">Modifiez les textes, les prix, le stock et le poids d'expédition. Un pot à 0 en stock s'affiche « momentanément indisponible » sur le site.</p>
+
+<div class="gb-admin-card">
+    <h2 class="h5">Gammes de produits</h2>
+    <p class="gb-admin-help">Actuellement : @(Model.Categories.Count == 0 ? "aucune" : string.Join(", ", Model.Categories.Select(c => c.Name))). Ajoutez une gamme (ex. Cire, Propolis) pour pouvoir y ranger des produits. Les visiteurs verront des boutons de filtre dès qu'il y a plusieurs gammes.</p>
+    @foreach (var c in Model.Categories)
+    {
+        <div class="gb-row">
+            <form method="post" asp-page-handler="SaveCategory" class="gb-row-form">
+                <input type="hidden" name="id" value="@c.Id" />
+                <input name="name" class="form-control" value="@c.Name" maxlength="80" aria-label="Libellé de la gamme" required />
+                <input name="menuLabel" class="form-control" value="@c.MenuLabel" maxlength="60" placeholder="Libellé dans le menu (vide = pas de lien)" aria-label="Libellé dans le menu" />
+                <input name="description" class="form-control" value="@c.Description" maxlength="250" placeholder="Phrase d'introduction (facultatif)" aria-label="Introduction de la gamme" />
+                <button type="submit" class="btn btn-warning btn-sm">Enregistrer</button>
+            </form>
+            <div class="gb-card-actions">
+                <form method="post" asp-page-handler="MoveCategory"><input type="hidden" name="id" value="@c.Id" /><input type="hidden" name="direction" value="-1" /><button class="btn btn-sm btn-outline-dark" aria-label="Monter">&uarr;</button></form>
+                <form method="post" asp-page-handler="MoveCategory"><input type="hidden" name="id" value="@c.Id" /><input type="hidden" name="direction" value="1" /><button class="btn btn-sm btn-outline-dark" aria-label="Descendre">&darr;</button></form>
+                <form method="post" asp-page-handler="AddCategoryMenu"><input type="hidden" name="id" value="@c.Id" /><button class="btn btn-sm btn-outline-dark">Ajouter au menu</button></form>
+                <form method="post" asp-page-handler="DeleteCategory"><input type="hidden" name="id" value="@c.Id" /><button class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer cette gamme ?');">Supprimer</button></form>
+            </div>
+        </div>
+    }
+    <hr />
+    <form method="post" asp-page-handler="AddCategory" class="row g-2">
+        <div class="col-md-6"><input name="name" class="form-control" maxlength="80" placeholder="Nom de la nouvelle gamme" aria-label="Nom de la gamme" required /></div>
+        <div class="col-md-4"><input name="menuLabel" class="form-control" maxlength="60" placeholder="Libellé dans le menu (facultatif)" aria-label="Libellé dans le menu" /></div>
+        <div class="col-auto"><button type="submit" class="btn btn-warning">Ajouter la gamme</button></div>
+    </form>
+</div>
+
+<div class="gb-admin-card">
+    <h2 class="h5">Ajouter un produit</h2>
+    <form method="post" asp-page-handler="AddProduct" class="row g-2">
+        <div class="col-md-6"><label class="form-label" for="np-name">Nom</label><input id="np-name" name="name" class="form-control" maxlength="120" required /></div>
+        <div class="col-md-6">
+            <label class="form-label" for="np-cat">Gamme</label>
+            <select id="np-cat" name="categoryId" class="form-select">
+                <option value="">(aucune)</option>
+                @foreach (var c in Model.Categories) { <option value="@c.Id">@c.Name</option> }
+            </select>
+        </div>
+        <div class="col-12"><label class="form-label" for="np-short">Description courte</label><input id="np-short" name="shortDescription" class="form-control" maxlength="250" required /></div>
+        <div class="col-md-4"><label class="form-label" for="np-var">Premier format (ex. Pot 250 g)</label><input id="np-var" name="variantLabel" class="form-control" maxlength="60" /></div>
+        <div class="col-md-4"><label class="form-label" for="np-price">Prix TTC (&euro;)</label><input id="np-price" name="price" class="form-control" inputmode="decimal" value="0" /></div>
+        <div class="col-md-4"><label class="form-label" for="np-weight">Poids d'exp&eacute;dition (g)</label><input id="np-weight" name="weight" class="form-control" inputmode="numeric" value="0" /></div>
+        <div class="col-12"><button type="submit" class="btn btn-warning">Cr&eacute;er le produit</button></div>
+    </form>
+</div>
 
 @foreach (var p in Model.Products)
 {
     <div class="gb-admin-card">
         <h2 class="h5">@p.Name</h2>
+        <form method="post" asp-page-handler="SetCategory" class="row g-2 align-items-end mb-2">
+            <input type="hidden" name="id" value="@p.Id" />
+            <div class="col-md-6">
+                <label class="form-label" for="cat-@p.Id">Gamme de produits</label>
+                <select id="cat-@p.Id" name="categoryId" class="form-select">
+                    <option value="">(aucune)</option>
+                    @foreach (var c in Model.Categories)
+                    {
+                        <option value="@c.Id" selected="@(p.CategoryId == c.Id)">@c.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-auto"><button type="submit" class="btn btn-outline-dark btn-sm">Changer de gamme</button></div>
+        </form>
         <form method="post" asp-page-handler="SaveProduct">
             <input type="hidden" name="id" value="@p.Id" />
             <div class="row g-2">
@@ -57,6 +119,13 @@
 
         <hr />
         <h3 class="h6">Pots et prix</h3>
+        <form method="post" asp-page-handler="AddVariant" class="row g-2 align-items-end mb-3">
+            <input type="hidden" name="productId" value="@p.Id" />
+            <div class="col-md-4"><input name="label" class="form-control" placeholder="Nouveau format (ex. Pot 500 g)" aria-label="Nom du format" maxlength="60" required /></div>
+            <div class="col-md-3"><input name="price" class="form-control" inputmode="decimal" value="0" aria-label="Prix TTC" /></div>
+            <div class="col-md-3"><input name="weight" class="form-control" inputmode="numeric" value="0" aria-label="Poids en grammes" /></div>
+            <div class="col-auto"><button type="submit" class="btn btn-outline-dark btn-sm">Ajouter ce format</button></div>
+        </form>
         @foreach (var v in p.Variants)
         {
             <form method="post" asp-page-handler="SaveVariant" class="row g-2 align-items-end mb-2">

@@ -47,7 +47,32 @@ public class IndexModel : PageModel
         return RedirectToPage();
     }
 
-    public async Task<IActionResult> OnPostSaveAsync(int id, string? caption, string? alt, string? theme, string? season, MediaStatus status)
+    public async Task<IActionResult> OnPostToggleHeroAsync(int id)
+    {
+        var m = await _db.MediaAssets.FindAsync(id);
+        if (m is null) return NotFound();
+        if (!m.ShowInHero)
+        {
+            var count = await _db.MediaAssets.CountAsync(x => x.ShowInHero && x.Status == MediaStatus.Published);
+            if (count >= 5)
+            {
+                TempData["Error"] = "Le carrousel est limité à 5 photos. Retirez-en une avant d'en ajouter.";
+                return RedirectToPage();
+            }
+            m.ShowInHero = true;
+            m.Status = MediaStatus.Published;
+            TempData["Message"] = "Photo ajoutée au carrousel de l'accueil.";
+        }
+        else
+        {
+            m.ShowInHero = false;
+            TempData["Message"] = "Photo retirée du carrousel.";
+        }
+        await _db.SaveChangesAsync();
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostSaveAsync(int id, string? caption, string? alt, string? theme, string? season, MediaStatus status, bool showInHero)
     {
         var m = await _db.MediaAssets.FindAsync(id);
         if (m is null) return NotFound();
@@ -56,6 +81,7 @@ public class IndexModel : PageModel
         m.Theme = theme;
         m.Season = season;
         m.Status = status;
+        m.ShowInHero = showInHero;
         await _db.SaveChangesAsync();
         TempData["Message"] = "Photo enregistrée.";
         return RedirectToPage();

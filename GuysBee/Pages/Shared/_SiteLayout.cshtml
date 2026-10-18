@@ -20,8 +20,9 @@
     <meta property="og:type" content="website" />
     <link rel="icon" href="~/favicon.ico" />
     <link rel="stylesheet" href="~/css/guysbee.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/guysbee-modern.css" asp-append-version="true" />
 </head>
-<body class="gb-body">
+<body class="gb-body theme-modern">
     <a class="gb-skip" href="#contenu">Aller au contenu</a>
     @if (!string.IsNullOrWhiteSpace(banner))
     {
@@ -30,7 +31,7 @@
     <header class="gb-header">
         <div class="gb-container gb-header-inner">
             <a class="gb-brand" href="/" aria-label="GUY's Bee, retour à l'accueil">
-                src="~/img/logo.jpg"
+                <img class="gb-logo" src="~/img/logo.jpg" alt="" width="48" height="48" />
                 <span class="gb-brand-name">GUY's Bee</span>
             </a>
             <button class="gb-nav-toggle" type="button" aria-expanded="false" aria-controls="gb-nav">Menu</button>

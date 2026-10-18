@@ -6,14 +6,17 @@
     ViewData["Description"] = Model.Product.ShortDescription;
 }
 <article class="gb-section">
-    <div class="gb-container gb-prose">
-        <h1>@Model.Product.Name</h1>
-        <p class="gb-lead">@Model.Product.ShortDescription</p>
-
+    <div class="gb-container gb-detail">
         @if (Model.Product.MainMedia is { } img)
         {
-            <img src="@MediaUrls.Src(img, 800)" srcset="@MediaUrls.SrcSet(img)" sizes="(min-width: 800px) 70ch, 100vw" alt="@MediaUrls.Alt(img)" width="800" height="800" />
+            <div class="gb-detail-media">
+                <img src="@MediaUrls.Src(img, 800)" srcset="@MediaUrls.SrcSet(img)" sizes="(min-width: 900px) 50vw, 100vw" alt="@MediaUrls.Alt(img)" width="800" height="800" />
+            </div>
         }
+        <div class="gb-detail-body gb-prose">
+        <p class="gb-breadcrumb"><a href="/Produits">&larr; Tous nos miels</a></p>
+        <h1>@Model.Product.Name</h1>
+        <p class="gb-lead">@Model.Product.ShortDescription</p>
 
         @if (!string.IsNullOrWhiteSpace(Model.Product.LongDescription))
         {
@@ -43,6 +46,7 @@
             <p>@Model.Product.UsageTips</p>
         }
 
-        <p><a href="/Produits">&larr; Tous nos miels</a></p>
+        <p><a class="gb-btn" href="/Contact">Commander ou poser une question</a></p>
+        </div>
     </div>
 </article>

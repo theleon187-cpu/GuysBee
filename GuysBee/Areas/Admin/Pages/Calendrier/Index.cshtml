@@ -1,0 +1,34 @@
+@page
+@model GuysBee.Areas.Admin.Pages.Calendrier.IndexModel
+@using GuysBee.Areas.Admin.Pages.Calendrier
+@{
+    ViewData["Title"] = "Calendrier de la ruche";
+}
+<header class="gb-admin-head">
+    <h1>Calendrier de la ruche</h1>
+    <p class="gb-admin-help">Ce que font les abeilles et l'apiculteur chaque mois. Le mois en cours s'affiche sur la page d'accueil.</p>
+</header>
+
+<div class="gb-cal-grid">
+@foreach (var e in Model.Entries)
+{
+    <div class="gb-admin-card @(e.Month == DateTime.Now.Month ? "gb-current-card" : "")">
+        <h2>@IndexModel.MonthNames[Math.Clamp(e.Month, 1, 12)]@(e.Month == DateTime.Now.Month ? " (mois en cours)" : "")</h2>
+        <form method="post" asp-page-handler="Save">
+            <input type="hidden" name="id" value="@e.Id" />
+            <label class="form-label" for="ti-@e.Id">Titre</label>
+            <input id="ti-@e.Id" name="title" class="form-control mb-2" value="@e.Title" maxlength="150" required />
+            <label class="form-label" for="b-@e.Id">Les abeilles</label>
+            <textarea id="b-@e.Id" name="whatBeesDo" class="form-control mb-2" rows="3">@e.WhatBeesDo</textarea>
+            <label class="form-label" for="k-@e.Id">L'apiculteur</label>
+            <textarea id="k-@e.Id" name="whatBeekeeperDoes" class="form-control mb-2" rows="3">@e.WhatBeekeeperDoes</textarea>
+            <div class="form-check mb-2">
+                <input id="v-@e.Id" name="isVisible" type="checkbox" value="true" class="form-check-input" checked="@e.IsVisible" />
+                <input type="hidden" name="isVisible" value="false" />
+                <label class="form-check-label" for="v-@e.Id">Visible sur le site</label>
+            </div>
+            <button type="submit" class="btn btn-warning btn-sm">Enregistrer</button>
+        </form>
+    </div>
+}
+</div>

@@ -1,35 +1,63 @@
 @page
 @using GuysBee.Services
+@using GuysBee.Data.Entities
 @model GuysBee.Pages.Produits.IndexModel
 @{
-    ViewData["Title"] = "Nos miels";
-    ViewData["Description"] = "Miel de printemps, d'acacia, de montagne et de fleurs sauvages, récoltés par GUY's Bee.";
+    var title = Model.Current?.Name ?? "Boutique";
+    ViewData["Title"] = title;
+    ViewData["Description"] = Model.Current?.Description ?? "Les produits de GUY's Bee, récoltés et préparés à Saint-Julien-sur-Bibost.";
+    var grouped = Model.Current is null && Model.Categories.Count > 1;
 }
-<h1 class="gb-page-title">Nos miels</h1>
+<h1 class="gb-page-title">@title</h1>
 <section class="gb-section">
     <div class="gb-container">
-        <div class="gb-grid">
-            @foreach (var p in Model.Products)
+        @if (Model.Current?.Description is { Length: > 0 } intro)
+        {
+            <p class="gb-category-intro">@intro</p>
+        }
+        @if (Model.Categories.Count > 1)
+        {
+            <nav class="gb-category-nav" aria-label="Gammes de produits">
+                <a href="/Produits" aria-current="@(Model.Current is null ? "true" : "false")">Toute la boutique</a>
+                @foreach (var c in Model.Categories)
+                {
+                    <a href="/Produits?gamme=@c.Slug" aria-current="@(Model.Current?.Id == c.Id ? "true" : "false")">@c.Name</a>
+                }
+            </nav>
+        }
+
+        @if (grouped)
+        {
+            foreach (var c in Model.Categories)
             {
-                <article class="gb-card">
-                    @if (p.MainMedia is { } img)
+                <h2 class="gb-section-title"><a href="/Produits?gamme=@c.Slug">@c.Name</a></h2>
+                <div class="gb-grid">
+                    @foreach (var p in Model.Products.Where(x => x.CategoryId == c.Id))
                     {
-                        <img src="@MediaUrls.Src(img, 480)" alt="@MediaUrls.Alt(img)" loading="lazy" width="480" height="480" />
+                        <partial name="_ProductCard" model="p" />
                     }
-                    <h2 class="gb-card-title"><a href="/Produits/@p.Slug">@p.Name</a></h2>
-                    <p class="gb-card-text">@p.ShortDescription</p>
-                    <ul class="gb-variants">
-                        @foreach (var v in p.Variants.Where(v => v.IsActive))
-                        {
-                            <li>
-                                <span>@v.Label</span>
-                                <span class="gb-price">@v.Price.ToString("0.00") €</span>
-                            </li>
-                        }
-                    </ul>
-                    <a class="gb-btn gb-btn-secondary" href="/Produits/@p.Slug">Voir le détail</a>
-                </article>
+                </div>
             }
-        </div>
+            var others = Model.Products.Where(x => x.CategoryId == null).ToList();
+            if (others.Count > 0)
+            {
+                <h2 class="gb-section-title">Autres produits</h2>
+                <div class="gb-grid">
+                    @foreach (var p in others)
+                    {
+                        <partial name="_ProductCard" model="p" />
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <div class="gb-grid">
+                @foreach (var p in Model.Products)
+                {
+                    <partial name="_ProductCard" model="p" />
+                }
+            </div>
+        }
     </div>
 </section>

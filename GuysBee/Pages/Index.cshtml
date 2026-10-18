@@ -10,18 +10,24 @@
     switch (block.Kind)
     {
         case "Hero":
-            <section class="gb-hero" aria-labelledby="hero-title">
-                @if (Model.HeroMedia is { } hero)
+            <section class="gb-hero" aria-label="Photos de l'exploitation">
+                @for (var i = 0; i < Model.HeroMedias.Count; i++)
                 {
-                    <img class="gb-hero-media" src="@MediaUrls.Src(hero, 1200)" srcset="@MediaUrls.SrcSet(hero)" sizes="100vw" alt="" />
+                    var hero = Model.HeroMedias[i];
+                    <img class="gb-hero-media@(i == 0 ? " gb-hero-active" : "")" src="@MediaUrls.Src(hero, 1200)" srcset="@MediaUrls.SrcSet(hero)" sizes="100vw" alt="" loading="@(i == 0 ? "eager" : "lazy")" />
                 }
-                <div class="gb-container gb-hero-inner">
-                    <h1 id="hero-title" class="gb-hero-title">@block.Title</h1>
+                </section>
+                <section class="gb-hero-intro" aria-labelledby="hero-title">
+                    <div class="gb-container gb-hero-inner">
+                        <h1 id="hero-title" class="gb-hero-title">@block.Title</h1>
                     <p class="gb-hero-text">@block.Subtitle</p>
+                    <div class="gb-hero-actions">
                     @if (!string.IsNullOrEmpty(block.ButtonUrl))
                     {
                         <a class="gb-btn" href="@block.ButtonUrl">@block.ButtonLabel</a>
                     }
+                        <a class="gb-btn gb-btn-light" href="/Galerie">Voir la galerie</a>
+                    </div>
                 </div>
             </section>
             <div class="gb-hex-divider" aria-hidden="true"></div>
@@ -44,18 +50,32 @@
         case "ProduitsDeSaison":
             <section class="gb-section gb-section-alt">
                 <div class="gb-container">
-                    <h2 class="gb-section-title">@block.Title</h2>
+                    @{
+                        var rangeUrl = string.IsNullOrEmpty(block.ButtonUrl) ? "/Produits" : block.ButtonUrl;
+                        var rangeSlug = rangeUrl.Contains("gamme=") ? rangeUrl[(rangeUrl.IndexOf("gamme=") + 6)..] : null;
+                    }
+                    <h2 class="gb-section-title"><a href="@rangeUrl">@block.Title</a></h2>
                     <div class="gb-grid">
-                        @foreach (var p in Model.Products)
+                        @foreach (var p in Model.Products.Where(x => rangeSlug == null || x.Category?.Slug == rangeSlug))
                         {
                             var minPrice = p.Variants.Where(v => v.IsActive).Select(v => v.Price).DefaultIfEmpty(0m).Min();
-                            <article class="gb-card">
+                            <article class="gb-card gb-card-product">
+                                @if (p.MainMedia is { } img)
+                                {
+                                    <a class="gb-card-media" href="/Produits/@p.Slug" tabindex="-1" aria-hidden="true">
+                                        <img src="@MediaUrls.Src(img, 480)" alt="" loading="lazy" width="480" height="480" />
+                                    </a>
+                                }
                                 <h3 class="gb-card-title"><a href="/Produits/@p.Slug">@p.Name</a></h3>
                                 <p class="gb-card-text">@p.ShortDescription</p>
                                 <p class="gb-price">à partir de @minPrice.ToString("0.00") €</p>
                             </article>
                         }
                     </div>
+                    @if (!string.IsNullOrEmpty(block.ButtonLabel))
+                    {
+                        <p class="gb-section-more"><a class="gb-btn gb-btn-secondary" href="@rangeUrl">@block.ButtonLabel</a></p>
+                    }
                 </div>
             </section>
             break;
@@ -86,4 +106,22 @@
             </section>
             break;
     }
+}
+
+@if (Model.GalleryTeaser.Count > 0)
+{
+    <section class="gb-section gb-teaser">
+        <div class="gb-container">
+            <h2 class="gb-section-title">Vie de la ruche</h2>
+            <div class="gb-mosaic">
+                @foreach (var m in Model.GalleryTeaser)
+                {
+                    <a class="gb-mosaic-item" href="/Galerie">
+                        <img src="@MediaUrls.Src(m, 480)" srcset="@MediaUrls.SrcSet(m)" sizes="(min-width: 900px) 33vw, 50vw" alt="@MediaUrls.Alt(m)" loading="lazy" width="480" height="480" />
+                    </a>
+                }
+            </div>
+            <p class="gb-teaser-more"><a class="gb-btn gb-btn-secondary" href="/Galerie">Toute la galerie</a></p>
+        </div>
+    </section>
 }

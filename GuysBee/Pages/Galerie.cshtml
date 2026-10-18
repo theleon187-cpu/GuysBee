@@ -14,11 +14,11 @@
         }
         else
         {
-            <div class="gb-gallery">
+            <div class="gb-gallery" data-gb-lightbox>
                 @foreach (var m in Model.Items)
                 {
                     <figure class="gb-gallery-item">
-                        <img src="@MediaUrls.Src(m, 480)" srcset="@MediaUrls.SrcSet(m)" sizes="(min-width: 900px) 25vw, 50vw" alt="@MediaUrls.Alt(m)" loading="lazy" width="480" height="480" />
+                        <img src="@MediaUrls.Src(m, 480)" srcset="@MediaUrls.SrcSet(m)" sizes="(min-width: 900px) 25vw, 50vw" alt="@MediaUrls.Alt(m)" data-full="@MediaUrls.Src(m, 1200)" loading="lazy" width="480" height="480" />
                         @if (!string.IsNullOrWhiteSpace(m.Caption))
                         {
                             <figcaption class="gb-gallery-caption">@m.Caption</figcaption>

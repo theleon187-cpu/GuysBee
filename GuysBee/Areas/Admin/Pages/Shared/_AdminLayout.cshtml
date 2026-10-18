@@ -1,3 +1,10 @@
+@{
+    var path = Context.Request.Path.Value ?? "";
+    string Active(string prefix) =>
+        prefix == "/Admin" ? (path.TrimEnd('/').Equals("/Admin", StringComparison.OrdinalIgnoreCase) ? "gb-active" : "")
+                           : (path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) ? "gb-active" : "");
+    var signedIn = User.Identity?.IsAuthenticated == true;
+}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -8,43 +15,50 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 </head>
-<body class="gb-admin">
-    <header class="navbar navbar-expand-lg gb-admin-nav">
-        <div class="container-fluid">
-            <a class="navbar-brand gb-admin-brand" href="/Admin">GUY's Bee : administration</a>
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminMenu" aria-controls="adminMenu" aria-expanded="false" aria-label="Menu">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="adminMenu">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item"><a class="nav-link" href="/Admin">Tableau de bord</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/Admin/Photos">Photos</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/Admin/Miels">Miels et prix</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/Admin/Textes">Textes du site</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/Admin/Messages">Messages</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/Admin/Reglages">Réglages</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/" target="_blank" rel="noopener">Voir le site</a></li>
-                    </ul>
-                    <form method="post" asp-area="Admin" asp-page="/Logout" class="d-flex">
-                        <button type="submit" class="btn btn-outline-dark btn-sm">Se déconnecter</button>
-                    </form>
-                </div>
-            }
+<body class="gb-admin @(signedIn ? "gb-admin-shell" : "gb-admin-bare")">
+@if (signedIn)
+{
+    <aside class="gb-sidebar">
+        <div class="gb-sidebar-top">
+            <a class="gb-sidebar-brand" href="/Admin"><span class="gb-sidebar-logo" aria-hidden="true">&#x2B21;</span> GUY's Bee</a>
+            <button class="gb-sidebar-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#adminMenu" aria-controls="adminMenu" aria-expanded="false" aria-label="Menu">&#9776;</button>
         </div>
-    </header>
+        <div class="collapse gb-sidebar-collapse" id="adminMenu">
+            <nav class="gb-sidebar-nav" aria-label="Administration">
+                <p class="gb-sidebar-label">Pilotage</p>
+                <a class="gb-sidebar-link @Active("/Admin")" href="/Admin">Tableau de bord</a>
+                <a class="gb-sidebar-link @Active("/Admin/Messages")" href="/Admin/Messages">Messages</a>
+                <p class="gb-sidebar-label">Contenu</p>
+                <a class="gb-sidebar-link @Active("/Admin/Photos")" href="/Admin/Photos">Photos</a>
+                <a class="gb-sidebar-link @Active("/Admin/Textes")" href="/Admin/Textes">Textes du site</a>
+                <a class="gb-sidebar-link @Active("/Admin/Accueil")" href="/Admin/Accueil">Page d'accueil</a>
+                <a class="gb-sidebar-link @Active("/Admin/Navigation")" href="/Admin/Navigation">Menu du site</a>
+                <a class="gb-sidebar-link @Active("/Admin/Calendrier")" href="/Admin/Calendrier">Calendrier de la ruche</a>
+                <p class="gb-sidebar-label">Boutique</p>
+                <a class="gb-sidebar-link @Active("/Admin/Miels")" href="/Admin/Miels">Gammes et produits</a>
+                <p class="gb-sidebar-label">Site</p>
+                <a class="gb-sidebar-link @Active("/Admin/Reglages")" href="/Admin/Reglages">R&eacute;glages</a>
+                <a class="gb-sidebar-link" href="/" target="_blank" rel="noopener">Voir le site &#8599;</a>
+            </nav>
+            <form method="post" asp-area="Admin" asp-page="/Logout" class="gb-sidebar-logout">
+                <button type="submit" class="btn btn-sm btn-outline-light w-100">Se d&eacute;connecter</button>
+            </form>
+        </div>
+    </aside>
+}
 
-    <main class="container py-4">
-        @if (TempData["Message"] is string message)
-        {
-            <div class="alert alert-success" role="status">@message</div>
-        }
-        @if (TempData["Error"] is string error)
-        {
-            <div class="alert alert-danger" role="alert">@error</div>
-        }
-        @RenderBody()
+    <main class="gb-admin-main">
+        <div class="gb-admin-content">
+            @if (TempData["Message"] is string message)
+            {
+                <div class="alert alert-success gb-admin-alert" role="status">@message</div>
+            }
+            @if (TempData["Error"] is string error)
+            {
+                <div class="alert alert-danger gb-admin-alert" role="alert">@error</div>
+            }
+            @RenderBody()
+        </div>
     </main>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

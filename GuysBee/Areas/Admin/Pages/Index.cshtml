@@ -3,20 +3,71 @@
 @{
     ViewData["Title"] = "Tableau de bord";
 }
-<h1 class="h3 mb-3">Tableau de bord</h1>
-<div class="row g-3">
-    <div class="col-6 col-lg-3"><div class="gb-admin-card"><div class="gb-admin-stat">@Model.UnreadMessages</div><a href="/Admin/Messages">Messages non lus</a></div></div>
-    <div class="col-6 col-lg-3"><div class="gb-admin-card"><div class="gb-admin-stat">@Model.DraftPhotos</div><a href="/Admin/Photos">Photos à publier</a></div></div>
-    <div class="col-6 col-lg-3"><div class="gb-admin-card"><div class="gb-admin-stat">@Model.OutOfStock</div><a href="/Admin/Miels">Conditionnements en rupture</a></div></div>
-    <div class="col-6 col-lg-3"><div class="gb-admin-card"><div class="gb-admin-stat">@Model.PublishedPhotos</div><a href="/Admin/Photos">Photos publiées</a></div></div>
-</div>
+<header class="gb-admin-head">
+    <h1>Bonjour &#x1F44B;</h1>
+    <p class="gb-admin-help">Voici l'&eacute;tat de votre site en un coup d'&oelig;il.</p>
+</header>
 
-<div class="gb-admin-card mt-3">
-    <h2 class="h5">Pour bien démarrer</h2>
-    <ol class="mb-0">
-        <li>Rubrique <strong>Photos</strong> : importez les photos, ajoutez une légende, puis publiez-les.</li>
-        <li>Rubrique <strong>Miels et prix</strong> : indiquez le stock de chaque pot.</li>
-        <li>Rubrique <strong>Textes du site</strong> : rédigez « Notre histoire » et relisez les pages légales.</li>
-        <li>Rubrique <strong>Réglages</strong> : ajoutez un bandeau d'annonce si besoin.</li>
-    </ol>
+<section class="gb-stats" aria-label="Chiffres cl&eacute;s">
+    <a class="gb-stat @(Model.UnreadMessages > 0 ? "gb-stat-alert" : "")" href="/Admin/Messages">
+        <span class="gb-stat-value">@Model.UnreadMessages</span>
+        <span class="gb-stat-label">Messages non lus</span>
+    </a>
+    <a class="gb-stat @(Model.DraftPhotos > 0 ? "gb-stat-alert" : "")" href="/Admin/Photos">
+        <span class="gb-stat-value">@Model.DraftPhotos</span>
+        <span class="gb-stat-label">Photos &agrave; publier</span>
+    </a>
+    <a class="gb-stat @(Model.OutOfStock > 0 ? "gb-stat-alert" : "")" href="/Admin/Miels">
+        <span class="gb-stat-value">@Model.OutOfStock</span>
+        <span class="gb-stat-label">Pots en rupture</span>
+    </a>
+    <a class="gb-stat" href="/Admin/Photos">
+        <span class="gb-stat-value">@Model.PublishedPhotos</span>
+        <span class="gb-stat-label">Photos publi&eacute;es</span>
+    </a>
+</section>
+
+<div class="gb-dash-grid">
+    <section class="gb-panel">
+        <h2>Actions rapides</h2>
+        <div class="gb-quick">
+            <a class="gb-quick-item" href="/Admin/Photos">Ajouter des photos</a>
+            <a class="gb-quick-item" href="/Admin/Miels">Mettre &agrave; jour le stock</a>
+            <a class="gb-quick-item" href="/Admin/Textes">&Eacute;crire un texte</a>
+            <a class="gb-quick-item" href="/Admin/Reglages">Bandeau d'annonce</a>
+        </div>
+    </section>
+
+    <section class="gb-panel">
+        <h2>Pour bien d&eacute;marrer</h2>
+        <ul class="gb-checklist">
+            <li class="@(Model.HasPhotos ? "gb-done" : "")"><a href="/Admin/Photos">Publier vos premi&egrave;res photos</a></li>
+            <li class="@(Model.HasHero ? "gb-done" : "")"><a href="/Admin/Photos">Choisir les photos du bandeau d'accueil</a></li>
+            <li class="@(Model.StockFilled ? "gb-done" : "")"><a href="/Admin/Miels">Indiquer le stock de chaque pot</a></li>
+            <li><a href="/Admin/Textes">Relire &laquo; Notre histoire &raquo; et les pages l&eacute;gales</a></li>
+            <li><a href="/Admin/Reglages">Renseigner vos coordonn&eacute;es</a></li>
+        </ul>
+    </section>
+
+    <section class="gb-panel gb-panel-wide">
+        <h2>Derniers messages</h2>
+        @if (Model.RecentMessages.Count == 0)
+        {
+            <p class="gb-admin-help">Aucun message pour le moment.</p>
+        }
+        else
+        {
+            <ul class="gb-messages">
+                @foreach (var m in Model.RecentMessages)
+                {
+                    <li class="@(m.IsRead ? "" : "gb-unread")">
+                        <a href="/Admin/Messages">
+                            <strong>@m.Name</strong> &middot; @m.Subject
+                            <span class="gb-admin-help">@m.CreatedUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+    </section>
 </div>

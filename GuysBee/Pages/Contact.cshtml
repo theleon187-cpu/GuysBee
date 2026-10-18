@@ -6,7 +6,15 @@
 }
 <h1 class="gb-page-title">Contact</h1>
 <section class="gb-section">
-    <div class="gb-container">
+    <div class="gb-container gb-contact">
+        <aside class="gb-contact-info">
+            <h2>Parlons miel</h2>
+            <p>Une question, une commande, une visite de la miellerie ? Écrivez-nous ou appelez-nous.</p>
+            <p><a href="tel:0650511236">06 50 51 12 36</a></p>
+            <p><a href="mailto:GUYsBee@hotmail.com">GUYsBee@hotmail.com</a></p>
+            <p>69690 Saint-Julien-sur-Bibost</p>
+        </aside>
+        <div class="gb-contact-form">
         @if (Model.Sent)
         {
             <p class="gb-alert" role="status">Merci, votre message a bien été envoyé. Nous vous répondrons rapidement.</p>
@@ -41,9 +49,11 @@
                 <button type="submit" class="gb-btn">Envoyer</button>
             </form>
         }
+        </div>
     </div>
 </section>
 
 @section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <partial name="_ValidationScriptsPartial" />
 }
