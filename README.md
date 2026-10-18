@@ -77,7 +77,7 @@ Rendez-vous sur `https://localhost:<port>/Admin`.
 > Le mot de passe `guy` n'est accepté qu'en **développement** (`appsettings.Development.json`). En production, une politique stricte s'applique et le mot de passe doit être fourni par configuration (voir ci-dessous). Si la base existe déjà avec un autre administrateur, supprimez `guysbee.db` pour la recréer.
 
 ### Photos et logo
-- **Logo** : placez-le dans `GuysBee/wwwroot/img/logo.png`.
+`GuysBee/wwwroot/img/logo.jpg`
 - **Photos d'origine** : placez-les dans `GuysBee/posts/` (ce dossier n'est pas versionné), puis dans l'administration : **Photos > Importer le dossier des photos**. Les doublons sont ignorés. Les photos arrivent en brouillon : ajoutez une description puis publiez-les.
 - Un outil facultatif analyse les photos : `dotnet run Tools/AnalyseMedias.cs` (rapport dans `Content/analyse-techniques.md`).
 
