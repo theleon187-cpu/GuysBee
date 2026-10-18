@@ -7,7 +7,9 @@ obj/
 *.userprefs
 TestResults/
 *.log
-.vscode/
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
 
 ## Base de données locale et secrets
 *.db

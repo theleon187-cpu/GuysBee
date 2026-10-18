@@ -58,6 +58,8 @@ Au premier lancement, le site :
 
 Avec Visual Studio : ouvrez `GuysBee.slnx` puis lancez le projet `GuysBee` (F5).
 
+Avec VS Code : ouvrez le dossier à la racine, installez l'extension **C# Dev Kit**, puis F5 (configuration « GuysBee (https/http) », fichiers `.vscode/launch.json` et `.vscode/tasks.json`). Le site écoute sur `https://localhost:7080` et `http://localhost:5080`. La tâche `watch` offre le rechargement à chaud. Si besoin : `dotnet dev-certs https --trust`.
+
 ### Connexion à l'administration
 Rendez-vous sur `https://localhost:<port>/Admin`.
 

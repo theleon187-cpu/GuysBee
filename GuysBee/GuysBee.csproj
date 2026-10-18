@@ -20,11 +20,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Sources brutes : non publiées, non servies par le site. -->
+    <!-- Sources brutes (photos, logo d'origine) : non publiees, non servies par le site. -->
     <Content Remove="posts\**" />
-    <None Include="posts\**" CopyToPublishDirectory="Never" />
     <Content Remove="img\**" />
-    <None Include="img\**" CopyToPublishDirectory="Never" />
+    <None Update="posts\**" CopyToPublishDirectory="Never" />
+    <None Update="img\**" CopyToPublishDirectory="Never" />
   </ItemGroup>
 
 </Project>
