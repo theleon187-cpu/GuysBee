@@ -68,7 +68,23 @@ TinyMCE n'est pas restauré automatiquement au build : lancez `libman restore` a
 
 Avec Visual Studio : ouvrez `GuysBee.slnx` puis lancez le projet `GuysBee` (F5).
 
-Avec VS Code : ouvrez le dossier à la racine, installez l'extension **C# Dev Kit**, puis F5 (configuration « GuysBee (https/http) », fichiers `.vscode/launch.json` et `.vscode/tasks.json`). Le site écoute sur `https://localhost:7080` et `http://localhost:5080`. La tâche `watch` offre le rechargement à chaud. Si besoin : `dotnet dev-certs https --trust`.
+Avec VS Code : voir la section [Lancer avec VS Code](#lancer-avec-vs-code).
+
+### Lancer avec VS Code
+
+Section indépendante : elle suffit pour lancer le site sans Visual Studio.
+
+1. Installer le [SDK .NET 10](https://dotnet.microsoft.com/download), [VS Code](https://code.visualstudio.com/) et Git.
+2. Cloner le dépôt puis ouvrir **le dossier racine** (celui qui contient `GuysBee.slnx`) : `code .`
+3. Accepter les extensions recommandées (**C# Dev Kit**, fichier `.vscode/extensions.json`).
+4. Restaurer TinyMCE une seule fois : `dotnet tool install -g Microsoft.Web.LibraryManager.Cli`, puis `Terminal > Exécuter la tâche > libman-restore`.
+5. Approuver le certificat HTTPS de développement (une fois) : `dotnet dev-certs https --trust`
+6. Appuyer sur **F5** et choisir la configuration « GuysBee (https/http) ». Le projet est compilé (tâche `build`) puis le navigateur s'ouvre.
+
+- Adresses : `https://localhost:7080` et `http://localhost:5080` (administration : `/Admin`).
+- Rechargement à chaud : `Terminal > Exécuter la tâche > watch`.
+- Sans débogueur : `dotnet run --project GuysBee`.
+- La base SQLite `guysbee.db` et le compte administrateur sont créés au premier lancement (voir ci-dessous).
 
 ### Connexion à l'administration
 Rendez-vous sur `https://localhost:<port>/Admin`.
