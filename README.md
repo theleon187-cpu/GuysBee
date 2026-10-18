@@ -44,17 +44,24 @@ Livraison administrable (retrait, colis, tournée locale), panier et paiement Pa
 git clone https://github.com/theleon187-cpu/GuysBee.git
 cd GuysBee
 
-# 2. (Facultatif) Ajouter les photos et le logo, voir plus bas
+# 2. Restaurer TinyMCE (éditeur visuel de l'admin)
+dotnet tool install -g Microsoft.Web.LibraryManager.Cli
+cd GuysBee
+libman restore
+cd ..
 
-# 3. Lancer le site
+# 3. (Facultatif) Ajouter les photos et le logo, voir plus bas
+
+# 4. Lancer le site
 dotnet run --project GuysBee
 ```
 
 Au premier lancement, le site :
-1. restaure les bibliothèques côté client (TinyMCE) ;
-2. crée la base SQLite `guysbee.db` ;
-3. insère les données de départ (miels, prix, pages, calendrier, FAQ, menu) ;
-4. crée le compte administrateur.
+1. crée la base SQLite `guysbee.db` ;
+2. insère les données de départ (miels, prix, pages, calendrier, FAQ, menu) ;
+3. crée le compte administrateur.
+
+TinyMCE n'est pas restauré automatiquement au build : lancez `libman restore` après un clone (dans Visual Studio : clic droit sur `libman.json` > Restaurer les bibliothèques côté client).
 
 Avec Visual Studio : ouvrez `GuysBee.slnx` puis lancez le projet `GuysBee` (F5).
 

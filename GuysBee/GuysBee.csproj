@@ -16,7 +16,6 @@
     </PackageReference>
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.*" />
     <PackageReference Include="HtmlSanitizer" Version="9.*" />
-    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.*" />
   </ItemGroup>
 
   <ItemGroup>
