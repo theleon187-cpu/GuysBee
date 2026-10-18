@@ -72,19 +72,82 @@ Avec VS Code : voir la section [Lancer avec VS Code](#lancer-avec-vs-code).
 
 ### Lancer avec VS Code
 
-Section indépendante : elle suffit pour lancer le site sans Visual Studio.
+Ce guide est écrit pour les personnes qui ne sont pas développeurs. Il suffit de suivre les étapes dans l'ordre, sans rien modifier dans le code. Comptez environ 20 minutes la première fois, et moins d'une minute ensuite.
 
-1. Installer le [SDK .NET 10](https://dotnet.microsoft.com/download), [VS Code](https://code.visualstudio.com/) et Git.
-2. Cloner le dépôt puis ouvrir **le dossier racine** (celui qui contient `GuysBee.slnx`) : `code .`
-3. Accepter les extensions recommandées (**C# Dev Kit**, fichier `.vscode/extensions.json`).
-4. Restaurer TinyMCE une seule fois : `dotnet tool install -g Microsoft.Web.LibraryManager.Cli`, puis `Terminal > Exécuter la tâche > libman-restore`.
-5. Approuver le certificat HTTPS de développement (une fois) : `dotnet dev-certs https --trust`
-6. Appuyer sur **F5** et choisir la configuration « GuysBee (https/http) ». Le projet est compilé (tâche `build`) puis le navigateur s'ouvre.
+> Les textes entre accents graves (`comme ceci`) sont des **commandes** : copiez-les telles quelles dans le terminal, puis appuyez sur **Entrée**.
 
-- Adresses : `https://localhost:7080` et `http://localhost:5080` (administration : `/Admin`).
-- Rechargement à chaud : `Terminal > Exécuter la tâche > watch`.
-- Sans débogueur : `dotnet run --project GuysBee`.
-- La base SQLite `guysbee.db` et le compte administrateur sont créés au premier lancement (voir ci-dessous).
+#### Partie 1 : installer les logiciels (une seule fois)
+
+Installez ces trois programmes avec les options proposées par défaut (bouton « Suivant » jusqu'à la fin) :
+
+1. [Visual Studio Code](https://code.visualstudio.com/) : l'éditeur qui permet de lancer le site.
+2. [SDK .NET 10](https://dotnet.microsoft.com/download) : le moteur qui exécute le site. Choisissez « SDK », pas « Runtime ».
+3. [Git](https://git-scm.com/downloads) : pour récupérer le projet.
+
+Redémarrez ensuite l'ordinateur.
+
+#### Partie 2 : récupérer et ouvrir le projet (une seule fois)
+
+1. Ouvrez VS Code, puis le menu **Terminal > Nouveau terminal**. Un panneau apparaît en bas de la fenêtre.
+2. Choisissez le dossier où placer le projet (par exemple `C:\Sites`) :
+   ```powershell
+   mkdir C:\Sites
+   cd C:\Sites
+   ```
+3. Récupérez le projet :
+   ```powershell
+   git clone https://github.com/theleon187-cpu/GuysBee.git
+   ```
+4. Menu **Fichier > Ouvrir un dossier...**, sélectionnez `C:\Sites\GuysBee`, puis cliquez sur **Oui, je fais confiance aux auteurs**.
+   Vous devez voir `GuysBee.slnx` et `README.md` dans la liste de gauche. Sinon, vous avez ouvert le mauvais dossier.
+5. En bas à droite, VS Code propose d'**installer les extensions recommandées** : cliquez sur **Installer**. Sinon, ouvrez l'onglet Extensions (`Ctrl+Maj+X`) et installez **C# Dev Kit**. Attendez la fin de l'installation.
+
+#### Partie 3 : préparer le site (une seule fois)
+
+Dans le terminal de VS Code (**Terminal > Nouveau terminal**) :
+
+1. Installez l'outil qui télécharge l'éditeur de texte de l'administration :
+   ```powershell
+   dotnet tool install -g Microsoft.Web.LibraryManager.Cli
+   ```
+   Si le message indique que l'outil est « déjà installé », c'est normal.
+2. Fermez puis rouvrez le terminal (icône corbeille, puis **Terminal > Nouveau terminal**).
+3. Téléchargez l'éditeur : menu **Terminal > Exécuter la tâche...**, choisissez **libman-restore**, puis « Continuer sans analyser la sortie de la tâche ».
+4. Autorisez la connexion sécurisée locale (Windows peut demander confirmation : répondez **Oui**) :
+   ```powershell
+   dotnet dev-certs https --trust
+   ```
+
+#### Partie 4 : démarrer le site (à chaque fois)
+
+1. Ouvrez le dossier `GuysBee` dans VS Code.
+2. Appuyez sur la touche **F5** (ou menu **Exécuter > Démarrer le débogage**).
+3. Si VS Code demande de choisir un environnement, sélectionnez **GuysBee (https/http)**.
+4. Patientez : la première fois, la préparation prend 1 à 2 minutes. Le navigateur s'ouvre ensuite sur le site.
+
+Au tout premier démarrage, le site crée lui-même sa base de données et le compte administrateur. Aucune action n'est nécessaire.
+
+- **Site** : `https://localhost:7080`
+- **Administration** : `https://localhost:7080/Admin` (identifiants dans la section ci-dessous)
+
+Pour **arrêter** le site : cliquez sur le carré rouge de la barre d'outils en haut de l'écran, ou appuyez sur `Maj+F5`.
+
+#### Un problème ?
+
+| Ce que vous voyez | Ce qu'il faut faire |
+|---|---|
+| `dotnet` n'est pas reconnu | Le SDK .NET n'est pas installé, ou l'ordinateur n'a pas été redémarré. Refaites la partie 1. |
+| `git` n'est pas reconnu | Installez Git, puis fermez et rouvrez VS Code. |
+| `libman` n'est pas reconnu | Fermez et rouvrez VS Code, puis relancez la tâche **libman-restore**. |
+| Le navigateur affiche « connexion non sécurisée » | Refaites l'étape 4 de la partie 3, puis fermez et rouvrez le navigateur. |
+| F5 propose « Installer C# Dev Kit » | Installez l'extension (partie 2, étape 5), attendez la fin, puis réessayez. |
+| `Address already in use` (port déjà utilisé) | Le site tourne déjà : arrêtez-le (`Maj+F5`) ou fermez l'autre fenêtre VS Code. |
+| L'éditeur de texte de l'administration ne s'affiche pas | La tâche **libman-restore** n'a pas été exécutée (partie 3, étape 3). |
+| Les photos ou textes modifiés ont disparu | Ils sont stockés dans le fichier `GuysBee/guysbee.db`. Ne le supprimez pas. |
+
+Pour obtenir de l'aide, copiez le texte rouge affiché dans le terminal et envoyez-le avec une capture d'écran.
+
+Pour les développeurs : rechargement à chaud via **Terminal > Exécuter la tâche > watch**, ou `dotnet run --project GuysBee` sans débogueur.
 
 ### Connexion à l'administration
 Rendez-vous sur `https://localhost:<port>/Admin`.
