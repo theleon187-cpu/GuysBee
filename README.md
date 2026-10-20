@@ -1,6 +1,6 @@
 # GUY's Bee : site vitrine et boutique d'un apiculteur
 
-Site web de **GUY's Bee**, apiculteur à Saint-Julien-sur-Bibost (69). Il présente l'exploitation, les miels et la vie de la ruche, et sera complété d'une boutique en ligne (paiement PayPal) et d'une livraison configurable.
+et sera complété d'une boutique en ligne (panier, commande, comptes clients, paiement PayPal à brancher)
 
 Le site est **administrable sans toucher au code** : textes, photos, prix et stocks se modifient depuis une interface web (`/Admin`).
 
@@ -23,9 +23,20 @@ Le site est **administrable sans toucher au code** : textes, photos, prix et sto
 - **Page d'accueil** : blocs, photos du carrousel (jusqu'à 5, depuis Photos), blocs produits liés à une gamme.
 - **Textes du site** avec éditeur visuel (TinyMCE), HTML assaini côté serveur.
 - **Messages** reçus par le formulaire de contact, **Réglages** (coordonnées, bandeau d'annonce).
+- **Tableau de bord** : commandes à préparer et en attente, dernières commandes et messages, état de la boutique (commande en ligne, PayPal, livraison, Colissimo, facturation) et liste « Pour bien démarrer » qui se coche automatiquement.
+- **Commandes** : suivi des commandes, statuts et numéros de suivi.
+- **Boutique en ligne** : activation de la commande, comptes clients, historique, modes de livraison (retrait sur place, Colissimo à domicile, point relais, tournée locale) avec tarifs par zone ou par tranche de poids, livraison offerte à partir d'un montant, délais et messages.
+- **Paiement et livraison** (`/Admin/Integrations`) :
+  - **PayPal** : activation, mode test (sandbox) ou réel, identifiant client, clé secrète, devise, nom affiché, test de connexion.
+  - **Facturation** : identité du vendeur, SIRET, TVA (non applicable ou taux), préfixe de numérotation, conditions de paiement, message de bas de facture.
+  - **Colissimo et points relais** : identifiants Colissimo avec test de connexion, carte de choix du point relais pendant la commande, lien de recherche de repli, adresse d'expédition, poids de l'emballage, poids maximum d'un colis, signature, assurance.
+  - Les secrets (clé PayPal, mot de passe Colissimo) sont **chiffrés** (Data Protection) et jamais réaffichés.
 
 ### À venir
-Livraison administrable (retrait, colis, tournée locale), panier et paiement PayPal, suivi des commandes, journal d'actualités, SEO (sitemap, JSON-LD), bandeau cookies. Voir [`PLAN.md`](PLAN.md).
+Branchement du paiement PayPal dans le tunnel de commande (les réglages sont prêts, la commande reste pour l'instant « en attente »), génération des factures et étiquettes Colissimo, e-mails de commande, journal d'actualités, SEO (sitemap, JSON-LD), bandeau cookies. Voir [`PLAN.md`](PLAN.md).
+
+### Production : clés de chiffrement
+Les secrets enregistrés depuis l'administration sont chiffrés avec les clés Data Protection d'ASP.NET Core. En production, configurez un stockage durable de ces clés (dossier persistant, base ou coffre) : sans cela, les secrets deviendront illisibles après un redéploiement et il faudra les saisir à nouveau.
 
 ## Technologies
 - .NET 10, **ASP.NET Core Razor Pages**
