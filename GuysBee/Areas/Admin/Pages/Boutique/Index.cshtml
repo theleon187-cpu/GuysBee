@@ -1,0 +1,71 @@
+@page
+@using GuysBee.Data.Entities
+@model GuysBee.Areas.Admin.Pages.Boutique.IndexModel
+@{
+    ViewData["Title"] = "Boutique en ligne";
+    string KindLabel(ShippingKind k) => k switch
+    {
+        ShippingKind.Pickup => "Retrait sur place",
+        ShippingKind.Parcel => "Colissimo à domicile",
+        ShippingKind.Relay => "Point relais",
+        _ => "Tournée locale",
+    };
+}
+<h1 class="h3 mb-3">Boutique en ligne</h1>
+<form method="post">
+    <div class="gb-admin-card">
+        <h2 class="h5">Fonctionnalités</h2>
+        <div class="form-check form-switch mb-2">
+            <input class="form-check-input" type="checkbox" role="switch" id="shop-on" name="ShopEnabled" value="true" checked="@Model.ShopEnabled" />
+            <label class="form-check-label" for="shop-on">Activer la commande en ligne (panier et validation de commande)</label>
+        </div>
+        <div class="form-check form-switch mb-2">
+            <input class="form-check-input" type="checkbox" role="switch" id="acc-on" name="AccountsEnabled" value="true" checked="@Model.AccountsEnabled" />
+            <label class="form-check-label" for="acc-on">Comptes clients (profil, adresses de livraison et de facturation)</label>
+        </div>
+        <div class="gb-admin-help mb-2">Si désactivé, le client commande sans compte en saisissant ses coordonnées.</div>
+        <div class="form-check form-switch mb-2">
+            <input class="form-check-input" type="checkbox" role="switch" id="his-on" name="HistoryEnabled" value="true" checked="@Model.HistoryEnabled" />
+            <label class="form-check-label" for="his-on">Suivi et historique des commandes dans l'espace client</label>
+        </div>
+        <div class="gb-admin-help">Le suivi nécessite les comptes clients.</div>
+    </div>
+
+    <div class="gb-admin-card">
+        <h2 class="h5">Modes de livraison</h2>
+        @for (var i = 0; i < Model.ShippingMethods.Count; i++)
+        {
+            var m = Model.ShippingMethods[i];
+            <fieldset class="mb-4">
+                <legend class="h6">@KindLabel(m.Kind)</legend>
+                <input type="hidden" name="Methods[@i].Id" value="@m.Id" />
+                <div class="form-check form-switch mb-2">
+                    <input class="form-check-input" type="checkbox" role="switch" id="m-active-@m.Id" name="Methods[@i].IsActive" value="true" checked="@m.IsActive" />
+                    <label class="form-check-label" for="m-active-@m.Id">Proposer ce mode de livraison</label>
+                </div>
+                <div class="mb-2"><label class="form-label" for="m-name-@m.Id">Nom affiché au client</label><input class="form-control" id="m-name-@m.Id" name="Methods[@i].Name" value="@m.Name" /></div>
+                <div class="mb-2"><label class="form-label" for="m-msg-@m.Id">Message affiché au client</label><input class="form-control" id="m-msg-@m.Id" name="Methods[@i].CustomerMessage" value="@m.CustomerMessage" /></div>
+                <div class="row g-2 mb-2">
+                    <div class="col-sm-6"><label class="form-label" for="m-free-@m.Id">Livraison offerte à partir de (€)</label><input class="form-control" id="m-free-@m.Id" inputmode="decimal" name="Methods[@i].FreeAboveAmount" value="@(m.FreeAboveAmount?.ToString("0.00"))" /></div>
+                    <div class="col-sm-6"><label class="form-label" for="m-prep-@m.Id">Jours de préparation</label><input class="form-control" id="m-prep-@m.Id" type="number" min="0" name="Methods[@i].PreparationDays" value="@m.PreparationDays" /></div>
+                </div>
+                @foreach (var z in m.Zones)
+                {
+                    <div class="mb-2">
+                        <strong>@z.Name</strong>@if (!string.IsNullOrWhiteSpace(z.PostalPrefixes)) { <span> (départements : @z.PostalPrefixes)</span> }
+                        @if (z.Rates.Count == 0)
+                        {
+                            <div class="mt-1"><label class="form-label" for="z-@z.Id">Tarif forfaitaire (€)</label><input class="form-control" id="z-@z.Id" inputmode="decimal" name="ZonePrices[@z.Id]" value="@(z.FlatPrice?.ToString("0.00"))" /></div>
+                        }
+                        @foreach (var r in z.Rates.OrderBy(r => r.MinGrams))
+                        {
+                            <div class="mt-1"><label class="form-label" for="r-@r.Id">De @r.MinGrams g à @r.MaxGrams g (€)</label><input class="form-control" id="r-@r.Id" inputmode="decimal" name="RatePrices[@r.Id]" value="@r.Price.ToString("0.00")" /></div>
+                        }
+                    </div>
+                }
+            </fieldset>
+        }
+        <div class="gb-admin-help">Le lien de recherche de point relais et les options Colissimo se règlent dans <a href="/Admin/Integrations#colissimo">Paiement et livraison</a>.</div>
+    </div>
+    <button type="submit" class="btn btn-warning">Enregistrer</button>
+</form>

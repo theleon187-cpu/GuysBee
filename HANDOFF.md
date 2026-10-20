@@ -38,6 +38,14 @@ GUY's Bee, 69690 Saint-Julien-sur-Bibost, 06 50 51 12 36, GUYsBee@hotmail.com, I
 - `DbInitializer` ajoute `Categories.MenuLabel` et `MediaAssets.ShowInHero` par `ALTER TABLE` tant qu'il n'y a pas de migration.
 - Build vérifié (réussi) après ces changements ; pages non testées dans un navigateur. Seule la gamme « Nos miels » (slug `miels`) existe au départ.
 
+## 4ter. Boutique, comptes et saisie sans saut d'écran (session récente)
+- **Boutique** : `CustomerProfile` (adresses livraison/facturation), `Order`/`OrderLine` (UserId, facturation, point relais, suivi), `ShippingKind` Pickup/Parcel/LocalRound/Relay (Colissimo, point relais). `CartService` (session), pages Panier, Commande, Compte (`/Compte`, connexion, inscription, historique). Admin : `/Admin/Boutique` (clés `shop.*` via `ShopSettings`) et `/Admin/Commandes`.
+- `DbInitializer` ajoute par SQL les colonnes Order et la table `CustomerProfiles` (pas de migration).
+- **`wwwroot/js/gb-forms.js`** (balise `<script asp-append-version>` dans `_SiteLayout.cshtml` et `_AdminLayout.cshtml`) : envoie les POST simples en `fetch`, remplace seulement `<main>`, restaure focus (par `id`) et scroll, affiche les messages en alertes flottantes (`.gb-admin-toast` dans `admin-focus.css`, `.gb-toast` dans `shop.css`). Exclus (POST classique) : formulaires avec fichier, `textarea.gb-richtext` ou `data-gb-noajax`. Redirection vers une autre URL = navigation normale. Événement `gb:content-replaced` écouté par `shop.js`.
+- Anciens `admin-focus.js` et `site-focus.js` supprimés.
+- Bugs corrigés : erreur de syntaxe dans `gb-forms.js` ; balise `<script>` manquante dans les layouts (le chemin s'affichait en texte sur `/Admin/Login`).
+- À vérifier : build après la dernière correction des layouts ; test navigateur (Ctrl+F5) du bouton OK de `/Admin/Miels` ; annulation des `confirm(...)` sur les formulaires interceptés.
+
 ## 5. Limites de l'agent et points non vérifiés
 - Aucun terminal ni outil Git : **aucun build, aucun test, aucun `git push` n'a été exécuté par l'agent**. Rien n'est validé par compilation.
 - Le dernier état du build est inconnu : si erreurs, les coller (code, fichier, ligne).

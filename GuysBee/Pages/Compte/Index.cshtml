@@ -1,0 +1,48 @@
+@page "/Compte"
+@model GuysBee.Pages.Compte.IndexModel
+@{
+    ViewData["Title"] = "Mon compte";
+}
+<section class="gb-section">
+    <div class="gb-container gb-prose">
+        <h1>Mon compte</h1>
+        @if (TempData["CartMessage"] is string msg)
+        {
+            <p class="gb-shop-notice" role="status">@msg</p>
+        }
+        @if (Model.HistoryEnabled)
+        {
+            <p><a class="gb-btn gb-btn-secondary" href="/Compte/Commandes">Mes commandes</a></p>
+        }
+        <form method="post" class="gb-form" novalidate>
+            <div asp-validation-summary="All" class="gb-form-errors" role="alert"></div>
+            <fieldset class="gb-fieldset">
+                <legend>Mes coordonnées</legend>
+                <div class="gb-field"><label asp-for="Input.FirstName">Prénom</label><input asp-for="Input.FirstName" class="gb-input" /></div>
+                <div class="gb-field"><label asp-for="Input.LastName">Nom</label><input asp-for="Input.LastName" class="gb-input" /></div>
+                <div class="gb-field"><label asp-for="Input.Phone">Téléphone</label><input asp-for="Input.Phone" class="gb-input" /></div>
+            </fieldset>
+            <fieldset class="gb-fieldset">
+                <legend>Adresse de livraison</legend>
+                <div class="gb-field"><label asp-for="Input.AddressLine">Adresse</label><input asp-for="Input.AddressLine" class="gb-input" /></div>
+                <div class="gb-field"><label asp-for="Input.PostalCode">Code postal</label><input asp-for="Input.PostalCode" class="gb-input" /></div>
+                <div class="gb-field"><label asp-for="Input.City">Ville</label><input asp-for="Input.City" class="gb-input" /></div>
+            </fieldset>
+            <fieldset class="gb-fieldset">
+                <legend>Facturation</legend>
+                <div class="gb-field gb-field-check"><input asp-for="Input.BillingSameAsDelivery" /><label asp-for="Input.BillingSameAsDelivery">Identique à l'adresse de livraison</label></div>
+                <div class="gb-billing" data-gb-billing>
+                    <div class="gb-field"><label asp-for="Input.BillingName">Nom ou société</label><input asp-for="Input.BillingName" class="gb-input" /></div>
+                    <div class="gb-field"><label asp-for="Input.BillingAddressLine">Adresse</label><input asp-for="Input.BillingAddressLine" class="gb-input" /></div>
+                    <div class="gb-field"><label asp-for="Input.BillingPostalCode">Code postal</label><input asp-for="Input.BillingPostalCode" class="gb-input" /></div>
+                    <div class="gb-field"><label asp-for="Input.BillingCity">Ville</label><input asp-for="Input.BillingCity" class="gb-input" /></div>
+                </div>
+            </fieldset>
+            <button type="submit" class="gb-btn">Enregistrer</button>
+        </form>
+        <form method="post" asp-page="/Compte/Deconnexion"><button type="submit" class="gb-btn gb-btn-secondary">Me déconnecter</button></form>
+    </div>
+</section>
+@section Scripts {
+    <script src="~/js/shop.js" asp-append-version="true"></script>
+}

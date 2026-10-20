@@ -33,3 +33,7 @@ GuysBee/img/
 
 ## Rapports générés
 Content/analyse-techniques.md
+
+*.db
+*.db-shm
+*.db-wal

@@ -137,3 +137,17 @@
     .gb-card, .gb-gallery-item { transition: transform .2s ease; }
     .gb-card:hover, .gb-gallery-item:hover { transform: translateY(-3px); }
 }
+
+/* Où nous trouver : agenda et lieux de revente */
+.gb-find-top { display: grid; gap: 1.5rem; grid-template-columns: 1fr; align-items: start; }
+@media (min-width: 768px) { .gb-find-top { grid-template-columns: 1fr 1fr; } }
+.gb-find-subtitle { margin: 2.5rem 0 1.25rem; }
+.gb-agenda-list { list-style: none; margin: 0; padding: 0; }
+.gb-agenda-item { display: flex; gap: 1rem; padding: .75rem 0; border-bottom: 1px solid rgba(43, 33, 24, .1); }
+.gb-agenda-item:last-child { border-bottom: 0; }
+.gb-agenda-date { flex: 0 0 6.5rem; font-weight: 700; text-transform: capitalize; }
+.gb-agenda-body { display: flex; flex-direction: column; }
+.gb-agenda-hours, .gb-agenda-place, .gb-agenda-details { color: var(--gb-muted); font-size: .95rem; }
+
+.gb-container .gb-find-subtitle { margin-top: 3rem; margin-bottom: 1.5rem; }
+.gb-find-top { margin-bottom: 1rem; }

@@ -15,6 +15,7 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     public DbSet<MediaAsset> MediaAssets => Set<MediaAsset>();
     public DbSet<Post> Posts => Set<Post>();
     public DbSet<SalePoint> SalePoints => Set<SalePoint>();
+    public DbSet<MarketEvent> MarketEvents => Set<MarketEvent>();
     public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderLine> OrderLines => Set<OrderLine>();
@@ -30,6 +31,7 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
     public DbSet<EmailTemplate> EmailTemplates => Set<EmailTemplate>();
     public DbSet<AuditEntry> AuditEntries => Set<AuditEntry>();
+    public DbSet<CustomerProfile> CustomerProfiles => Set<CustomerProfile>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -41,6 +43,7 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
         b.Entity<MediaAsset>().HasIndex(x => x.SourceFileName).IsUnique();
         b.Entity<SiteSetting>().HasIndex(x => x.Key).IsUnique();
         b.Entity<Order>().HasIndex(x => x.Number).IsUnique();
+        b.Entity<CustomerProfile>().HasIndex(x => x.UserId).IsUnique();
         b.Entity<ContentPage>().HasIndex(x => x.Key).IsUnique();
         b.Entity<ContentPage>().HasIndex(x => x.Slug).IsUnique();
         b.Entity<EmailTemplate>().HasIndex(x => x.Key).IsUnique();

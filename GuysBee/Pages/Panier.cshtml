@@ -1,0 +1,46 @@
+@page "/Panier"
+@model GuysBee.Pages.PanierModel
+@{
+    ViewData["Title"] = "Mon panier";
+}
+<section class="gb-section">
+    <div class="gb-container gb-prose gb-shop-page">
+        <h1>Mon panier</h1>
+        @if (TempData["CartMessage"] is string msg)
+        {
+            <p class="gb-shop-notice" role="status">@msg</p>
+        }
+        @if (Model.Items.Count == 0)
+        {
+            <p>Votre panier est vide.</p>
+            <p><a class="gb-btn" href="/Produits">Découvrir nos miels</a></p>
+        }
+        else
+        {
+            <div class="gb-cart">
+            <ul class="gb-cart-list">
+                @foreach (var i in Model.Items)
+                {
+                    <li class="gb-cart-item">
+                        <div class="gb-cart-info"><strong>@i.Label</strong><span>@i.UnitPrice.ToString("0.00") € l'unité</span></div>
+                        <div class="gb-cart-qty">
+                            <form method="post" asp-page-handler="Update" class="gb-shop-inline">                                <input type="hidden" name="variantId" value="@i.VariantId" />
+                                <label class="gb-visually-hidden" for="q-@i.VariantId">Quantité</label>
+                                <input id="q-@i.VariantId" class="gb-input gb-input-qty" type="number" name="quantity" min="0" max="99" value="@i.Quantity" />
+                                <button class="gb-btn gb-btn-secondary" type="submit">Mettre à jour</button>
+                            </form>
+                        </div>
+                        <div class="gb-cart-line">@i.LineTotal.ToString("0.00") €</div>
+                    </li>
+                }
+            </ul>
+            <aside class="gb-summary">
+                <h2>Total</h2>
+                <p class="gb-summary-total"><span>Total des articles</span><strong>@Model.Total.ToString("0.00") €</strong></p>
+                <p class="gb-summary-note">Les frais de livraison sont calculés à l'étape suivante.</p>
+                <a class="gb-btn" href="/Commande">Passer la commande</a>
+            </aside>
+            </div>
+        }
+    </div>
+</section>

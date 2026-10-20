@@ -1,0 +1,60 @@
+@page
+@model GuysBee.Areas.Admin.Pages.Marches.IndexModel
+@{
+    ViewData["Title"] = "Agenda des marchés";
+}
+<header class="gb-admin-head">
+    <h1>Agenda des marchés</h1>
+    <p class="gb-admin-help">Les marchés et rendez-vous où l'on peut vous rencontrer. Ils s'affichent sur la page « Où nous trouver ». Les dates passées ne sont plus affichées sur le site.</p>
+</header>
+
+<div class="gb-admin-card">
+    <h2>Ajouter un rendez-vous</h2>
+    <form method="post" asp-page-handler="Save">
+        <input type="hidden" name="id" value="0" />
+        <input type="hidden" name="isVisible" value="true" />
+        <label class="form-label" for="new-title">Titre (ex. Marché de Tarare)</label>
+        <input id="new-title" name="title" class="form-control mb-2" maxlength="150" required />
+        <label class="form-label" for="new-date">Date</label>
+        <input id="new-date" name="eventDate" type="date" class="form-control mb-2" required />
+        <label class="form-label" for="new-hours">Horaires (ex. 8h – 12h30)</label>
+        <input id="new-hours" name="hours" class="form-control mb-2" maxlength="80" />
+        <label class="form-label" for="new-place">Lieu</label>
+        <input id="new-place" name="place" class="form-control mb-2" maxlength="200" />
+        <label class="form-label" for="new-details">Précisions</label>
+        <textarea id="new-details" name="details" class="form-control mb-2" rows="2"></textarea>
+        <button type="submit" class="btn btn-warning btn-sm">Ajouter</button>
+    </form>
+</div>
+
+<div class="gb-cal-grid">
+@foreach (var e in Model.Events)
+{
+    <div class="gb-admin-card">
+        <h2>@e.EventDate.ToString("dd/MM/yyyy") – @e.Title</h2>
+        <form method="post" asp-page-handler="Save">
+            <input type="hidden" name="id" value="@e.Id" />
+            <label class="form-label" for="t-@e.Id">Titre</label>
+            <input id="t-@e.Id" name="title" class="form-control mb-2" value="@e.Title" maxlength="150" required />
+            <label class="form-label" for="d-@e.Id">Date</label>
+            <input id="d-@e.Id" name="eventDate" type="date" class="form-control mb-2" value="@e.EventDate.ToString("yyyy-MM-dd")" required />
+            <label class="form-label" for="h-@e.Id">Horaires</label>
+            <input id="h-@e.Id" name="hours" class="form-control mb-2" value="@e.Hours" maxlength="80" />
+            <label class="form-label" for="p-@e.Id">Lieu</label>
+            <input id="p-@e.Id" name="place" class="form-control mb-2" value="@e.Place" maxlength="200" />
+            <label class="form-label" for="x-@e.Id">Précisions</label>
+            <textarea id="x-@e.Id" name="details" class="form-control mb-2" rows="2">@e.Details</textarea>
+            <div class="form-check mb-2">
+                <input id="v-@e.Id" name="isVisible" type="checkbox" value="true" class="form-check-input" checked="@e.IsVisible" />
+                <input type="hidden" name="isVisible" value="false" />
+                <label class="form-check-label" for="v-@e.Id">Visible sur le site</label>
+            </div>
+            <button type="submit" class="btn btn-warning btn-sm">Enregistrer</button>
+        </form>
+        <form method="post" asp-page-handler="Delete" class="mt-2">
+            <input type="hidden" name="id" value="@e.Id" />
+            <button type="submit" class="btn btn-outline-danger btn-sm">Supprimer</button>
+        </form>
+    </div>
+}
+</div>

@@ -1,0 +1,17 @@
+@page "/Compte/Connexion"
+@model GuysBee.Pages.Compte.ConnexionModel
+@{
+    ViewData["Title"] = "Connexion";
+}
+<section class="gb-section">
+    <div class="gb-container gb-prose">
+        <h1>Connexion</h1>
+        <form method="post" class="gb-form" novalidate>
+            <div asp-validation-summary="All" class="gb-form-errors" role="alert"></div>
+            <div class="gb-field"><label asp-for="Input.Email">E-mail</label><input asp-for="Input.Email" class="gb-input" autocomplete="username" /></div>
+            <div class="gb-field"><label asp-for="Input.Password">Mot de passe</label><input asp-for="Input.Password" class="gb-input" autocomplete="current-password" /></div>
+            <button type="submit" class="gb-btn">Me connecter</button>
+        </form>
+        <p>Pas encore de compte ? <a href="/Compte/Inscription">Créer mon compte</a></p>
+    </div>
+</section>

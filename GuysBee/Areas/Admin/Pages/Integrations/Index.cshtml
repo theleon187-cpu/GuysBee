@@ -1,0 +1,153 @@
+@page
+@model GuysBee.Areas.Admin.Pages.Integrations.IndexModel
+@{
+    ViewData["Title"] = "Paiement, facturation et livraison";
+}
+<h1 class="h3 mb-3">Paiement, facturation et livraison</h1>
+<p class="gb-admin-help mb-3">Réglez ici la connexion à PayPal, les informations qui figurent sur vos factures et les options Colissimo et points relais. Les mots de passe et clés secrètes sont enregistrés de façon chiffrée et ne sont jamais réaffichés.</p>
+
+<section class="gb-admin-card" id="paypal" aria-labelledby="paypal-title">
+    <h2 class="h5" id="paypal-title">Paiement PayPal</h2>
+    <form method="post" asp-page-handler="PayPal">
+        <div class="form-check form-switch mb-2">
+            <input class="form-check-input" type="checkbox" role="switch" id="pp-on" name="PayPal.Enabled" value="true" checked="@Model.PayPal.Enabled" />
+            <label class="form-check-label" for="pp-on">Proposer le paiement par PayPal</label>
+        </div>
+        <div class="mb-2">
+            <label class="form-label" for="pp-mode">Mode de fonctionnement</label>
+            <select class="form-select" id="pp-mode" name="PayPal.IsLive">
+                <option value="false" selected="@(!Model.PayPal.IsLive)">Test (sandbox) : aucun vrai paiement</option>
+                <option value="true" selected="@Model.PayPal.IsLive">Réel : les clients paient vraiment</option>
+            </select>
+            <div class="gb-admin-help">Les identifiants de test et les identifiants réels sont différents : utilisez ceux du mode choisi.</div>
+        </div>
+        <div class="mb-2">
+            <label class="form-label" for="pp-client">Identifiant client (Client ID)</label>
+            <input class="form-control" id="pp-client" name="PayPal.ClientId" value="@Model.PayPal.ClientId" autocomplete="off" />
+            <div class="gb-admin-help">À copier depuis developer.paypal.com, rubrique « Apps &amp; Credentials ».</div>
+        </div>
+        <div class="mb-2">
+            <label class="form-label" for="pp-secret">Clé secrète (Secret)</label>
+            <input class="form-control" id="pp-secret" name="PayPalSecret" type="password" autocomplete="new-password" placeholder="@(Model.PayPalHasSecret ? "Clé enregistrée : laisser vide pour la conserver" : "")" />
+            <div class="gb-admin-help">@(Model.PayPalHasSecret ? "Une clé secrète est enregistrée." : "Aucune clé secrète enregistrée.")</div>
+        </div>
+        <div class="row g-2 mb-2">
+            <div class="col-sm-4">
+                <label class="form-label" for="pp-cur">Devise</label>
+                <input class="form-control" id="pp-cur" name="PayPal.Currency" value="@Model.PayPal.Currency" maxlength="3" />
+            </div>
+            <div class="col-sm-8">
+                <label class="form-label" for="pp-brand">Nom affiché sur la page PayPal</label>
+                <input class="form-control" id="pp-brand" name="PayPal.BrandName" value="@Model.PayPal.BrandName" />
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="pp-desc">Libellé du paiement</label>
+            <input class="form-control" id="pp-desc" name="PayPal.PaymentDescription" value="@Model.PayPal.PaymentDescription" />
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <button type="submit" class="btn btn-warning">Enregistrer</button>
+            <button type="submit" class="btn btn-outline-secondary" asp-page-handler="TestPayPal">Enregistrer et tester la connexion</button>
+            @if (Model.PayPalHasSecret)
+            {
+                <button type="submit" class="btn btn-outline-danger" asp-page-handler="ClearPayPalSecret" formnovalidate>Supprimer la clé secrète</button>
+            }
+        </div>
+    </form>
+</section>
+
+<section class="gb-admin-card" id="facturation" aria-labelledby="facturation-title">
+    <h2 class="h5" id="facturation-title">Facturation</h2>
+    <form method="post" asp-page-handler="Invoice">
+        <div class="mb-2"><label class="form-label" for="inv-name">Nom de l'exploitation (vendeur)</label><input class="form-control" id="inv-name" name="Invoice.SellerName" value="@Model.Invoice.SellerName" /></div>
+        <div class="mb-2"><label class="form-label" for="inv-addr">Adresse</label><input class="form-control" id="inv-addr" name="Invoice.AddressLine" value="@Model.Invoice.AddressLine" /></div>
+        <div class="row g-2 mb-2">
+            <div class="col-sm-4"><label class="form-label" for="inv-zip">Code postal</label><input class="form-control" id="inv-zip" name="Invoice.PostalCode" value="@Model.Invoice.PostalCode" /></div>
+            <div class="col-sm-8"><label class="form-label" for="inv-city">Ville</label><input class="form-control" id="inv-city" name="Invoice.City" value="@Model.Invoice.City" /></div>
+        </div>
+        <div class="row g-2 mb-2">
+            <div class="col-sm-6"><label class="form-label" for="inv-mail">E-mail affiché sur la facture</label><input class="form-control" id="inv-mail" type="email" name="Invoice.Email" value="@Model.Invoice.Email" /></div>
+            <div class="col-sm-6"><label class="form-label" for="inv-tel">Téléphone</label><input class="form-control" id="inv-tel" name="Invoice.Phone" value="@Model.Invoice.Phone" /></div>
+        </div>
+        <div class="row g-2 mb-2">
+            <div class="col-sm-6"><label class="form-label" for="inv-siret">Numéro SIRET</label><input class="form-control" id="inv-siret" name="Invoice.Siret" value="@Model.Invoice.Siret" inputmode="numeric" /></div>
+            <div class="col-sm-6"><label class="form-label" for="inv-vat">N° de TVA intracommunautaire (si assujetti)</label><input class="form-control" id="inv-vat" name="Invoice.VatNumber" value="@Model.Invoice.VatNumber" /></div>
+        </div>
+        <div class="form-check form-switch mb-2">
+            <input class="form-check-input" type="checkbox" role="switch" id="inv-exempt" name="Invoice.VatExempt" value="true" checked="@Model.Invoice.VatExempt" />
+            <label class="form-check-label" for="inv-exempt">TVA non applicable (mention « TVA non applicable, art. 293 B du CGI »)</label>
+        </div>
+        <div class="row g-2 mb-2">
+            <div class="col-sm-6"><label class="form-label" for="inv-rate">Taux de TVA (%) si assujetti</label><input class="form-control" id="inv-rate" inputmode="decimal" name="Invoice.VatRate" value="@Model.Invoice.VatRate.ToString("0.##")" /></div>
+            <div class="col-sm-6"><label class="form-label" for="inv-prefix">Préfixe des numéros de facture</label><input class="form-control" id="inv-prefix" name="Invoice.NumberPrefix" value="@Model.Invoice.NumberPrefix" maxlength="10" /></div>
+        </div>
+        <div class="mb-2"><label class="form-label" for="inv-terms">Conditions de paiement affichées</label><input class="form-control" id="inv-terms" name="Invoice.PaymentTerms" value="@Model.Invoice.PaymentTerms" /></div>
+        <div class="mb-3"><label class="form-label" for="inv-foot">Message en bas de facture (facultatif)</label><input class="form-control" id="inv-foot" name="Invoice.FooterNote" value="@Model.Invoice.FooterNote" /></div>
+        <button type="submit" class="btn btn-warning">Enregistrer</button>
+    </form>
+</section>
+
+<section class="gb-admin-card" id="colissimo" aria-labelledby="colissimo-title">
+    <h2 class="h5" id="colissimo-title">Colissimo et points relais</h2>
+    <form method="post" asp-page-handler="Colissimo">
+        <div class="form-check form-switch mb-2">
+            <input class="form-check-input" type="checkbox" role="switch" id="co-on" name="Colissimo.Enabled" value="true" checked="@Model.Colissimo.Enabled" />
+            <label class="form-check-label" for="co-on">Activer les réglages Colissimo (poids du colis et limites)</label>
+        </div>
+        <div class="row g-2 mb-2">
+            <div class="col-sm-6"><label class="form-label" for="co-contract">Numéro de contrat Colissimo</label><input class="form-control" id="co-contract" name="Colissimo.ContractNumber" value="@Model.Colissimo.ContractNumber" autocomplete="off" /></div>
+            <div class="col-sm-6">
+                <label class="form-label" for="co-pass">Mot de passe Colissimo</label>
+                <input class="form-control" id="co-pass" name="ColissimoPassword" type="password" autocomplete="new-password" placeholder="@(Model.ColissimoHasPassword ? "Mot de passe enregistré : laisser vide pour le conserver" : "")" />
+            </div>
+        </div>
+        <div class="gb-admin-help mb-2">Ces identifiants sont ceux de votre espace Colissimo Entreprise. Ils servent à afficher la carte des points relais au client.</div>
+        <div class="form-check form-switch mb-2">
+            <input class="form-check-input" type="checkbox" role="switch" id="co-widget" name="Colissimo.RelayWidgetEnabled" value="true" checked="@Model.Colissimo.RelayWidgetEnabled" />
+            <label class="form-check-label" for="co-widget">Afficher la carte de choix du point relais pendant la commande</label>
+        </div>
+        <div class="mb-2">
+            <label class="form-label" for="co-finder">Lien de recherche de point relais (solution de repli)</label>
+            <input class="form-control" id="co-finder" name="Colissimo.RelayFinderUrl" value="@Model.Colissimo.RelayFinderUrl" />
+            <div class="gb-admin-help">Proposé au client si la carte est désactivée ou indisponible.</div>
+        </div>
+
+        <h3 class="h6 mt-3">Expédition</h3>
+        <div class="mb-2"><label class="form-label" for="co-sname">Nom de l'expéditeur</label><input class="form-control" id="co-sname" name="Colissimo.SenderName" value="@Model.Colissimo.SenderName" /></div>
+        <div class="mb-2"><label class="form-label" for="co-saddr">Adresse de l'expéditeur</label><input class="form-control" id="co-saddr" name="Colissimo.SenderAddressLine" value="@Model.Colissimo.SenderAddressLine" /></div>
+        <div class="row g-2 mb-2">
+            <div class="col-sm-4"><label class="form-label" for="co-szip">Code postal</label><input class="form-control" id="co-szip" name="Colissimo.SenderPostalCode" value="@Model.Colissimo.SenderPostalCode" /></div>
+            <div class="col-sm-8"><label class="form-label" for="co-scity">Ville</label><input class="form-control" id="co-scity" name="Colissimo.SenderCity" value="@Model.Colissimo.SenderCity" /></div>
+        </div>
+        <div class="row g-2 mb-2">
+            <div class="col-sm-6">
+                <label class="form-label" for="co-tare">Poids de l'emballage (g)</label>
+                <input class="form-control" id="co-tare" type="number" min="0" name="Colissimo.ParcelTareGrams" value="@Model.Colissimo.ParcelTareGrams" />
+                <div class="gb-admin-help">Ajouté au poids des pots pour calculer le tarif d'envoi.</div>
+            </div>
+            <div class="col-sm-6">
+                <label class="form-label" for="co-max">Poids maximum d'un colis (g)</label>
+                <input class="form-control" id="co-max" type="number" min="0" name="Colissimo.MaxParcelGrams" value="@Model.Colissimo.MaxParcelGrams" />
+                <div class="gb-admin-help">Au-delà, Colissimo et point relais ne sont plus proposés (30 000 g maximum chez Colissimo).</div>
+            </div>
+        </div>
+        <div class="form-check form-switch mb-2">
+            <input class="form-check-input" type="checkbox" role="switch" id="co-sign" name="Colissimo.SignatureRequired" value="true" checked="@Model.Colissimo.SignatureRequired" />
+            <label class="form-check-label" for="co-sign">Livraison contre signature</label>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="co-ins">Assurer le colis à partir de (€)</label>
+            <input class="form-control" id="co-ins" inputmode="decimal" name="Colissimo.InsuranceAboveAmount" value="@(Model.Colissimo.InsuranceAboveAmount?.ToString("0.00"))" />
+            <div class="gb-admin-help">Laissez vide pour ne jamais assurer.</div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <button type="submit" class="btn btn-warning">Enregistrer</button>
+            <button type="submit" class="btn btn-outline-secondary" asp-page-handler="TestColissimo">Enregistrer et tester la connexion</button>
+            @if (Model.ColissimoHasPassword)
+            {
+                <button type="submit" class="btn btn-outline-danger" asp-page-handler="ClearColissimoPassword" formnovalidate>Supprimer le mot de passe</button>
+            }
+        </div>
+    </form>
+    <p class="gb-admin-help mt-3">Les tarifs, zones et délais de chaque mode de livraison restent réglables dans <a href="/Admin/Boutique">Boutique en ligne</a>.</p>
+</section>

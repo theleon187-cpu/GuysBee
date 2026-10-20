@@ -1,0 +1,60 @@
+@page
+@using GuysBee.Data.Entities
+@model GuysBee.Areas.Admin.Pages.Commandes.IndexModel
+@{
+    ViewData["Title"] = "Commandes";
+}
+<h1 class="h3 mb-3">Commandes</h1>
+<form method="get" class="gb-admin-card d-flex gap-2 align-items-end">
+    <div>
+        <label class="form-label" for="f-status">Statut</label>
+        <select class="form-select" id="f-status" name="Status">
+                    <option value="">Tous</option>
+                    @foreach (var st in Enum.GetValues<OrderStatus>())
+                    {
+                        <option value="@((int)st)" selected="@(Model.Status == st)">@GuysBee.Areas.Admin.Pages.Commandes.IndexModel.StatusLabel(st)</option>
+                    }
+                </select>
+    </div>
+    <button type="submit" class="btn btn-outline-secondary">Filtrer</button>
+</form>
+
+@if (Model.Orders.Count == 0)
+{
+    <div class="gb-admin-card">Aucune commande pour le moment.</div>
+}
+@foreach (var o in Model.Orders)
+{
+    <div class="gb-admin-card">
+        <h2 class="h6">@o.Number &middot; @o.CreatedUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm") &middot; @o.Total.ToString("0.00") €</h2>
+        <p class="mb-1">@o.CustomerName &middot; <a href="mailto:@o.CustomerEmail">@o.CustomerEmail</a> @if (!string.IsNullOrWhiteSpace(o.CustomerPhone)) { <span>&middot; @o.CustomerPhone</span> }</p>
+        <details class="mb-2">
+            <summary>Détail de la commande</summary>
+            <ul>
+                @foreach (var l in o.Lines) { <li>@l.Quantity × @l.Label (@l.UnitPrice.ToString("0.00") €)</li> }
+            </ul>
+            <p class="mb-1"><strong>Livraison :</strong> @o.ShippingMethodLabel (@o.ShippingCost.ToString("0.00") €)</p>
+            @if (!string.IsNullOrWhiteSpace(o.RelayPointLabel)) { <p class="mb-1"><strong>Point relais :</strong> @o.RelayPointLabel</p> }
+            <p class="mb-1"><strong>Adresse :</strong> @o.AddressLine, @o.PostalCode @o.City</p>
+            <p class="mb-1"><strong>Facturation :</strong> @o.BillingName, @o.BillingAddressLine, @o.BillingPostalCode @o.BillingCity</p>
+            @if (!string.IsNullOrWhiteSpace(o.CustomerNote)) { <p class="mb-1"><strong>Message :</strong> @o.CustomerNote</p> }
+        </details>
+        <form method="post" class="d-flex flex-wrap gap-2 align-items-end">
+            <input type="hidden" name="id" value="@o.Id" />
+            <div>
+                <label class="form-label" for="st-@o.Id">Statut</label>
+                <select class="form-select" id="st-@o.Id" name="status">
+                                    @foreach (var st in Enum.GetValues<OrderStatus>())
+                                    {
+                                        <option value="@((int)st)" selected="@(o.Status == st)">@GuysBee.Areas.Admin.Pages.Commandes.IndexModel.StatusLabel(st)</option>
+                                    }
+                                </select>
+            </div>
+            <div>
+                <label class="form-label" for="tr-@o.Id">Numéro de suivi</label>
+                <input class="form-control" id="tr-@o.Id" name="trackingNumber" value="@o.TrackingNumber" />
+            </div>
+            <button type="submit" class="btn btn-warning">Enregistrer</button>
+        </form>
+    </div>
+}

@@ -3,7 +3,7 @@
     string Active(string prefix) =>
         prefix == "/Admin" ? (path.TrimEnd('/').Equals("/Admin", StringComparison.OrdinalIgnoreCase) ? "gb-active" : "")
                            : (path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) ? "gb-active" : "");
-    var signedIn = User.Identity?.IsAuthenticated == true;
+    var signedIn = User.Identity?.IsAuthenticated == true && User.IsInRole(GuysBee.Services.DbInitializer.AdminRole);
 }
 <!DOCTYPE html>
 <html lang="fr">
@@ -14,6 +14,7 @@
     <title>@ViewData["Title"] - Administration GUY's Bee</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-focus.css" asp-append-version="true" />
 </head>
 <body class="gb-admin @(signedIn ? "gb-admin-shell" : "gb-admin-bare")">
 @if (signedIn)
@@ -34,8 +35,13 @@
                 <a class="gb-sidebar-link @Active("/Admin/Accueil")" href="/Admin/Accueil">Page d'accueil</a>
                 <a class="gb-sidebar-link @Active("/Admin/Navigation")" href="/Admin/Navigation">Menu du site</a>
                 <a class="gb-sidebar-link @Active("/Admin/Calendrier")" href="/Admin/Calendrier">Calendrier de la ruche</a>
+                <a class="gb-sidebar-link @Active("/Admin/Marches")" href="/Admin/Marches">Agenda des marchés</a>
+                <a class="gb-sidebar-link @Active("/Admin/Revendeurs")" href="/Admin/Revendeurs">Lieux de revente</a>
                 <p class="gb-sidebar-label">Boutique</p>
                 <a class="gb-sidebar-link @Active("/Admin/Miels")" href="/Admin/Miels">Gammes et produits</a>
+                <a class="gb-sidebar-link @Active("/Admin/Commandes")" href="/Admin/Commandes">Commandes</a>
+                <a class="gb-sidebar-link @Active("/Admin/Boutique")" href="/Admin/Boutique">Boutique en ligne</a>
+                <a class="gb-sidebar-link @Active("/Admin/Integrations")" href="/Admin/Integrations">Paiement et livraison</a>
                 <p class="gb-sidebar-label">Site</p>
                 <a class="gb-sidebar-link @Active("/Admin/Reglages")" href="/Admin/Reglages">R&eacute;glages</a>
                 <a class="gb-sidebar-link" href="/" target="_blank" rel="noopener">Voir le site &#8599;</a>
@@ -63,6 +69,7 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/gb-forms.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

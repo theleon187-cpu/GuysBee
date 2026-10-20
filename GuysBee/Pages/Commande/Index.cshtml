@@ -1,0 +1,117 @@
+@page "/Commande"
+@using GuysBee.Data.Entities
+@model GuysBee.Pages.Commande.IndexModel
+@{
+    ViewData["Title"] = "Valider ma commande";
+}
+<section class="gb-section">
+    <div class="gb-container gb-prose gb-shop-page">
+        <h1>Valider ma commande</h1>
+        <div class="gb-checkout">
+        <aside class="gb-summary" aria-label="Récapitulatif">
+            <h2>Récapitulatif</h2>
+            <ul class="gb-variants">
+                @foreach (var i in Model.Items)
+                {
+                    <li><span>@i.Quantity × @i.Label</span><span>@i.LineTotal.ToString("0.00") €</span></li>
+                }
+            </ul>
+            <p class="gb-summary-total"><span>Articles</span><strong>@Model.ItemsTotal.ToString("0.00") €</strong></p>
+            <p class="gb-summary-note">Frais de livraison ajoutés selon le mode choisi.</p>
+        </aside>
+
+        <form method="post" class="gb-form" novalidate>
+            <div asp-validation-summary="All" class="gb-form-errors" role="alert"></div>
+
+            <fieldset class="gb-fieldset">
+                <legend>Vos coordonnées</legend>
+                @if (Model.IsSignedIn)
+                {
+                    <input type="hidden" asp-for="Input.Email" />
+                    <p>Compte : <strong>@Model.Input.Email</strong> (<a href="/Compte">modifier mon profil</a>)</p>
+                }
+                else
+                {
+                    <div class="gb-field"><label asp-for="Input.Email">E-mail</label><input asp-for="Input.Email" class="gb-input" autocomplete="email" /></div>
+                }
+                <div class="gb-field"><label asp-for="Input.FirstName">Prénom</label><input asp-for="Input.FirstName" class="gb-input" autocomplete="given-name" /></div>
+                <div class="gb-field"><label asp-for="Input.LastName">Nom</label><input asp-for="Input.LastName" class="gb-input" autocomplete="family-name" /></div>
+                <div class="gb-field"><label asp-for="Input.Phone">Téléphone (facultatif)</label><input asp-for="Input.Phone" class="gb-input" autocomplete="tel" /></div>
+            </fieldset>
+
+            <fieldset class="gb-fieldset">
+                <legend>Adresse</legend>
+                <div class="gb-field"><label asp-for="Input.AddressLine">Adresse</label><input asp-for="Input.AddressLine" class="gb-input" autocomplete="street-address" /></div>
+                <div class="gb-field"><label asp-for="Input.PostalCode">Code postal</label><input asp-for="Input.PostalCode" class="gb-input" autocomplete="postal-code" /></div>
+                <div class="gb-field"><label asp-for="Input.City">Ville</label><input asp-for="Input.City" class="gb-input" autocomplete="address-level2" /></div>
+                </fieldset>
+
+                <fieldset class="gb-fieldset">
+                    <legend>Facturation</legend>
+                    <div class="gb-field gb-field-check"><input asp-for="Input.BillingSameAsDelivery" /><label asp-for="Input.BillingSameAsDelivery">L'adresse de facturation est identique à l'adresse de livraison</label></div>
+                    <div class="gb-billing" data-gb-billing>
+                    <div class="gb-field"><label asp-for="Input.BillingName">Nom ou société (facturation)</label><input asp-for="Input.BillingName" class="gb-input" /></div>
+                    <div class="gb-field"><label asp-for="Input.BillingAddressLine">Adresse de facturation</label><input asp-for="Input.BillingAddressLine" class="gb-input" /></div>
+                    <div class="gb-field"><label asp-for="Input.BillingPostalCode">Code postal</label><input asp-for="Input.BillingPostalCode" class="gb-input" /></div>
+                    <div class="gb-field"><label asp-for="Input.BillingCity">Ville</label><input asp-for="Input.BillingCity" class="gb-input" /></div>
+                </div>
+            </fieldset>
+
+            <fieldset class="gb-fieldset">
+                <legend>Livraison</legend>
+                <p><button type="submit" class="gb-btn gb-btn-secondary" asp-page-handler="Refresh" formnovalidate>Actualiser les tarifs avec mon code postal</button></p>
+                @if (Model.Quotes.Count == 0)
+                {
+                    <p>Aucun mode de livraison n'est disponible pour le moment. <a href="/Contact">Contactez-nous</a>.</p>
+                }
+                @foreach (var q in Model.Quotes)
+                {
+                    var kind = Model.Kinds[q.MethodId];
+                    <div class="gb-field gb-field-check">
+                        <input type="radio" id="ship-@q.MethodId" name="Input.ShippingMethodId" value="@q.MethodId" checked="@(Model.Input.ShippingMethodId == q.MethodId)" />
+                        <label for="ship-@q.MethodId">
+                            <strong>@q.MethodName</strong> - @(q.IsFree ? "offerte" : q.Price.ToString("0.00") + " €")
+                            @if (q.MinDays is { } min && q.MaxDays is { } max) { <span> (@min à @max jours)</span> }
+                            @if (!string.IsNullOrWhiteSpace(q.Message)) { <br /><small>@q.Message</small> }
+                        </label>
+                    </div>
+                    @if (kind == ShippingKind.Relay)
+                    {
+                        <div class="gb-relay">
+                            @if (Model.Colissimo.WidgetAvailable)
+                            {
+                                <p><button type="button" class="gb-btn gb-btn-secondary" id="gb-relay-open" data-relay-token-url="/Commande?handler=RelayToken">Choisir mon point relais sur la carte</button></p>
+                                <p class="gb-summary-note">Vous pouvez aussi <a href="@Model.Config.RelayFinderUrl" target="_blank" rel="noopener">rechercher un point relais</a> et le saisir ci-dessous.</p>
+                            }
+                            else
+                            {
+                                <p><a href="@Model.Config.RelayFinderUrl" target="_blank" rel="noopener">Rechercher un point relais</a>, puis indiquez-le ci-dessous.</p>
+                            }
+                            <div class="gb-field"><label asp-for="Input.RelayName">Nom du point relais</label><input asp-for="Input.RelayName" class="gb-input" /></div>
+                            <div class="gb-field"><label asp-for="Input.RelayAddress">Adresse du point relais</label><input asp-for="Input.RelayAddress" class="gb-input" /></div>
+                        </div>
+                    }
+                }
+            </fieldset>
+
+            <div class="gb-field"><label asp-for="Input.Note">Un message pour l'apiculteur (facultatif)</label><textarea asp-for="Input.Note" class="gb-input" rows="3"></textarea></div>
+            @if (Model.IsSignedIn)
+            {
+                <div class="gb-field gb-field-check"><input asp-for="Input.SaveToProfile" /><label asp-for="Input.SaveToProfile">Enregistrer ces informations dans mon profil</label></div>
+            }
+            <div class="gb-field gb-field-check"><input asp-for="Input.AcceptCgv" /><label asp-for="Input.AcceptCgv">J'ai lu et j'accepte les <a href="/p/cgv" target="_blank" rel="noopener">conditions générales de vente</a></label></div>
+
+            <button type="submit" class="gb-btn">Confirmer la commande</button>
+        </form>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    <script src="~/js/shop.js" asp-append-version="true"></script>
+    @if (Model.Colissimo.WidgetAvailable)
+    {
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="https://ws.colissimo.fr/widget-colissimo/js/jquery.plugin.colissimo.min.js"></script>
+        <script src="~/js/relay-widget.js" asp-append-version="true"></script>
+    }
+}

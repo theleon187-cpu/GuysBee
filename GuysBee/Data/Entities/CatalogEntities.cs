@@ -102,6 +102,17 @@ public class SalePoint
     public bool IsActive { get; set; } = true;
 }
 
+public class MarketEvent
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = "";
+    public DateTime EventDate { get; set; } = DateTime.Today;
+    public string? Hours { get; set; }
+    public string? Place { get; set; }
+    public string? Details { get; set; }
+    public bool IsVisible { get; set; } = true;
+}
+
 public class SiteSetting
 {
     public int Id { get; set; }

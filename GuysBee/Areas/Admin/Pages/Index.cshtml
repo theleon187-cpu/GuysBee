@@ -1,7 +1,18 @@
 @page
+@using GuysBee.Data.Entities
 @model GuysBee.Areas.Admin.Pages.IndexModel
 @{
     ViewData["Title"] = "Tableau de bord";
+    string StatusLabel(OrderStatus s) => s switch
+    {
+        OrderStatus.Pending => "En attente de paiement",
+        OrderStatus.Paid => "Payée",
+        OrderStatus.Preparing => "En préparation",
+        OrderStatus.Shipped => "Expédiée",
+        OrderStatus.Delivered => "Livrée",
+        OrderStatus.Cancelled => "Annulée",
+        _ => "Remboursée",
+    };
 }
 <header class="gb-admin-head">
     <h1>Bonjour &#x1F44B;</h1>
@@ -9,6 +20,14 @@
 </header>
 
 <section class="gb-stats" aria-label="Chiffres cl&eacute;s">
+    <a class="gb-stat @(Model.OrdersToPrepare > 0 ? "gb-stat-alert" : "")" href="/Admin/Commandes">
+        <span class="gb-stat-value">@Model.OrdersToPrepare</span>
+        <span class="gb-stat-label">Commandes &agrave; pr&eacute;parer</span>
+    </a>
+    <a class="gb-stat" href="/Admin/Commandes">
+        <span class="gb-stat-value">@Model.PendingOrders</span>
+        <span class="gb-stat-label">Commandes en attente de paiement</span>
+    </a>
     <a class="gb-stat @(Model.UnreadMessages > 0 ? "gb-stat-alert" : "")" href="/Admin/Messages">
         <span class="gb-stat-value">@Model.UnreadMessages</span>
         <span class="gb-stat-label">Messages non lus</span>
@@ -31,6 +50,8 @@
     <section class="gb-panel">
         <h2>Actions rapides</h2>
         <div class="gb-quick">
+            <a class="gb-quick-item" href="/Admin/Commandes">Suivre les commandes</a>
+            <a class="gb-quick-item" href="/Admin/Integrations">Paiement et livraison</a>
             <a class="gb-quick-item" href="/Admin/Photos">Ajouter des photos</a>
             <a class="gb-quick-item" href="/Admin/Miels">Mettre &agrave; jour le stock</a>
             <a class="gb-quick-item" href="/Admin/Textes">&Eacute;crire un texte</a>
@@ -46,7 +67,45 @@
             <li class="@(Model.StockFilled ? "gb-done" : "")"><a href="/Admin/Miels">Indiquer le stock de chaque pot</a></li>
             <li><a href="/Admin/Textes">Relire &laquo; Notre histoire &raquo; et les pages l&eacute;gales</a></li>
             <li><a href="/Admin/Reglages">Renseigner vos coordonn&eacute;es</a></li>
+            <li class="@(Model.ShopEnabled ? "gb-done" : "")"><a href="/Admin/Boutique">Activer la boutique en ligne</a></li>
+            <li class="@(Model.ShippingReady ? "gb-done" : "")"><a href="/Admin/Boutique">Choisir vos modes de livraison et vos tarifs</a></li>
+            <li class="@(Model.PayPalReady ? "gb-done" : "")"><a href="/Admin/Integrations#paypal">Connecter votre compte PayPal</a></li>
+            <li class="@(Model.InvoiceReady ? "gb-done" : "")"><a href="/Admin/Integrations#facturation">Compl&eacute;ter vos informations de facturation</a></li>
+            <li class="@(Model.ColissimoReady ? "gb-done" : "")"><a href="/Admin/Integrations#colissimo">Configurer Colissimo et les points relais</a></li>
         </ul>
+    </section>
+
+    <section class="gb-panel">
+        <h2>&Eacute;tat de la boutique</h2>
+        <ul class="gb-checklist">
+            @(Model.ShopEnabled ? "activée" : "désactivée")
+            (Model.PayPal.IsLive ? "connecté (mode réel)" : "connecté (mode test)") : "à configurer")
+            <li class="@(Model.ShippingReady ? "gb-done" : "")"><a href="/Admin/Boutique">Livraison : @Model.ActiveShippingMethods mode(s) propos&eacute;(s)</a></li>
+            @(Model.ColissimoReady ? "identifiants renseignés" : "à configurer")
+            @(Model.InvoiceReady ? "informations complètes" : "informations à compléter")
+        </ul>
+    </section>
+
+    <section class="gb-panel gb-panel-wide">
+        <h2>Derni&egrave;res commandes</h2>
+        @if (Model.RecentOrders.Count == 0)
+        {
+            <p class="gb-admin-help">Aucune commande pour le moment.</p>
+        }
+        else
+        {
+            <ul class="gb-messages">
+                @foreach (var o in Model.RecentOrders)
+                {
+                    <li>
+                        <a href="/Admin/Commandes">
+                            <strong>@o.Number</strong> &middot; @o.CustomerName &middot; @o.Total.ToString("0.00") &euro; &middot; @StatusLabel(o.Status)
+                            <span class="gb-admin-help">@o.CreatedUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
     </section>
 
     <section class="gb-panel gb-panel-wide">

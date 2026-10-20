@@ -1,0 +1,33 @@
+@page "/Compte/Commandes/{number}"
+@model GuysBee.Pages.Compte.Commandes.DetailModel
+@{
+    ViewData["Title"] = "Commande " + Model.Order.Number;
+}
+<section class="gb-section">
+    <div class="gb-container gb-prose">
+        <p class="gb-breadcrumb"><a href="/Compte/Commandes">&larr; Mes commandes</a></p>
+        <h1>Commande @Model.Order.Number</h1>
+        <p>Passée le @Model.Order.CreatedUtc.ToLocalTime().ToString("dd/MM/yyyy"). Statut : <strong>@GuysBee.Pages.Compte.Commandes.IndexModel.StatusLabel(Model.Order.Status)</strong></p>
+        @if (!string.IsNullOrWhiteSpace(Model.Order.TrackingNumber))
+        {
+            <p>Numéro de suivi : <strong>@Model.Order.TrackingNumber</strong>
+                (<a href="https://www.laposte.fr/outils/suivre-vos-envois?code=@Uri.EscapeDataString(Model.Order.TrackingNumber)" target="_blank" rel="noopener">suivre mon colis</a>)</p>
+        }
+        <ul class="gb-variants">
+            @foreach (var l in Model.Order.Lines)
+            {
+                <li><span>@l.Quantity × @l.Label</span><span>@((l.UnitPrice * l.Quantity).ToString("0.00")) €</span></li>
+            }
+            <li><span>Livraison : @Model.Order.ShippingMethodLabel</span><span>@Model.Order.ShippingCost.ToString("0.00") €</span></li>
+            <li><strong>Total</strong><strong>@Model.Order.Total.ToString("0.00") €</strong></li>
+        </ul>
+        <h2>Livraison</h2>
+        @if (!string.IsNullOrWhiteSpace(Model.Order.RelayPointLabel))
+        {
+            <p>Point relais : @Model.Order.RelayPointLabel</p>
+        }
+        <p>@Model.Order.CustomerName<br />@Model.Order.AddressLine<br />@Model.Order.PostalCode @Model.Order.City</p>
+        <h2>Facturation</h2>
+        <p>@Model.Order.BillingName<br />@Model.Order.BillingAddressLine<br />@Model.Order.BillingPostalCode @Model.Order.BillingCity</p>
+    </div>
+</section>

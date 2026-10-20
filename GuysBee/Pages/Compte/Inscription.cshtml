@@ -1,0 +1,21 @@
+@page "/Compte/Inscription"
+@model GuysBee.Pages.Compte.InscriptionModel
+@{
+    ViewData["Title"] = "Créer mon compte";
+}
+<section class="gb-section">
+    <div class="gb-container gb-prose">
+        <h1>Créer mon compte</h1>
+        <p>Votre compte permet de retrouver vos adresses et de suivre vos commandes.</p>
+        <form method="post" class="gb-form" novalidate>
+            <div asp-validation-summary="All" class="gb-form-errors" role="alert"></div>
+            <div class="gb-field"><label asp-for="Input.FirstName">Prénom</label><input asp-for="Input.FirstName" class="gb-input" autocomplete="given-name" /></div>
+            <div class="gb-field"><label asp-for="Input.LastName">Nom</label><input asp-for="Input.LastName" class="gb-input" autocomplete="family-name" /></div>
+            <div class="gb-field"><label asp-for="Input.Email">E-mail</label><input asp-for="Input.Email" class="gb-input" autocomplete="username" /></div>
+            <div class="gb-field"><label asp-for="Input.Password">Mot de passe</label><input asp-for="Input.Password" class="gb-input" autocomplete="new-password" /></div>
+            <div class="gb-field"><label asp-for="Input.ConfirmPassword">Confirmer le mot de passe</label><input asp-for="Input.ConfirmPassword" class="gb-input" autocomplete="new-password" /></div>
+            <button type="submit" class="gb-btn">Créer mon compte</button>
+        </form>
+        <p>Déjà inscrit ? <a href="/Compte/Connexion">Me connecter</a></p>
+    </div>
+</section>

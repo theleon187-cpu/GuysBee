@@ -21,6 +21,14 @@ public class Order
     public decimal ShippingCost { get; set; }
     public decimal Total { get; set; }
     public string? CustomerNote { get; set; }
+    public string? UserId { get; set; }
+    public string? BillingName { get; set; }
+    public string? BillingAddressLine { get; set; }
+    public string? BillingPostalCode { get; set; }
+    public string? BillingCity { get; set; }
+    /// <summary>Point relais choisi par le client (nom et adresse).</summary>
+    public string? RelayPointLabel { get; set; }
+    public string? TrackingNumber { get; set; }
     public string? PayPalOrderId { get; set; }
     public string? PayPalCaptureId { get; set; }
     public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
@@ -40,7 +48,7 @@ public class OrderLine
     public int WeightGrams { get; set; }
 }
 
-public enum ShippingKind { Pickup = 0, Parcel = 1, LocalRound = 2 }
+public enum ShippingKind { Pickup = 0, Parcel = 1, LocalRound = 2, Relay = 3 }
 
 public class ShippingMethod
 {

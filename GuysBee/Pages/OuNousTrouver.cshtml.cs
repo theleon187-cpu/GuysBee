@@ -11,7 +11,13 @@ public class OuNousTrouverModel : PageModel
     public OuNousTrouverModel(AppDbContext db) => _db = db;
 
     public List<SalePoint> SalePoints { get; private set; } = new();
+    public List<MarketEvent> Events { get; private set; } = new();
 
-    public async Task OnGetAsync() =>
+    public async Task OnGetAsync()
+    {
         SalePoints = await _db.SalePoints.AsNoTracking().Where(s => s.IsActive).OrderBy(s => s.Name).ToListAsync();
+        var today = DateTime.Today;
+        Events = await _db.MarketEvents.AsNoTracking()
+            .Where(e => e.IsVisible && e.EventDate >= today).OrderBy(e => e.EventDate).ToListAsync();
+    }
 }

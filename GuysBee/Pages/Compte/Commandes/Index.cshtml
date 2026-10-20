@@ -1,0 +1,33 @@
+@page "/Compte/Commandes"
+@model GuysBee.Pages.Compte.Commandes.IndexModel
+@{
+    ViewData["Title"] = "Mes commandes";
+}
+<section class="gb-section">
+    <div class="gb-container gb-prose">
+        <p class="gb-breadcrumb"><a href="/Compte">&larr; Mon compte</a></p>
+        <h1>Mes commandes</h1>
+        @if (Model.Orders.Count == 0)
+        {
+            <p>Vous n'avez pas encore passé de commande.</p>
+            <p><a class="gb-btn" href="/Produits">Découvrir nos miels</a></p>
+        }
+        else
+        {
+            <table class="gb-shop-table">
+                <thead><tr><th scope="col">Commande</th><th scope="col">Date</th><th scope="col">Statut</th><th scope="col">Total</th></tr></thead>
+                <tbody>
+                @foreach (var o in Model.Orders)
+                {
+                    <tr>
+                        <td><a href="/Compte/Commandes/@o.Number">@o.Number</a></td>
+                        <td>@o.CreatedUtc.ToLocalTime().ToString("dd/MM/yyyy")</td>
+                        <td>@GuysBee.Pages.Compte.Commandes.IndexModel.StatusLabel(o.Status)</td>
+                        <td>@o.Total.ToString("0.00") €</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </div>
+</section>

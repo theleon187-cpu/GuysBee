@@ -11,7 +11,9 @@ Statut : **à valider**. Rien n'est lancé tant que ce plan n'est pas approuvé.
 - [x] Fondations : Identity (rôle Admin, verrouillage après 5 échecs), initialisation auto de la base (création du schéma tant qu'il n'y a pas de migration), compte admin au premier démarrage, culture fr-FR.
 - [x] Pages publiques : Accueil (blocs pilotés par la base), Nos miels, fiche miel, Calendrier de la ruche, Galerie, pages éditables `/p/{slug}`, Où nous trouver, Contact (anti-spam + stockage).
 - [x] Admin `/Admin` : connexion, tableau de bord, Photos (import du dossier `posts`, envoi, légendes, publication), Miels et prix, Textes du site (TinyMCE), Messages, Réglages.
-- [ ] Reste à faire : migration EF, Livraison (admin + simulateur), panier + PayPal, commandes (admin), journal, menu/accueil/FAQ/lexique/e-mails en admin, utilisateurs, sauvegarde, SEO (sitemap, JSON-LD), cookies, tests.
+- [x] Boutique : comptes clients et profils (adresses livraison/facturation), panier en session, commande, confirmation, historique, livraison configurable (retrait, Colissimo, point relais, tournée), `/Admin/Boutique` (activation et réglages) et `/Admin/Commandes`. Build réussi, non testé dans un navigateur.
+- [x] Saisie sans saut d'écran : `wwwroot/js/gb-forms.js` (POST en fetch, remplacement de `<main>`, focus/scroll conservés, alertes flottantes) sur le site et l'admin. À valider dans le navigateur (bouton OK de `/Admin/Miels`).
+- [ ] Reste à faire : migration EF, simulateur de livraison (admin), paiement PayPal, journal, menu/accueil/FAQ/lexique/e-mails en admin, utilisateurs, sauvegarde, SEO (sitemap, JSON-LD), cookies, tests.
 
 > Concept du site : voir `Content/direction-editoriale.md`. Le site est centré sur le cycle de la ruche (calendrier des saisons, miel par miellée, journal du rucher), pas sur une vitrine classique.
 

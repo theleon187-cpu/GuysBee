@@ -1,5 +1,6 @@
 @using Microsoft.EntityFrameworkCore
 @inject GuysBee.Data.AppDbContext Db
+@inject GuysBee.Services.Shop.CartService Cart
 @{
     var s = await Db.SiteSettings.AsNoTracking().ToDictionaryAsync(x => x.Key, x => x.Value);
     string Setting(string key) => s.TryGetValue(key, out var v) ? v : "";
@@ -7,6 +8,8 @@
     var description = ViewData["Description"] as string
         ?? "GUY's Bee, apiculteur à Saint-Julien-sur-Bibost : miels de printemps, d'acacia, de montagne et de fleurs sauvages.";
     var banner = Setting("site.banner");
+    var shopOn = GuysBee.Services.Shop.ShopKeys.IsOn(s, GuysBee.Services.Shop.ShopKeys.Enabled);
+    var accountsOn = shopOn && GuysBee.Services.Shop.ShopKeys.IsOn(s, GuysBee.Services.Shop.ShopKeys.AccountsEnabled);
 }
 <!DOCTYPE html>
 <html lang="fr">
@@ -21,6 +24,7 @@
     <link rel="icon" href="~/favicon.ico" />
     <link rel="stylesheet" href="~/css/guysbee.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/guysbee-modern.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/shop.css" asp-append-version="true" />
 </head>
 <body class="gb-body theme-modern">
     <a class="gb-skip" href="#contenu">Aller au contenu</a>
@@ -37,6 +41,16 @@
             <button class="gb-nav-toggle" type="button" aria-expanded="false" aria-controls="gb-nav">Menu</button>
             <nav id="gb-nav" class="gb-nav" aria-label="Navigation principale">
                 <vc:menu footer="false" />
+                @if (shopOn)
+                {
+                    <ul class="gb-menu gb-menu-shop">
+                        <li class="gb-menu-item"><a class="gb-menu-link gb-cart-link" href="/Panier" aria-label="Panier, @Cart.Count article(s)"><svg class="gb-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2l2.4 10.2a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.8L20 8H6.2M10 20h.01M17 20h.01" /></svg><span>Panier</span>@if (Cart.Count > 0) {<span class="gb-cart-badge">@Cart.Count</span>}</a></li>
+                        @if (accountsOn)
+                        {
+                            <li class="gb-menu-item"><a class="gb-menu-link gb-account-link" href="@(User.Identity?.IsAuthenticated == true ? "/Compte" : "/Compte/Connexion")"><svg class="gb-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M20 21a8 8 0 0 0-16 0M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" /></svg><span>@(User.Identity?.IsAuthenticated == true ? "Mon compte" : "Connexion")</span></a></li>
+                        }
+                    </ul>
+                }
             </nav>
         </div>
     </header>
@@ -65,6 +79,7 @@
     </footer>
 
     <script src="~/js/site-public.js" asp-append-version="true"></script>
+    <script src="~/js/gb-forms.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

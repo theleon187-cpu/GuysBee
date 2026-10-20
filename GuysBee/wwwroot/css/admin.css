@@ -1,4 +1,4 @@
-/* Administration GUY's Bee : mise en page avec menu latéral. */
+﻿/* Administration GUY's Bee : mise en page avec menu latéral. */
 .gb-admin { --gb-amber: #F5B700; --gb-brown: #2B2118; --gb-bg: #F6F3EA; background: var(--gb-bg); color: #2B2118; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 .gb-admin h1, .gb-admin .h3 { font-size: 1.6rem; font-weight: 700; }
 .gb-admin h2 { font-size: 1.1rem; font-weight: 700; }
@@ -89,3 +89,11 @@
 .gb-admin-bare .gb-admin-content .row { margin: 0; }
 .gb-admin-bare .gb-admin-content .row > [class*='col-'] { width: 100%; max-width: 100%; flex: 0 0 100%; }
 .gb-admin-bare .gb-admin-content .btn, .gb-admin-bare .gb-admin-content .form-control { width: 100%; }
+.gb-notice-dialog { width: min(26rem, calc(100vw - 2rem)); padding: 2rem 1.5rem 1.5rem; border: 0; border-top: 6px solid var(--gb-amber, #F5B700); border-radius: 16px; background: #fff; color: #2B2118; text-align: center; box-shadow: 0 20px 50px rgba(43, 33, 24, .35); }
+.gb-notice-dialog::backdrop { background: rgba(43, 33, 24, .55); backdrop-filter: blur(2px); }
+.gb-notice-dialog::before { content: '\2713'; display: flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; margin: 0 auto 1rem; border-radius: 50%; background: #FFF4CC; color: #2E8B57; font-size: 1.6rem; font-weight: 700; }
+.gb-notice-dialog-error { border-top-color: #C0392B; }
+.gb-notice-dialog-error::before { content: '!'; background: #FBE4E1; color: #C0392B; }
+.gb-notice-dialog-body { margin-bottom: 1.5rem; font-size: 1.05rem; font-weight: 600; }
+.gb-notice-dialog-ok-btn { display: inline-block; min-width: 8rem; padding: .6rem 1.5rem; border: 2px solid #2B2118; border-radius: 999px; background: #F5B700; color: #2B2118; font: inherit; font-weight: 700; cursor: pointer; }
+.gb-notice-dialog-ok-btn:hover, .gb-notice-dialog-ok-btn:focus-visible { background: #2B2118; color: #F5B700; outline: 3px solid rgba(245, 183, 0, .5); outline-offset: 2px; }

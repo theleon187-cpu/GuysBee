@@ -1,0 +1,64 @@
+@page
+@model GuysBee.Areas.Admin.Pages.Revendeurs.IndexModel
+@{
+    ViewData["Title"] = "Lieux de revente";
+}
+<header class="gb-admin-head">
+    <h1>Lieux de revente</h1>
+    <p class="gb-admin-help">Les boutiques et commerces qui vendent vos miels. Ils s'affichent en bas de la page « Où nous trouver ».</p>
+</header>
+
+<div class="gb-admin-card">
+    <h2>Ajouter un lieu de revente</h2>
+    <form method="post" asp-page-handler="Save">
+        <input type="hidden" name="id" value="0" />
+        <input type="hidden" name="isActive" value="true" />
+        <label class="form-label" for="new-name">Nom</label>
+        <input id="new-name" name="name" class="form-control mb-2" maxlength="150" required />
+        <label class="form-label" for="new-address">Adresse</label>
+        <input id="new-address" name="address" class="form-control mb-2" maxlength="200" />
+        <label class="form-label" for="new-cp">Code postal</label>
+        <input id="new-cp" name="postalCode" class="form-control mb-2" maxlength="10" />
+        <label class="form-label" for="new-city">Ville</label>
+        <input id="new-city" name="city" class="form-control mb-2" maxlength="100" />
+        <label class="form-label" for="new-schedule">Horaires</label>
+        <input id="new-schedule" name="schedule" class="form-control mb-2" maxlength="200" />
+        <label class="form-label" for="new-phone">Téléphone</label>
+        <input id="new-phone" name="phone" class="form-control mb-2" maxlength="30" />
+        <button type="submit" class="btn btn-warning btn-sm">Ajouter</button>
+    </form>
+</div>
+
+<div class="gb-cal-grid">
+@foreach (var s in Model.Points)
+{
+    <div class="gb-admin-card">
+        <h2>@s.Name</h2>
+        <form method="post" asp-page-handler="Save">
+            <input type="hidden" name="id" value="@s.Id" />
+            <label class="form-label" for="n-@s.Id">Nom</label>
+            <input id="n-@s.Id" name="name" class="form-control mb-2" value="@s.Name" maxlength="150" required />
+            <label class="form-label" for="a-@s.Id">Adresse</label>
+            <input id="a-@s.Id" name="address" class="form-control mb-2" value="@s.Address" maxlength="200" />
+            <label class="form-label" for="c-@s.Id">Code postal</label>
+            <input id="c-@s.Id" name="postalCode" class="form-control mb-2" value="@s.PostalCode" maxlength="10" />
+            <label class="form-label" for="v-@s.Id">Ville</label>
+            <input id="v-@s.Id" name="city" class="form-control mb-2" value="@s.City" maxlength="100" />
+            <label class="form-label" for="s-@s.Id">Horaires</label>
+            <input id="s-@s.Id" name="schedule" class="form-control mb-2" value="@s.Schedule" maxlength="200" />
+            <label class="form-label" for="p-@s.Id">Téléphone</label>
+            <input id="p-@s.Id" name="phone" class="form-control mb-2" value="@s.Phone" maxlength="30" />
+            <div class="form-check mb-2">
+                <input id="act-@s.Id" name="isActive" type="checkbox" value="true" class="form-check-input" checked="@s.IsActive" />
+                <input type="hidden" name="isActive" value="false" />
+                <label class="form-check-label" for="act-@s.Id">Visible sur le site</label>
+            </div>
+            <button type="submit" class="btn btn-warning btn-sm">Enregistrer</button>
+        </form>
+        <form method="post" asp-page-handler="Delete" class="mt-2">
+            <input type="hidden" name="id" value="@s.Id" />
+            <button type="submit" class="btn btn-outline-danger btn-sm">Supprimer</button>
+        </form>
+    </div>
+}
+</div>

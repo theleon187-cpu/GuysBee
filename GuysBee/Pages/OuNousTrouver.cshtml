@@ -3,25 +3,57 @@
 @{
     ViewData["Title"] = "Où nous trouver";
     ViewData["Description"] = "Points de vente et retrait des miels GUY's Bee.";
+    var fr = new System.Globalization.CultureInfo("fr-FR");
 }
 <h1 class="gb-page-title">Où nous trouver</h1>
 <section class="gb-section">
     <div class="gb-container">
-        <div class="gb-grid">
-            <article class="gb-card">
+        <div class="gb-find-top">
+            <article class="gb-card gb-find-miellerie">
                 <h2 class="gb-card-title">À la miellerie</h2>
                 <p>69690 Saint-Julien-sur-Bibost</p>
                 <p>Retrait sur rendez-vous : <a href="tel:0650511236">06 50 51 12 36</a></p>
             </article>
-            @foreach (var sp in Model.SalePoints)
-            {
-                <article class="gb-card">
-                    <h2 class="gb-card-title">@sp.Name</h2>
-                    <p>@sp.Address<br />@sp.PostalCode @sp.City</p>
-                    @if (!string.IsNullOrWhiteSpace(sp.Schedule)) { <p>@sp.Schedule</p> }
-                    @if (!string.IsNullOrWhiteSpace(sp.Phone)) { <p>@sp.Phone</p> }
-                </article>
-            }
+            <aside class="gb-card gb-agenda" aria-labelledby="gb-agenda-title">
+                <h2 class="gb-card-title" id="gb-agenda-title">Agenda des marchés</h2>
+                @if (Model.Events.Count == 0)
+                {
+                    <p class="gb-card-text">Aucun rendez-vous programmé pour le moment.</p>
+                }
+                else
+                {
+                    <ul class="gb-agenda-list">
+                        @foreach (var e in Model.Events)
+                        {
+                            <li class="gb-agenda-item">
+                                <time class="gb-agenda-date" datetime="@e.EventDate.ToString("yyyy-MM-dd")">@e.EventDate.ToString("ddd d MMM", fr)</time>
+                                <div class="gb-agenda-body">
+                                    <strong>@e.Title</strong>
+                                    @if (!string.IsNullOrWhiteSpace(e.Hours)) { <span class="gb-agenda-hours">@e.Hours</span> }
+                                    @if (!string.IsNullOrWhiteSpace(e.Place)) { <span class="gb-agenda-place">@e.Place</span> }
+                                    @if (!string.IsNullOrWhiteSpace(e.Details)) { <span class="gb-agenda-details">@e.Details</span> }
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+            </aside>
         </div>
+
+        @if (Model.SalePoints.Count > 0)
+        {
+            <h2 class="gb-find-subtitle">Nos lieux de revente</h2>
+            <div class="gb-grid">
+                @foreach (var sp in Model.SalePoints)
+                {
+                    <article class="gb-card">
+                        <h3 class="gb-card-title">@sp.Name</h3>
+                        <p>@sp.Address<br />@sp.PostalCode @sp.City</p>
+                        @if (!string.IsNullOrWhiteSpace(sp.Schedule)) { <p>@sp.Schedule</p> }
+                        @if (!string.IsNullOrWhiteSpace(sp.Phone)) { <p><a href="tel:@sp.Phone.Replace(" ", "")">@sp.Phone</a></p> }
+                    </article>
+                }
+            </div>
+        }
     </div>
 </section>

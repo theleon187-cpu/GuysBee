@@ -1,0 +1,28 @@
+@page "/Commande/Confirmation/{number}"
+@model GuysBee.Pages.Commande.ConfirmationModel
+@{
+    ViewData["Title"] = "Commande enregistrée";
+}
+<section class="gb-section">
+    <div class="gb-container gb-prose">
+        <h1>Merci pour votre commande !</h1>
+        <p class="gb-lead">Votre commande <strong>@Model.Order.Number</strong> est enregistrée. Nous reviendrons vers vous à l'adresse @Model.Order.CustomerEmail pour le règlement et la préparation.</p>
+        <ul class="gb-variants">
+            @foreach (var l in Model.Order.Lines)
+            {
+                <li><span>@l.Quantity × @l.Label</span><span>@((l.UnitPrice * l.Quantity).ToString("0.00")) €</span></li>
+            }
+            <li><span>Livraison : @Model.Order.ShippingMethodLabel</span><span>@Model.Order.ShippingCost.ToString("0.00") €</span></li>
+            <li><strong>Total</strong><strong>@Model.Order.Total.ToString("0.00") €</strong></li>
+        </ul>
+        @if (!string.IsNullOrWhiteSpace(Model.Order.RelayPointLabel))
+        {
+            <p>Point relais : @Model.Order.RelayPointLabel</p>
+        }
+        @if (Model.HistoryEnabled)
+        {
+            <p><a class="gb-btn" href="/Compte/Commandes">Suivre mes commandes</a></p>
+        }
+        <p><a href="/Produits">Retour aux produits</a></p>
+    </div>
+</section>

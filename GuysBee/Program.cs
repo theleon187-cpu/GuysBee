@@ -41,6 +41,13 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SameSite = SameSiteMode.Lax;
     options.ExpireTimeSpan = TimeSpan.FromHours(8);
     options.SlidingExpiration = true;
+    options.Events.OnRedirectToLogin = ctx =>
+    {
+        var target = ctx.Request.Path.StartsWithSegments("/Admin") ? "/Admin/Login" : "/Compte/Connexion";
+        var returnUrl = Uri.EscapeDataString(ctx.Request.Path + ctx.Request.QueryString);
+        ctx.Response.Redirect($"{target}?returnUrl={returnUrl}");
+        return Task.CompletedTask;
+    };
 });
 
 builder.Services.AddAuthorizationBuilder()
@@ -50,10 +57,27 @@ builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AuthorizeAreaFolder("Admin", "/", "AdminOnly");
     options.Conventions.AllowAnonymousToAreaPage("Admin", "/Login");
+    options.Conventions.AuthorizeFolder("/Compte");
+    options.Conventions.AllowAnonymousToPage("/Compte/Connexion");
+    options.Conventions.AllowAnonymousToPage("/Compte/Inscription");
 });
 
 builder.Services.AddSingleton<IHtmlCleaner, HtmlCleaner>();
 builder.Services.AddScoped<MediaService>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(o =>
+{
+    o.Cookie.Name = ".GuysBee.Panier";
+    o.Cookie.HttpOnly = true;
+    o.Cookie.IsEssential = true;
+    o.IdleTimeout = TimeSpan.FromHours(4);
+});
+builder.Services.AddScoped<GuysBee.Services.Shop.ShopSettings>();
+builder.Services.AddScoped<GuysBee.Services.Shop.CartService>();
+builder.Services.AddScoped<GuysBee.Services.Shop.IntegrationSettings>();
+builder.Services.AddHttpClient("integrations", c => c.Timeout = TimeSpan.FromSeconds(15));
+builder.Services.AddScoped<GuysBee.Services.Shop.IntegrationConnector>();
 
 var app = builder.Build();
 
@@ -84,6 +108,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();

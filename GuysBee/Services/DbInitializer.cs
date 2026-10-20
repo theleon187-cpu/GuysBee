@@ -24,6 +24,11 @@ public static class DbInitializer
             await db.Database.EnsureCreatedAsync();
             await AddColumnIfMissingAsync(db, "MediaAssets", "ShowInHero", "INTEGER NOT NULL DEFAULT 0");
             await AddColumnIfMissingAsync(db, "Categories", "MenuLabel", "TEXT NULL");
+            foreach (var col in new[] { "UserId", "BillingName", "BillingAddressLine", "BillingPostalCode", "BillingCity", "RelayPointLabel", "TrackingNumber" })
+                await AddColumnIfMissingAsync(db, "Orders", col, "TEXT NULL");
+            await db.Database.ExecuteSqlRawAsync("CREATE TABLE IF NOT EXISTS CustomerProfiles (Id INTEGER NOT NULL CONSTRAINT PK_CustomerProfiles PRIMARY KEY AUTOINCREMENT, UserId TEXT NOT NULL, FirstName TEXT NOT NULL, LastName TEXT NOT NULL, Phone TEXT NULL, AddressLine TEXT NULL, PostalCode TEXT NULL, City TEXT NULL, Country TEXT NOT NULL, BillingSameAsDelivery INTEGER NOT NULL, BillingName TEXT NULL, BillingAddressLine TEXT NULL, BillingPostalCode TEXT NULL, BillingCity TEXT NULL, UpdatedUtc TEXT NOT NULL)");
+            await db.Database.ExecuteSqlRawAsync("CREATE UNIQUE INDEX IF NOT EXISTS IX_CustomerProfiles_UserId ON CustomerProfiles (UserId)");
+            await db.Database.ExecuteSqlRawAsync("CREATE TABLE IF NOT EXISTS MarketEvents (Id INTEGER NOT NULL CONSTRAINT PK_MarketEvents PRIMARY KEY AUTOINCREMENT, Title TEXT NOT NULL, EventDate TEXT NOT NULL, Hours TEXT NULL, Place TEXT NULL, Details TEXT NULL, IsVisible INTEGER NOT NULL)");
         }
 
         await DbSeeder.SeedAsync(db);

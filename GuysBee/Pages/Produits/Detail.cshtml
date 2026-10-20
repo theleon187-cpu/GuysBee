@@ -1,7 +1,9 @@
 @page "/Produits/{slug}"
 @using GuysBee.Services
 @model GuysBee.Pages.Produits.DetailModel
+@inject GuysBee.Services.Shop.ShopSettings Shop
 @{
+    var shopOn = (await Shop.GetAsync()).Enabled;
     ViewData["Title"] = Model.Product.Name;
     ViewData["Description"] = Model.Product.ShortDescription;
 }
@@ -34,6 +36,14 @@
                         @if (v.Stock <= 0)
                         {
                             <span class="gb-tag gb-tag-out">Momentanément indisponible</span>
+                        }
+                        else if (shopOn)
+                        {
+                            <form method="post" asp-page="/Panier" asp-page-handler="Add" class="gb-shop-inline">
+                                <input type="hidden" name="variantId" value="@v.Id" />
+                                <input type="hidden" name="quantity" value="1" />
+                                <button type="submit" class="gb-btn gb-btn-secondary">Ajouter au panier</button>
+                            </form>
                         }
                     </span>
                 </li>

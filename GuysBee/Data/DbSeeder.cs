@@ -113,6 +113,38 @@ public static class DbSeeder
                 });
         }
 
+        if (!await db.ShippingMethods.AnyAsync(m => m.Kind == ShippingKind.Relay))
+        {
+            db.ShippingMethods.Add(new ShippingMethod
+            {
+                Name = "Point relais Colissimo",
+                Kind = ShippingKind.Relay,
+                IsActive = false,
+                PreparationDays = 2,
+                DeliveryMinDays = 3,
+                DeliveryMaxDays = 5,
+                FreeAboveAmount = 60m,
+                CustomerMessage = "Retrait dans le point relais de votre choix.",
+                SortOrder = 4,
+                Zones =
+                {
+                    new ShippingZone
+                    {
+                        Name = "France métropolitaine",
+                        Rates =
+                        {
+                            new ShippingRate { MinGrams = 0, MaxGrams = 1000, Price = 4.90m },
+                            new ShippingRate { MinGrams = 1001, MaxGrams = 3000, Price = 6.90m },
+                            new ShippingRate { MinGrams = 3001, MaxGrams = 10000, Price = 9.90m },
+                        }
+                    }
+                }
+            });
+        }
+
+        var legacyParcel = await db.ShippingMethods.FirstOrDefaultAsync(m => m.Name == "Colis à domicile");
+        if (legacyParcel is not null) legacyParcel.Name = "Colissimo à domicile";
+
         await db.SaveChangesAsync();
     }
 }
