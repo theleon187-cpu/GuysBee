@@ -97,21 +97,26 @@ public class SalePoint
     public string City { get; set; } = "";
     public string? Schedule { get; set; }
     public string? Phone { get; set; }
+    public string? Details { get; set; }
     public double? Latitude { get; set; }
     public double? Longitude { get; set; }
-    public bool IsActive { get; set; } = true;
-}
+    public string? MapUrl { get; set; }
+    public string? PhotoBaseName { get; set; }
+    public bool IsActive { get; set; } = true;}
 
 public class MarketEvent
 {
     public int Id { get; set; }
     public string Title { get; set; } = "";
     public DateTime EventDate { get; set; } = DateTime.Today;
+    public DayOfWeek WeekDay { get; set; } = DayOfWeek.Saturday;
+    public int DaysMask { get; set; } = 1 << 5;
     public string? Hours { get; set; }
     public string? Place { get; set; }
+    public string? MapUrl { get; set; }
+    public string? PhotoBaseName { get; set; }
     public string? Details { get; set; }
-    public bool IsVisible { get; set; } = true;
-}
+    public bool IsVisible { get; set; } = true;}
 
 public class SiteSetting
 {

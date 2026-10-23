@@ -34,6 +34,22 @@
 /* Cartes et panneaux (pages existantes incluses) */
 .gb-admin-card, .gb-panel { background: #fff; border: 1px solid rgba(43, 33, 24, .07); border-radius: 16px; padding: 1.1rem 1.35rem; box-shadow: 0 4px 14px rgba(43, 33, 24, .06); margin-bottom: 1rem; }
 .gb-admin-card h2, .gb-panel h2 { margin-bottom: .75rem; }
+.gb-days { border: 0; padding: 0; margin: 0 0 1rem; min-width: 0; }
+.gb-days legend { float: none; width: auto; padding: 0; margin-bottom: .5rem; font-size: 1rem; font-weight: 600; }
+.gb-days-hint { font-weight: 400; color: #7a6a58; font-size: .85rem; }
+.gb-days-chips { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: .6rem; }
+.gb-day { position: relative; display: inline-block; }
+.gb-day-input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; z-index: 1; }
+.gb-day-chip { display: inline-flex; align-items: center; justify-content: center; min-width: 3.4rem; min-height: 2.75rem; padding: 0 1rem; border: 2px solid #e3d3a8; border-radius: 999px; background: #fffaf0; color: #6b4e00; font-weight: 600; transition: background .15s, border-color .15s, transform .1s; user-select: none; }
+.gb-day-input:hover + .gb-day-chip { border-color: #f2b705; }
+.gb-day-input:active + .gb-day-chip { transform: scale(.96); }
+.gb-day-input:checked + .gb-day-chip { background: #f2b705; border-color: #d99e00; color: #2b1f00; box-shadow: 0 2px 6px rgba(217, 158, 0, .35); }
+.gb-day-input:checked + .gb-day-chip::before { content: "\2713"; margin-right: .35rem; }
+.gb-day-input:focus-visible + .gb-day-chip { outline: 3px solid #1a5fb4; outline-offset: 2px; }
+.gb-days-presets { display: flex; flex-wrap: wrap; gap: .4rem; }
+.gb-days-preset { border: 1px solid #e3d3a8; background: #fff; color: #6b4e00; border-radius: 999px; padding: .3rem .9rem; font-size: .875rem; cursor: pointer; transition: background .15s; }
+.gb-days-preset:hover { background: #fff3cf; }
+.gb-days-preset:focus-visible { outline: 3px solid #1a5fb4; outline-offset: 2px; }
 .gb-admin-thumb { width: 110px; height: 110px; object-fit: cover; border-radius: 12px; background: #eee; }
 .gb-admin-stat { font-size: 2rem; font-weight: 700; }
 .gb-admin-help { color: #6B6253; font-size: .9rem; }

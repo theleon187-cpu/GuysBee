@@ -1,28 +1,54 @@
 @page
+@using GuysBee.Services
 @model GuysBee.Areas.Admin.Pages.Marches.IndexModel
 @{
     ViewData["Title"] = "Agenda des marchés";
+    var Fr = new System.Globalization.CultureInfo("fr-FR");
+    void DayPicker(string prefix, int mask)
+    {
+        <fieldset class="gb-days" data-days-picker>
+            <legend class="form-label">Jours de la semaine <span class="gb-days-hint">(cochez un ou plusieurs jours)</span></legend>
+            <div class="gb-days-chips">
+                @for (var i = 0; i < 7; i++)
+                {
+                    <span class="gb-day">
+                        <input id="@(prefix)-day-@i" class="gb-day-input" type="checkbox" name="weekDays" value="@i" checked="@WeekDays.Has(mask, i)" />
+                        <label class="gb-day-chip" for="@(prefix)-day-@i" title="@WeekDays.Name(i)">@WeekDays.ShortName(i)</label>
+                    </span>
+                }
+            </div>
+            <div class="gb-days-presets">
+                <button type="button" class="gb-days-preset" data-days="0,1,2,3,4">Semaine</button>
+                <button type="button" class="gb-days-preset" data-days="5,6">Week-end</button>
+                <button type="button" class="gb-days-preset" data-days="0,1,2,3,4,5,6">Tous les jours</button>
+                <button type="button" class="gb-days-preset" data-days="">Effacer</button>
+            </div>
+        </fieldset>
+    }
 }
 <header class="gb-admin-head">
     <h1>Agenda des marchés</h1>
-    <p class="gb-admin-help">Les marchés et rendez-vous où l'on peut vous rencontrer. Ils s'affichent sur la page « Où nous trouver ». Les dates passées ne sont plus affichées sur le site.</p>
+    <p class="gb-admin-help">Les marchés et rendez-vous où l'on peut vous rencontrer. Ils s'affichent sur la page « Où nous trouver » avec leurs jours de la semaine.</p>
 </header>
 
 <div class="gb-admin-card">
     <h2>Ajouter un rendez-vous</h2>
-    <form method="post" asp-page-handler="Save">
+    <form method="post" asp-page-handler="Save" enctype="multipart/form-data">
         <input type="hidden" name="id" value="0" />
         <input type="hidden" name="isVisible" value="true" />
         <label class="form-label" for="new-title">Titre (ex. Marché de Tarare)</label>
         <input id="new-title" name="title" class="form-control mb-2" maxlength="150" required />
-        <label class="form-label" for="new-date">Date</label>
-        <input id="new-date" name="eventDate" type="date" class="form-control mb-2" required />
+        @{ DayPicker("new", 1 << 5); }
         <label class="form-label" for="new-hours">Horaires (ex. 8h – 12h30)</label>
         <input id="new-hours" name="hours" class="form-control mb-2" maxlength="80" />
         <label class="form-label" for="new-place">Lieu</label>
         <input id="new-place" name="place" class="form-control mb-2" maxlength="200" />
-        <label class="form-label" for="new-details">Précisions</label>
-        <textarea id="new-details" name="details" class="form-control mb-2" rows="2"></textarea>
+        <label class="form-label" for="new-map">Lien Google Maps du lieu</label>
+        <input id="new-map" name="mapUrl" type="url" class="form-control mb-2" maxlength="500" placeholder="https://maps.app.goo.gl/..." />
+        <p class="gb-admin-help">Ouvrez <a href="https://www.google.com/maps" target="_blank" rel="noopener">Google Maps</a>, cherchez le lieu, cliquez sur « Partager » puis « Copier le lien » et collez-le ici.</p>
+        <label class="form-label" for="new-photo">Photo (JPG, PNG ou WebP)</label>
+        <input id="new-photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" class="form-control mb-2" />
+        <label class="form-label" for="new-details">Précisions</label>        <textarea id="new-details" name="details" class="form-control mb-2" rows="2"></textarea>
         <button type="submit" class="btn btn-warning btn-sm">Ajouter</button>
     </form>
 </div>
@@ -31,17 +57,28 @@
 @foreach (var e in Model.Events)
 {
     <div class="gb-admin-card">
-        <h2>@e.EventDate.ToString("dd/MM/yyyy") – @e.Title</h2>
-        <form method="post" asp-page-handler="Save">
+        <h2>@WeekDays.Format(e.DaysMask) – @e.Title</h2>
+        <form method="post" asp-page-handler="Save" enctype="multipart/form-data">
             <input type="hidden" name="id" value="@e.Id" />
             <label class="form-label" for="t-@e.Id">Titre</label>
             <input id="t-@e.Id" name="title" class="form-control mb-2" value="@e.Title" maxlength="150" required />
-            <label class="form-label" for="d-@e.Id">Date</label>
-            <input id="d-@e.Id" name="eventDate" type="date" class="form-control mb-2" value="@e.EventDate.ToString("yyyy-MM-dd")" required />
+            @{ DayPicker("e" + e.Id, e.DaysMask); }
             <label class="form-label" for="h-@e.Id">Horaires</label>
             <input id="h-@e.Id" name="hours" class="form-control mb-2" value="@e.Hours" maxlength="80" />
             <label class="form-label" for="p-@e.Id">Lieu</label>
             <input id="p-@e.Id" name="place" class="form-control mb-2" value="@e.Place" maxlength="200" />
+            <label class="form-label" for="m-@e.Id">Lien Google Maps du lieu</label>
+            <input id="m-@e.Id" name="mapUrl" type="url" class="form-control mb-2" value="@e.MapUrl" maxlength="500" />
+            @if (!string.IsNullOrEmpty(e.PhotoBaseName))
+            {
+                <img class="gb-admin-thumb" src="@GuysBee.Services.MediaUrls.Src(e.PhotoBaseName, 480)" alt="Photo de @e.Title" loading="lazy" width="120" />
+                <div class="form-check mb-2">
+                    <input id="rp-@e.Id" name="removePhoto" type="checkbox" value="true" class="form-check-input" />
+                    <label class="form-check-label" for="rp-@e.Id">Supprimer la photo</label>
+                </div>
+            }
+            <label class="form-label" for="ph-@e.Id">Photo (JPG, PNG ou WebP)</label>
+            <input id="ph-@e.Id" name="photo" type="file" accept="image/jpeg,image/png,image/webp" class="form-control mb-2" />
             <label class="form-label" for="x-@e.Id">Précisions</label>
             <textarea id="x-@e.Id" name="details" class="form-control mb-2" rows="2">@e.Details</textarea>
             <div class="form-check mb-2">
@@ -58,3 +95,15 @@
     </div>
 }
 </div>
+<script>
+    document.querySelectorAll('[data-days-picker]').forEach(function (picker) {
+        picker.querySelectorAll('.gb-days-preset').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var wanted = btn.dataset.days ? btn.dataset.days.split(',') : [];
+                picker.querySelectorAll('.gb-day-input').forEach(function (cb) {
+                    cb.checked = wanted.indexOf(cb.value) !== -1;
+                });
+            });
+        });
+    });
+</script>

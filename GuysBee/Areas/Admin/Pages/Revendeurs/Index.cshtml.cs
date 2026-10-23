@@ -9,14 +9,16 @@ namespace GuysBee.Areas.Admin.Pages.Revendeurs;
 public class IndexModel : PageModel
 {
     private readonly AppDbContext _db;
-    public IndexModel(AppDbContext db) => _db = db;
+    private readonly GuysBee.Services.MediaService _media;
+    public IndexModel(AppDbContext db, GuysBee.Services.MediaService media) { _db = db; _media = media; }
 
     public List<SalePoint> Points { get; private set; } = new();
 
     public async Task OnGetAsync() =>
         Points = await _db.SalePoints.AsNoTracking().OrderBy(s => s.Name).ToListAsync();
 
-    public async Task<IActionResult> OnPostSaveAsync(int id, string name, string? address, string? postalCode, string? city, string? schedule, string? phone, bool isActive)
+    public async Task<IActionResult> OnPostSaveAsync(int id, string name, string? address, string? postalCode, string? city, string? schedule, string? phone,
+        string? mapUrl, string? details, bool isActive, IFormFile? photo, bool removePhoto)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -40,6 +42,14 @@ public class IndexModel : PageModel
         s.City = city?.Trim() ?? "";
         s.Schedule = schedule?.Trim();
         s.Phone = phone?.Trim();
+        s.Details = details?.Trim();
+        s.MapUrl = GuysBee.Services.MapLinks.Clean(mapUrl);
+        if (removePhoto) s.PhotoBaseName = null;
+        if (photo is { Length: > 0 })
+        {
+            try { s.PhotoBaseName = await _media.SavePhotoAsync(photo) ?? s.PhotoBaseName; }
+            catch (Exception ex) { TempData["Error"] = ex.Message; return RedirectToPage(); }
+        }
         s.IsActive = isActive;
         await _db.SaveChangesAsync();
         TempData["Message"] = "Lieu de revente enregistré.";

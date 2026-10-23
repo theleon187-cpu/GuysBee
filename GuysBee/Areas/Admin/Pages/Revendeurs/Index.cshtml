@@ -10,7 +10,7 @@
 
 <div class="gb-admin-card">
     <h2>Ajouter un lieu de revente</h2>
-    <form method="post" asp-page-handler="Save">
+    <form method="post" asp-page-handler="Save" enctype="multipart/form-data">
         <input type="hidden" name="id" value="0" />
         <input type="hidden" name="isActive" value="true" />
         <label class="form-label" for="new-name">Nom</label>
@@ -25,6 +25,13 @@
         <input id="new-schedule" name="schedule" class="form-control mb-2" maxlength="200" />
         <label class="form-label" for="new-phone">Téléphone</label>
         <input id="new-phone" name="phone" class="form-control mb-2" maxlength="30" />
+        <label class="form-label" for="new-map">Lien Google Maps</label>
+        <input id="new-map" name="mapUrl" type="url" class="form-control mb-2" maxlength="500" placeholder="https://maps.app.goo.gl/..." />
+        <p class="gb-admin-help">Ouvrez <a href="https://www.google.com/maps" target="_blank" rel="noopener">Google Maps</a>, cherchez le lieu, cliquez sur « Partager » puis « Copier le lien » et collez-le ici.</p>
+        <label class="form-label" for="new-photo">Photo (JPG, PNG ou WebP)</label>
+        <input id="new-photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" class="form-control mb-2" />
+        <label class="form-label" for="new-details">Précisions</label>
+        <textarea id="new-details" name="details" class="form-control mb-2" rows="2"></textarea>
         <button type="submit" class="btn btn-warning btn-sm">Ajouter</button>
     </form>
 </div>
@@ -34,7 +41,7 @@
 {
     <div class="gb-admin-card">
         <h2>@s.Name</h2>
-        <form method="post" asp-page-handler="Save">
+        <form method="post" asp-page-handler="Save" enctype="multipart/form-data">
             <input type="hidden" name="id" value="@s.Id" />
             <label class="form-label" for="n-@s.Id">Nom</label>
             <input id="n-@s.Id" name="name" class="form-control mb-2" value="@s.Name" maxlength="150" required />
@@ -48,6 +55,20 @@
             <input id="s-@s.Id" name="schedule" class="form-control mb-2" value="@s.Schedule" maxlength="200" />
             <label class="form-label" for="p-@s.Id">Téléphone</label>
             <input id="p-@s.Id" name="phone" class="form-control mb-2" value="@s.Phone" maxlength="30" />
+            <label class="form-label" for="m-@s.Id">Lien Google Maps</label>
+            <input id="m-@s.Id" name="mapUrl" type="url" class="form-control mb-2" value="@s.MapUrl" maxlength="500" />
+            @if (!string.IsNullOrEmpty(s.PhotoBaseName))
+            {
+                <img class="gb-admin-thumb" src="@GuysBee.Services.MediaUrls.Src(s.PhotoBaseName, 480)" alt="Photo de @s.Name" loading="lazy" width="120" />
+                <div class="form-check mb-2">
+                    <input id="rp-@s.Id" name="removePhoto" type="checkbox" value="true" class="form-check-input" />
+                    <label class="form-check-label" for="rp-@s.Id">Supprimer la photo</label>
+                </div>
+            }
+            <label class="form-label" for="ph-@s.Id">Photo (JPG, PNG ou WebP)</label>
+            <input id="ph-@s.Id" name="photo" type="file" accept="image/jpeg,image/png,image/webp" class="form-control mb-2" />
+            <label class="form-label" for="x-@s.Id">Précisions</label>
+            <textarea id="x-@s.Id" name="details" class="form-control mb-2" rows="2">@s.Details</textarea>
             <div class="form-check mb-2">
                 <input id="act-@s.Id" name="isActive" type="checkbox" value="true" class="form-check-input" checked="@s.IsActive" />
                 <input type="hidden" name="isActive" value="false" />

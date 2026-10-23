@@ -14,6 +14,11 @@ public static class MediaUrls
 
     public static string Src(MediaAsset m, int width = 800) => $"/media/{m.BaseName}-{width}.webp";
 
+    public static string Src(string baseName, int width = 800) => $"/media/{baseName}-{width}.webp";
+
+    public static string SrcSet(string baseName) =>
+        string.Join(", ", Widths.Select(w => $"{Src(baseName, w)} {w}w"));
+
     public static string SrcSet(MediaAsset m) =>
         string.Join(", ", Widths.Select(w => $"{Src(m, w)} {w}w"));
 
@@ -76,8 +81,23 @@ public class MediaService
         return new ImportResult(imported, dups, errors);
     }
 
-    public async Task<MediaAsset?> AddUploadAsync(IFormFile file, CancellationToken ct = default)
+    public async Task<string?> SavePhotoAsync(IFormFile file, CancellationToken ct = default)
     {
+        if (!Extensions.Contains(Path.GetExtension(file.FileName).ToLowerInvariant()))
+            throw new InvalidOperationException("Format non accepté (WebP, JPG ou PNG).");
+        if (file.Length > 15 * 1024 * 1024)
+            throw new InvalidOperationException("Fichier trop volumineux (15 Mo maximum).");
+
+        using var ms = new MemoryStream();
+        await file.CopyToAsync(ms, ct);
+        var bytes = ms.ToArray();
+        var hash = Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
+        var existing = await _db.MediaAssets.FirstOrDefaultAsync(m => m.ContentHash == hash, ct);
+        if (existing is not null) return existing.BaseName;
+        return (await AddAsync(bytes, Path.GetFileName(file.FileName), ct))?.BaseName;
+    }
+
+    public async Task<MediaAsset?> AddUploadAsync(IFormFile file, CancellationToken ct = default)    {
         if (!Extensions.Contains(Path.GetExtension(file.FileName).ToLowerInvariant()))
             throw new InvalidOperationException("Format non accepté (WebP, JPG ou PNG).");
         if (file.Length > 15 * 1024 * 1024)

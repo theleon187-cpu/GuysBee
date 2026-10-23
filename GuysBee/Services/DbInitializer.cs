@@ -29,6 +29,14 @@ public static class DbInitializer
             await db.Database.ExecuteSqlRawAsync("CREATE TABLE IF NOT EXISTS CustomerProfiles (Id INTEGER NOT NULL CONSTRAINT PK_CustomerProfiles PRIMARY KEY AUTOINCREMENT, UserId TEXT NOT NULL, FirstName TEXT NOT NULL, LastName TEXT NOT NULL, Phone TEXT NULL, AddressLine TEXT NULL, PostalCode TEXT NULL, City TEXT NULL, Country TEXT NOT NULL, BillingSameAsDelivery INTEGER NOT NULL, BillingName TEXT NULL, BillingAddressLine TEXT NULL, BillingPostalCode TEXT NULL, BillingCity TEXT NULL, UpdatedUtc TEXT NOT NULL)");
             await db.Database.ExecuteSqlRawAsync("CREATE UNIQUE INDEX IF NOT EXISTS IX_CustomerProfiles_UserId ON CustomerProfiles (UserId)");
             await db.Database.ExecuteSqlRawAsync("CREATE TABLE IF NOT EXISTS MarketEvents (Id INTEGER NOT NULL CONSTRAINT PK_MarketEvents PRIMARY KEY AUTOINCREMENT, Title TEXT NOT NULL, EventDate TEXT NOT NULL, Hours TEXT NULL, Place TEXT NULL, Details TEXT NULL, IsVisible INTEGER NOT NULL)");
+            await AddColumnIfMissingAsync(db, "MarketEvents", "WeekDay", "INTEGER NOT NULL DEFAULT 6");
+            await AddColumnIfMissingAsync(db, "MarketEvents", "MapUrl", "TEXT NULL");
+            await AddColumnIfMissingAsync(db, "MarketEvents", "DaysMask", "INTEGER NOT NULL DEFAULT 0");
+            await db.Database.ExecuteSqlRawAsync("UPDATE MarketEvents SET DaysMask = (1 << ((WeekDay + 6) % 7)) WHERE DaysMask = 0");
+            await AddColumnIfMissingAsync(db, "SalePoints", "MapUrl", "TEXT NULL");
+            await AddColumnIfMissingAsync(db, "MarketEvents", "PhotoBaseName", "TEXT NULL");
+            await AddColumnIfMissingAsync(db, "SalePoints", "PhotoBaseName", "TEXT NULL");
+            await AddColumnIfMissingAsync(db, "SalePoints", "Details", "TEXT NULL");
         }
 
         await DbSeeder.SeedAsync(db);

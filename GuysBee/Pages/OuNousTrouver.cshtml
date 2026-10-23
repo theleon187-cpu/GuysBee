@@ -26,11 +26,24 @@
                         @foreach (var e in Model.Events)
                         {
                             <li class="gb-agenda-item">
-                                <time class="gb-agenda-date" datetime="@e.EventDate.ToString("yyyy-MM-dd")">@e.EventDate.ToString("ddd d MMM", fr)</time>
+                                <span class="gb-agenda-date">@GuysBee.Services.WeekDays.Format(e.DaysMask)</span>
                                 <div class="gb-agenda-body">
+                                    @if (!string.IsNullOrEmpty(e.PhotoBaseName)) { <img class="gb-agenda-photo" src="@GuysBee.Services.MediaUrls.Src(e.PhotoBaseName, 480)" srcset="@GuysBee.Services.MediaUrls.SrcSet(e.PhotoBaseName)" sizes="(min-width: 900px) 20vw, 50vw" alt="@e.Title" loading="lazy" /> }
                                     <strong>@e.Title</strong>
                                     @if (!string.IsNullOrWhiteSpace(e.Hours)) { <span class="gb-agenda-hours">@e.Hours</span> }
                                     @if (!string.IsNullOrWhiteSpace(e.Place)) { <span class="gb-agenda-place">@e.Place</span> }
+                                    @if (!string.IsNullOrWhiteSpace(e.MapUrl))
+                                    {
+                                        <a class="gb-agenda-map" href="@e.MapUrl" target="_blank" rel="noopener">Itinéraire sur Google Maps</a>
+                                        var embed = GuysBee.Services.MapLinks.EmbedUrl(e.MapUrl, e.Place);
+                                        if (embed is not null)
+                                        {
+                                            <details class="gb-map" open>
+                                                <summary>Voir sur la carte</summary>
+                                                <iframe class="gb-map-frame" src="@embed" title="Carte : @e.Title" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                                            </details>
+                                        }
+                                    }
                                     @if (!string.IsNullOrWhiteSpace(e.Details)) { <span class="gb-agenda-details">@e.Details</span> }
                                 </div>
                             </li>
@@ -47,10 +60,24 @@
                 @foreach (var sp in Model.SalePoints)
                 {
                     <article class="gb-card">
+                        @if (!string.IsNullOrEmpty(sp.PhotoBaseName)) { <img class="gb-find-photo" src="@GuysBee.Services.MediaUrls.Src(sp.PhotoBaseName, 480)" srcset="@GuysBee.Services.MediaUrls.SrcSet(sp.PhotoBaseName)" sizes="(min-width: 900px) 33vw, 100vw" alt="@sp.Name" loading="lazy" /> }
                         <h3 class="gb-card-title">@sp.Name</h3>
                         <p>@sp.Address<br />@sp.PostalCode @sp.City</p>
                         @if (!string.IsNullOrWhiteSpace(sp.Schedule)) { <p>@sp.Schedule</p> }
+                        @if (!string.IsNullOrWhiteSpace(sp.Details)) { <p class="gb-agenda-details">@sp.Details</p> }
                         @if (!string.IsNullOrWhiteSpace(sp.Phone)) { <p><a href="tel:@sp.Phone.Replace(" ", "")">@sp.Phone</a></p> }
+                        @if (!string.IsNullOrWhiteSpace(sp.MapUrl))
+                        {
+                            <p><a href="@sp.MapUrl" target="_blank" rel="noopener">Itinéraire sur Google Maps</a></p>
+                            var embed = GuysBee.Services.MapLinks.EmbedUrl(sp.MapUrl, $"{sp.Name}, {sp.Address}, {sp.PostalCode} {sp.City}");
+                            if (embed is not null)
+                            {
+                                <details class="gb-map" open>
+                                    <summary>Voir sur la carte</summary>
+                                    <iframe class="gb-map-frame" src="@embed" title="Carte : @sp.Name" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                                </details>
+                            }
+                        }
                     </article>
                 }
             </div>
