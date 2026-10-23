@@ -77,7 +77,19 @@ Au premier lancement, le site :
 
 TinyMCE n'est pas restauré automatiquement au build : lancez `libman restore` après un clone (dans Visual Studio : clic droit sur `libman.json` > Restaurer les bibliothèques côté client).
 
-Avec Visual Studio : ouvrez `GuysBee.slnx` puis lancez le projet `GuysBee` (F5).
+### Mettre à jour le projet (pull) et envoyer ses changements (push)
+
+```powershell
+# Récupérer les dernières modifications
+git pull origin main
+
+# Envoyer ses modifications
+git add .
+git commit -m "Description des changements"
+git push origin main
+```
+
+Avec Visual Studio : ouvrez `GuysBee.slnx` puis lancez
 
 Avec VS Code : voir la section [Lancer avec VS Code](#lancer-avec-vs-code).
 
