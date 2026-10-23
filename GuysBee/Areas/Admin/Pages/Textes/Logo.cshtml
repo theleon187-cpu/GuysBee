@@ -1,0 +1,29 @@
+@page
+@model GuysBee.Areas.Admin.Pages.Textes.LogoModel
+@{
+    ViewData["Title"] = "Texte à côté du logo";
+}
+<h1 class="h3 mb-3">Texte à côté du logo</h1>
+<form method="post" class="gb-admin-card">
+    <div class="mb-3">
+        <label class="form-label" for="BrandHtml">Texte</label>
+        <textarea id="BrandHtml" name="BrandHtml" class="form-control gb-richtext" rows="4">@Model.BrandHtml</textarea>
+        <div class="gb-admin-help">Nom affiché en haut du site, à côté du logo. Laissez vide pour afficher « GUY's Bee ».</div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="BrandFont">Police</label>
+        <select id="BrandFont" name="BrandFont" class="form-select">
+            @foreach (var f in Model.Fonts)
+            {
+                <option value="@f.Id" selected="@(f.Id == (Model.BrandFont ?? ""))">@f.Label</option>
+            }
+        </select>
+        <div class="gb-admin-help">Pour utiliser votre propre police, importez-la d'abord dans « Textes du site ».</div>
+    </div>
+    <button type="submit" class="btn btn-warning">Enregistrer</button>
+    <a class="btn btn-outline-dark" asp-page="Index">Annuler</a>
+</form>
+
+@section Scripts {
+    <partial name="_RichTextEditor" />
+}

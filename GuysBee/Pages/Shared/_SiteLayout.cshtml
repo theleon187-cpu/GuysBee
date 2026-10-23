@@ -1,6 +1,7 @@
 @using Microsoft.EntityFrameworkCore
 @inject GuysBee.Data.AppDbContext Db
 @inject GuysBee.Services.Shop.CartService Cart
+@inject GuysBee.Services.FontLibrary Fonts
 @{
     var s = await Db.SiteSettings.AsNoTracking().ToDictionaryAsync(x => x.Key, x => x.Value);
     string Setting(string key) => s.TryGetValue(key, out var v) ? v : "";
@@ -8,6 +9,11 @@
     var description = ViewData["Description"] as string
         ?? "GUY's Bee, apiculteur à Saint-Julien-sur-Bibost : miels de printemps, d'acacia, de montagne et de fleurs sauvages.";
     var banner = Setting("site.banner");
+    var brandHtml = System.Text.RegularExpressions.Regex.Replace(Setting("site.brandHtml"), @"</?p(\s[^>]*)?>", "").Trim();
+    if (string.IsNullOrWhiteSpace(System.Text.RegularExpressions.Regex.Replace(brandHtml, "<[^>]*>|&nbsp;", "")))
+    {
+        brandHtml = System.Net.WebUtility.HtmlEncode(string.IsNullOrWhiteSpace(Setting("site.brandName")) ? "GUY's Bee" : Setting("site.brandName"));
+    }
     var shopOn = GuysBee.Services.Shop.ShopKeys.IsOn(s, GuysBee.Services.Shop.ShopKeys.Enabled);
     var accountsOn = shopOn && GuysBee.Services.Shop.ShopKeys.IsOn(s, GuysBee.Services.Shop.ShopKeys.AccountsEnabled);
 }
@@ -25,6 +31,23 @@
     <link rel="stylesheet" href="~/css/guysbee.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/guysbee-modern.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/shop.css" asp-append-version="true" />
+    @{
+        var fontTitle = Fonts.StackFor(Setting(GuysBee.Services.FontChoices.TitleKey));
+        var fontText = Fonts.StackFor(Setting(GuysBee.Services.FontChoices.TextKey));
+        var fontBrand = Fonts.StackFor(Setting(GuysBee.Services.FontChoices.BrandKey));
+        var fontFaces = Fonts.FontFaceCss();
+    }
+    @if (fontTitle is not null || fontText is not null || fontBrand is not null)
+    {
+        <style>
+            @Html.Raw(fontFaces)
+            @if (fontBrand is not null) { @Html.Raw($"body.theme-modern .gb-brand-name {{ font-family: {fontBrand}; }}") }
+            body.theme-modern.gb-body {
+                @if (fontTitle is not null) { @Html.Raw($"--gb-font-title: {fontTitle};") }
+                @if (fontText is not null) { @Html.Raw($"--gb-font-text: {fontText};") }
+            }
+        </style>
+    }
 </head>
 <body class="gb-body theme-modern">
     <a class="gb-skip" href="#contenu">Aller au contenu</a>
@@ -36,7 +59,7 @@
         <div class="gb-container gb-header-inner">
             <a class="gb-brand" href="/" aria-label="GUY's Bee, retour à l'accueil">
                 <img class="gb-logo" src="~/img/logo.jpg" alt="" width="48" height="48" />
-                <span class="gb-brand-name">GUY's Bee</span>
+                <span class="gb-brand-name">@Html.Raw(brandHtml)</span>
             </a>
             <button class="gb-nav-toggle" type="button" aria-expanded="false" aria-controls="gb-nav">Menu</button>
             <nav id="gb-nav" class="gb-nav" aria-label="Navigation principale">

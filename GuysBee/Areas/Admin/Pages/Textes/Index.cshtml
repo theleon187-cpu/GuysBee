@@ -4,7 +4,62 @@
     ViewData["Title"] = "Textes du site";
 }
 <h1 class="h3 mb-3">Textes du site</h1>
-<p class="gb-admin-help">Modifiez le contenu des pages (histoire, conditions de vente, mentions légales...). Les pages légales sont des modèles à relire attentivement.</p>
+<div class="gb-admin-card d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <strong>Texte à côté du logo</strong>
+        <div class="gb-admin-help">Modifiez le nom affiché en haut du site, avec sa mise en forme et sa police.</div>
+    </div>
+    <a class="btn btn-warning btn-sm" asp-page="Logo">Modifier</a>
+</div>
+<form method="post" asp-page-handler="Fonts" class="gb-admin-card mb-3">
+    <h2 class="h5">Police d'écriture</h2>
+    <p class="gb-admin-help">Choisissez les polices utilisées sur tout le site. Elles s'appliquent partout où une police n'a pas été définie ailleurs.</p>
+    <div class="mb-3">
+        <label class="form-label" for="BrandFont">Police du nom à côté du logo</label>
+        <select id="BrandFont" name="BrandFont" class="form-select">
+            @foreach (var f in Model.Fonts)
+            {
+                <option value="@f.Id" selected="@(f.Id == (Model.BrandFont ?? ""))">@f.Label</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="TitleFont">Police des titres</label>
+        <select id="TitleFont" name="TitleFont" class="form-select">
+            @foreach (var f in Model.Fonts)
+            {
+                <option value="@f.Id" selected="@(f.Id == (Model.TitleFont ?? ""))">@f.Label</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="TextFont">Police du texte</label>
+        <select id="TextFont" name="TextFont" class="form-select">
+            @foreach (var f in Model.Fonts)
+            {
+                <option value="@f.Id" selected="@(f.Id == (Model.TextFont ?? ""))">@f.Label</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-warning">Enregistrer les polices</button>
+</form>
+<form method="post" asp-page-handler="UploadFont" enctype="multipart/form-data" class="gb-admin-card mb-3">
+    <h2 class="h5">Importer une police</h2>
+    <p class="gb-admin-help">Ajoutez votre propre police (fichier WOFF2, WOFF, TTF ou OTF, 2 Mo maximum). Elle apparaîtra ensuite dans les listes ci-dessus. Vérifiez que vous avez le droit de l'utiliser sur un site web.</p>
+    <div class="mb-3">
+        <label class="form-label" for="FontFile">Fichier de police</label>
+        <input id="FontFile" type="file" name="FontFile" class="form-control" accept=".woff2,.woff,.ttf,.otf" />
+    </div>
+    <button type="submit" class="btn btn-warning">Importer</button>
+    @foreach (var f in Model.CustomFonts)
+    {
+        <div class="d-flex justify-content-between align-items-center mt-2">
+            <span>@f.Label</span>
+            <button type="submit" class="btn btn-outline-danger btn-sm" asp-page-handler="DeleteFont" asp-route-id="@f.Id" formnovalidate>Supprimer</button>
+        </div>
+    }
+</form>
+<p class="gb-admin-help">Modifiez le contenu des pages
 @foreach (var p in Model.Items)
 {
     <div class="gb-admin-card d-flex justify-content-between align-items-center">
