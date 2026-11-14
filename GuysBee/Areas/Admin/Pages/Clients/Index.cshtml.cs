@@ -53,21 +53,6 @@ public class IndexModel : PageModel
             .ToList();
     }
 
-    public async Task<IActionResult> OnPostToggleAsync()
-    {
-        var key = ShopKeys.AccountsEnabled;
-        var setting = await _db.SiteSettings.FirstOrDefaultAsync(x => x.Key == key);
-        var enabled = setting is not null && ShopKeys.IsOn(new Dictionary<string, string> { [key] = setting.Value }, key);
-        var value = enabled ? "0" : "1";
-        if (setting is null) _db.SiteSettings.Add(new SiteSetting { Key = key, Value = value });
-        else setting.Value = value;
-        await _db.SaveChangesAsync();
-        TempData["Message"] = enabled
-            ? "Les inscriptions sont fermées : les clients commandent sans compte."
-            : "Les inscriptions sont ouvertes. Pensez à activer aussi la commande en ligne dans « Boutique en ligne ».";
-        return RedirectToPage();
-    }
-
     public async Task<IActionResult> OnPostBlockAsync(string id, bool block)
     {
         var user = await _users.FindByIdAsync(id);

@@ -1,0 +1,37 @@
+@page
+@model GuysBee.Areas.Admin.Pages.Clients.InscriptionsModel
+@{
+    ViewData["Title"] = "Inscriptions";
+}
+<h1 class="h3 mb-1">Inscriptions</h1>
+<p class="gb-admin-help">Choisissez si vos clients peuvent créer un compte sur le site.</p>
+
+<div class="gb-admin-card">
+    <p class="mb-2">
+        <strong>État :</strong>
+        @if (Model.AccountsEnabled)
+        {
+            <span class="badge text-bg-success">Inscriptions ouvertes</span>
+        }
+        else
+        {
+            <span class="badge text-bg-secondary">Inscriptions fermées</span>
+        }
+    </p>
+    <p class="gb-admin-help">
+        @(Model.AccountsEnabled
+            ? "Les clients peuvent créer un compte et doivent se connecter pour commander."
+            : "Les clients commandent sans compte, en saisissant leurs coordonnées.")
+    </p>
+    @if (!Model.ShopEnabled)
+    {
+        <p class="gb-admin-help">La commande en ligne est désactivée : les comptes restent invisibles tant qu'elle n'est pas activée dans <a asp-area="Admin" asp-page="/Boutique/Index">Boutique en ligne</a>.</p>
+    }
+    <form method="post" asp-page-handler="Toggle">
+        <button type="submit" class="btn @(Model.AccountsEnabled ? "btn-outline-dark" : "btn-warning")">
+            @(Model.AccountsEnabled ? "Fermer les inscriptions" : "Ouvrir les inscriptions")
+        </button>
+    </form>
+</div>
+
+<p><a asp-area="Admin" asp-page="/Clients/Index">Voir les @Model.ClientCount compte(s) client(s) →</a></p>

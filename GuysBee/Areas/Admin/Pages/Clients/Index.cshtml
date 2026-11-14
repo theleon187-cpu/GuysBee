@@ -25,11 +25,7 @@
                 <div class="gb-admin-help mb-0">La commande en ligne est désactivée : les comptes restent invisibles tant qu'elle n'est pas activée dans <a asp-area="Admin" asp-page="/Boutique/Index">Boutique en ligne</a>.</div>
             }
         </div>
-        <form method="post" asp-page-handler="Toggle">
-            <button type="submit" class="btn @(Model.AccountsEnabled ? "btn-outline-dark" : "btn-warning")">
-                @(Model.AccountsEnabled ? "Fermer les inscriptions" : "Ouvrir les inscriptions")
-            </button>
-        </form>
+        <a class="btn btn-outline-dark" asp-area="Admin" asp-page="/Clients/Inscriptions">Gérer les inscriptions</a>
     </div>
 </div>
 

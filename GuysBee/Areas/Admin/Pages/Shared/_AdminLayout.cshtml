@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="~/css/admin-focus.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin-motion.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin-cropper.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/gb-dialog.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="gb-admin @(showShell ? "gb-admin-shell" : "gb-admin-bare")" data-gb-admin-motion>
@@ -49,8 +50,10 @@
                 <a class="gb-sidebar-link @Active("/Admin/Miels")" href="/Admin/Miels">Gammes et produits</a>
                 <a class="gb-sidebar-link @Active("/Admin/Commandes")" href="/Admin/Commandes">Commandes</a>
                 <a class="gb-sidebar-link @Active("/Admin/Boutique")" href="/Admin/Boutique">Boutique en ligne</a>
-                <a class="gb-sidebar-link @Active("/Admin/Clients")" href="/Admin/Clients">Comptes clients</a>
                 <a class="gb-sidebar-link @Active("/Admin/Integrations")" href="/Admin/Integrations">Paiement et livraison</a>
+                <p class="gb-sidebar-label">Clients</p>
+                <a class="gb-sidebar-link @(path.StartsWith("/Admin/Clients/Inscriptions", StringComparison.OrdinalIgnoreCase) ? "" : Active("/Admin/Clients"))" href="/Admin/Clients">Comptes clients</a>
+                <a class="gb-sidebar-link @Active("/Admin/Clients/Inscriptions")" href="/Admin/Clients/Inscriptions">Inscriptions</a>
                 <p class="gb-sidebar-label">Site</p>
                 <a class="gb-sidebar-link @Active("/Admin/Annonce")" href="/Admin/Annonce">Annonce</a>
                 <a class="gb-sidebar-link @Active("/Admin/Reglages")" href="/Admin/Reglages">R&eacute;glages</a>

@@ -13,7 +13,7 @@ public class IndexModel : PageModel
     public IndexModel(AppDbContext db) => _db = db;
 
     [BindProperty] public bool ShopEnabled { get; set; }
-    [BindProperty] public bool AccountsEnabled { get; set; }
+[BindProperty] public bool AccountsEnabled { get; set; }
     [BindProperty] public bool HistoryEnabled { get; set; }
     [BindProperty] public List<MethodInput> Methods { get; set; } = new();
     [BindProperty] public Dictionary<int, decimal?> ZonePrices { get; set; } = new();
