@@ -1,0 +1,37 @@
+.gb-hist-tabs { display: flex; gap: .5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.gb-hist-tab { padding: .5rem 1.1rem; border-radius: 999px; background: #fff; border: 1px solid rgba(43, 33, 24, .12); color: var(--gb-brown); font-weight: 600; text-decoration: none; }
+.gb-hist-tab:hover { background: #FFF4CC; color: var(--gb-brown); }
+.gb-hist-tab.gb-active { background: var(--gb-amber); border-color: var(--gb-amber); }
+
+.gb-hist-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: .75rem; margin-bottom: 1.5rem; }
+.gb-hist-stat { background: #fff; border: 1px solid rgba(43, 33, 24, .07); border-left: 6px solid var(--gb-amber); border-radius: 14px; padding: .8rem 1rem; box-shadow: 0 4px 14px rgba(43, 33, 24, .06); }
+.gb-hist-stat strong { display: block; font-size: 1.6rem; line-height: 1.1; }
+.gb-hist-stat span { color: #6B6253; font-size: .9rem; }
+
+.gb-timeline { list-style: none; margin: 0; padding: 0 0 0 1.5rem; position: relative; }
+.gb-timeline::before { content: ""; position: absolute; left: .45rem; top: .4rem; bottom: .4rem; width: 3px; background: rgba(245, 183, 0, .45); border-radius: 3px; }
+.gb-timeline-item { position: relative; margin-bottom: 1.25rem; }
+.gb-timeline-item::before { content: ""; position: absolute; left: -1.5rem; top: 1.25rem; width: 1rem; height: 1rem; border-radius: 50%; background: var(--gb-amber); border: 3px solid var(--gb-bg); box-shadow: 0 0 0 2px var(--gb-amber); }
+.gb-timeline-card { background: #fff; border: 1px solid rgba(43, 33, 24, .07); border-radius: 16px; padding: 1rem 1.25rem; box-shadow: 0 4px 14px rgba(43, 33, 24, .06); }
+.gb-timeline-date { display: inline-block; font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #7A5B00; background: #FFF4CC; border-radius: 999px; padding: .15rem .7rem; }
+.gb-timeline-title { font-size: 1.15rem; margin: .5rem 0 .25rem; }
+.gb-timeline-summary { color: #6B6253; margin-bottom: .75rem; }
+.gb-timeline-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; }
+.gb-timeline-list li { display: flex; gap: .6rem; align-items: baseline; }
+
+.gb-tag { flex: 0 0 auto; min-width: 6.5rem; text-align: center; font-size: .72rem; font-weight: 700; border-radius: 6px; padding: .1rem .5rem; background: #EEE8D8; color: #4A3F2E; }
+.gb-tag-public { background: #FFF4CC; color: #7A5B00; }
+.gb-tag-admin { background: #E3EEF9; color: #1F4E79; }
+.gb-tag-boutique { background: #E2F3E4; color: #25622E; }
+.gb-tag-technique { background: #EEE8D8; color: #4A3F2E; }
+
+.gb-hist-filter { display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; margin-bottom: 1rem; }
+.gb-hist-filter > div { min-width: 12rem; }
+.gb-hist-table td, .gb-hist-table th { vertical-align: top; }
+.gb-hist-details { color: #6B6253; font-size: .88rem; word-break: break-word; }
+.gb-hist-action { font-weight: 700; font-size: .8rem; border-radius: 6px; padding: .1rem .55rem; display: inline-block; }
+.gb-hist-action-creation { background: #E2F3E4; color: #25622E; }
+.gb-hist-action-modification { background: #FFF4CC; color: #7A5B00; }
+.gb-hist-action-suppression { background: #FBE4E1; color: #8A2A1F; }
+.gb-hist-empty { text-align: center; color: #6B6253; padding: 2rem 1rem; }
+.gb-hist-pager { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .5rem; }

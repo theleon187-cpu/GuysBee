@@ -1,5 +1,6 @@
 using GuysBee.Data;
 using GuysBee.Data.Entities;
+using GuysBee.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +13,15 @@ public class IndexModel : PageModel
     private readonly AppDbContext _db;
     public IndexModel(AppDbContext db) => _db = db;
 
+    [BindProperty(SupportsGet = true)] public string Tab { get; set; } = "evolutions";
     [BindProperty(SupportsGet = true)] public string? Action { get; set; }
     [BindProperty(SupportsGet = true)] public string? Entity { get; set; }
+    [BindProperty(SupportsGet = true)] public string? Category { get; set; }
     [BindProperty(SupportsGet = true)] public int PageNumber { get; set; } = 1;
+
+    public bool ShowJournal => Tab == "journal";
+    public IReadOnlyList<ChangeRelease> Releases { get; private set; } = Array.Empty<ChangeRelease>();
+    public int ItemCount => Releases.Sum(r => r.Items.Count);
 
     public List<AuditEntry> Entries { get; private set; } = new();
     public List<string> Entities { get; private set; } = new();
@@ -27,18 +34,34 @@ public class IndexModel : PageModel
 
     public static readonly string[] Actions = { "Création", "Modification", "Suppression" };
 
-    public static readonly (string Title, string Text)[] WeekSummary =
+    public static string TagClass(string category) => category switch
     {
-        ("Contenu du site", "Textes, page d'accueil, prestations et photos modifiables depuis l'administration, avec mise à jour des images et des textes du site."),
-        ("Navigation", "Menu du site à plusieurs niveaux (titres principaux et sous-liens) réorganisable depuis l'administration."),
-        ("Agenda et points de vente", "Agenda des marchés (jours multiples, carte, coordonnées) et lieux de revente avec localisation sur carte."),
-        ("Boutique", "Gammes et produits, commandes, paiement et livraison configurables (points relais, numéro de suivi), espace client avec profil et adresses de facturation."),
-        ("Annonce", "Bandeau d'annonce du site : message, bouton, dates de début et de fin, fermeture mémorisée chez le visiteur."),
-        ("Historique", "Nouvelle rubrique : chaque création, modification ou suppression faite en administration est désormais conservée avec la date et l'auteur.")
+        ChangeLog.Public => "gb-tag-public",
+        ChangeLog.Admin => "gb-tag-admin",
+        ChangeLog.Shop => "gb-tag-boutique",
+        _ => "gb-tag-technique"
+    };
+
+    public static string ActionClass(string action) => action switch
+    {
+        "Création" => "gb-hist-action-creation",
+        "Suppression" => "gb-hist-action-suppression",
+        _ => "gb-hist-action-modification"
     };
 
     public async Task OnGetAsync()
     {
+        Tab = Tab == "journal" ? "journal" : "evolutions";
+
+        Releases = ChangeLog.Releases
+            .Select(r => string.IsNullOrWhiteSpace(Category)
+                ? r
+                : r with { Items = r.Items.Where(i => i.Category == Category).ToList() })
+            .Where(r => r.Items.Count > 0)
+            .ToList();
+
+        if (!ShowJournal) return;
+
         var today = DateTime.UtcNow.Date;
         WeekStartUtc = today.AddDays(-(((int)today.DayOfWeek + 6) % 7));
 
@@ -70,6 +93,6 @@ public class IndexModel : PageModel
         TempData["Message"] = removed == 0
             ? "Aucune ligne de plus d'un an à supprimer."
             : $"{removed} ancienne(s) ligne(s) supprimée(s).";
-        return RedirectToPage();
+        return RedirectToPage(new { Tab = "journal" });
     }
 }
