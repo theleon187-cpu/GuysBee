@@ -22,9 +22,13 @@
         <div class="gb-quick-filter" role="search">
             <label for="gb-quick-filter-input" class="gb-quick-filter-label">Filtre rapide</label>
             <input id="gb-quick-filter-input" class="gb-quick-filter-input" type="search" placeholder="Ville, nom, jour… (ex. Samedi, Tarare)" autocomplete="off" />
+            <div class="gb-quick-filter-types" role="group" aria-label="Type de point">
+                <label class="gb-quick-filter-type"><input type="checkbox" id="gb-filter-marche" checked /><span class="gb-quick-filter-chip gb-quick-filter-chip-marche">Marchés</span></label>
+                <label class="gb-quick-filter-type"><input type="checkbox" id="gb-filter-commerce" checked /><span class="gb-quick-filter-chip gb-quick-filter-chip-commerce">Commerces</span></label>
+            </div>
             <p class="gb-quick-filter-empty" id="gb-quick-filter-empty" hidden aria-live="polite">Aucun résultat pour cette recherche.</p>
         </div>
-        <section aria-labelledby="gb-agenda-title">
+        <section aria-labelledby="gb-agenda-title" data-gb-group="marche">
             <h2 class="gb-find-subtitle gb-find-list-title" id="gb-agenda-title">Sur les marchés</h2>
             <div class="gb-card gb-agenda">
                 @if (Model.Events.Count == 0)
@@ -38,7 +42,7 @@
                         {
                             <li class="gb-agenda-item">
                                 <span class="gb-agenda-date">@GuysBee.Services.WeekDays.Format(e.DaysMask)</span>
-                                <div class="gb-agenda-body">
+                                <div class="gb-agenda-body@(string.IsNullOrEmpty(e.PhotoBaseName) ? "" : " gb-agenda-body-photo")">
                                     @if (!string.IsNullOrEmpty(e.PhotoBaseName)) { <img class="gb-agenda-photo" src="@GuysBee.Services.MediaUrls.Src(e.PhotoBaseName, 480)" srcset="@GuysBee.Services.MediaUrls.SrcSet(e.PhotoBaseName)" sizes="(min-width: 900px) 20vw, 50vw" alt="@e.Title" loading="lazy" /> }
                                     <strong>@e.Title</strong>
                                     @if (!string.IsNullOrWhiteSpace(e.Hours)) { <span class="gb-agenda-hours">@e.Hours</span> }
@@ -58,6 +62,7 @@
 
         @if (Model.SalePoints.Count > 0)
         {
+            <section data-gb-group="commerce">
             <h2 class="gb-find-subtitle gb-find-list-title">Dans les commerces</h2>
             <div class="gb-card gb-agenda">
                 <ul class="gb-agenda-list">
@@ -65,7 +70,7 @@
                     {
                         <li class="gb-agenda-item">
                             <span class="gb-agenda-date">@sp.City</span>
-                            <div class="gb-agenda-body">
+                            <div class="gb-agenda-body@(string.IsNullOrEmpty(sp.PhotoBaseName) ? "" : " gb-agenda-body-photo")">
                                 @if (!string.IsNullOrEmpty(sp.PhotoBaseName)) { <img class="gb-agenda-photo" src="@GuysBee.Services.MediaUrls.Src(sp.PhotoBaseName, 480)" srcset="@GuysBee.Services.MediaUrls.SrcSet(sp.PhotoBaseName)" sizes="(min-width: 900px) 20vw, 50vw" alt="@sp.Name" loading="lazy" /> }
                                 <strong>@sp.Name</strong>
                                 @if (!string.IsNullOrWhiteSpace(sp.Schedule)) { <span class="gb-agenda-hours">@sp.Schedule</span> }
@@ -81,6 +86,7 @@
                     }
                 </ul>
             </div>
+            </section>
         }
     </div>
 </section>

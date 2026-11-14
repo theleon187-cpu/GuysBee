@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     var bounds = [];
+    var markers = [];
     points.forEach(function (pt) {
         var popup = document.createElement('div');
         popup.className = 'gb-map-popup';
@@ -45,11 +46,30 @@ document.addEventListener('DOMContentLoaded', function () {
             popup.appendChild(a);
         }
 
-        L.circleMarker([pt.lat, pt.lng], {
+        var marker = L.circleMarker([pt.lat, pt.lng], {
             radius: 10,
             className: 'gb-map-marker gb-map-marker-' + pt.kind
         }).bindPopup(popup).bindTooltip(pt.name).addTo(map);
+        markers.push({ pt: pt, marker: marker });
         bounds.push([pt.lat, pt.lng]);
+    });
+
+    var norm = function (s) {
+        return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    };
+    document.addEventListener('gb:filter', function (ev) {
+        var f = ev.detail || {};
+        var q = norm(f.q || '');
+        var shown = [];
+        markers.forEach(function (m) {
+            var typeOn = m.pt.kind === 'marche' ? f.marche !== false : f.commerce !== false;
+            var text = norm([m.pt.name, m.pt.when, m.pt.hours, m.pt.place, m.pt.details].join(' '));
+            var show = typeOn && (!q || text.indexOf(q) !== -1);
+            if (show) { m.marker.addTo(map); shown.push([m.pt.lat, m.pt.lng]); }
+            else { m.marker.remove(); }
+        });
+        if (shown.length === 1) { map.setView(shown[0], 13); }
+        else if (shown.length > 1) { map.fitBounds(shown, { padding: [30, 30] }); }
     });
 
     if (bounds.length === 1) { map.setView(bounds[0], 13); }
