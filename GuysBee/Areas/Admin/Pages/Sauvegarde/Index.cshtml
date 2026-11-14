@@ -16,7 +16,7 @@
         @(Model.LastExport is { } d ? d.ToString("dd/MM/yyyy HH:mm") : "jamais")
     </p>
     <p class="gb-admin-help">Ce fichier peut contenir des identifiants (PayPal, Colissimo) et des donn&eacute;es clients : conservez-le en lieu s&ucirc;r.</p>
-    <form method="post" asp-page-handler="Export">
+    <form method="post" asp-page-handler="Export" data-gb-noajax>
         <button type="submit" class="btn btn-primary">T&eacute;l&eacute;charger la sauvegarde</button>
     </form>
 </section>
@@ -24,7 +24,7 @@
 <section class="gb-admin-card">
     <h2 class="h5">Restaurer une sauvegarde</h2>
     <p><strong>Attention :</strong> la restauration remplace tout le contenu actuel du site (textes, produits, commandes, r&eacute;glages). Les comptes administrateur et clients sont conserv&eacute;s.</p>
-    <form method="post" asp-page-handler="Import" enctype="multipart/form-data">
+    <form method="post" asp-page-handler="Import" enctype="multipart/form-data" data-gb-noajax>
         <div class="mb-3">
             <label class="form-label" for="sv-file">Fichier de sauvegarde (.zip)</label>
             <input id="sv-file" type="file" name="archive" accept=".zip" class="form-control" required />
