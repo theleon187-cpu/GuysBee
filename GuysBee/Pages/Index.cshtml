@@ -15,22 +15,39 @@
     switch (block.Kind)
     {
         case "Hero":
-            <section class="gb-hero" aria-label="Photos de l'exploitation">
+            <section class="gb-hero gb-hero-premium" aria-label="Photos de l'exploitation" data-gb-hero>
                 @for (var i = 0; i < Model.HeroMedias.Count; i++)
                 {
                     var hero = Model.HeroMedias[i];
                     <img class="gb-hero-media@(i == 0 ? " gb-hero-active" : "")" src="@MediaUrls.Src(hero, 1200)" srcset="@MediaUrls.SrcSet(hero)" sizes="100vw" alt="" loading="@(i == 0 ? "eager" : "lazy")" />
                 }
-                </section>
-                <section class="gb-hero-intro" aria-labelledby="hero-title">
-                    <div class="gb-container gb-hero-inner">
-                        <h1 id="hero-title" class="gb-hero-title">@block.Title</h1>
+                @if (Model.HeroMedias.Count > 1)
+                {
+                    <div class="gb-hero-nav" aria-label="Navigation du carrousel">
+                        <button type="button" class="gb-hero-nav-btn gb-hero-nav-prev" data-gb-hero-prev aria-label="Photo précédente">
+                            <span aria-hidden="true">‹</span>
+                        </button>
+                        <button type="button" class="gb-hero-nav-btn gb-hero-nav-next" data-gb-hero-next aria-label="Photo suivante">
+                            <span aria-hidden="true">›</span>
+                        </button>
+                    </div>
+                    <div class="gb-hero-dots" role="tablist" aria-label="Choisir une photo du carrousel">
+                        @for (var i = 0; i < Model.HeroMedias.Count; i++)
+                        {
+                            <button type="button" class="gb-hero-dot@(i == 0 ? " gb-hero-dot-active" : "")" role="tab" aria-label="Afficher la photo @(i + 1)" aria-selected="@(i == 0 ? "true" : "false")" data-gb-hero-dot data-gb-index="@i"></button>
+                        }
+                    </div>
+                }
+            </section>
+            <section class="gb-hero-intro" aria-labelledby="hero-title">
+                <div class="gb-container gb-hero-inner">
+                    <h1 id="hero-title" class="gb-hero-title">@block.Title</h1>
                     <p class="gb-hero-text">@block.Subtitle</p>
                     <div class="gb-hero-actions">
-                    @if (!string.IsNullOrEmpty(block.ButtonUrl))
-                    {
-                        <a class="gb-btn" href="@block.ButtonUrl">@block.ButtonLabel</a>
-                    }
+                        @if (!string.IsNullOrEmpty(block.ButtonUrl))
+                        {
+                            <a class="gb-btn" href="@block.ButtonUrl">@block.ButtonLabel</a>
+                        }
                         <a class="gb-btn gb-btn-light" href="/Galerie">Voir la galerie</a>
                     </div>
                 </div>
