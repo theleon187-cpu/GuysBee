@@ -236,3 +236,68 @@
 
 .gb-container .gb-find-subtitle { margin-top: 3rem; margin-bottom: 1.5rem; }
 .gb-find-top { margin-bottom: 1rem; }
+
+/* Où nous trouver : variantes d'affichage (réglables en admin) */
+.gb-find-sections { display: flex; flex-direction: column; }
+.gb-find-sections.gb-find-reverse { flex-direction: column-reverse; }
+.gb-find-cartes .gb-agenda-list { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+@media (min-width: 768px) { .gb-find-cartes .gb-agenda-list { grid-template-columns: 1fr 1fr; } }
+.gb-find-cartes .gb-agenda-item { flex-direction: column; border: 1px solid rgba(43, 33, 24, .12); border-radius: 12px; padding: 1rem; }
+.gb-find-cartes .gb-agenda-item:last-child { border-bottom: 1px solid rgba(43, 33, 24, .12); }
+.gb-find-compact .gb-agenda-item { padding: .35rem 0; gap: .75rem; }
+.gb-find-compact .gb-agenda-body { flex-direction: row; flex-wrap: wrap; gap: .25rem .75rem; align-items: baseline; }
+.gb-find-compact .gb-find-subtitle { margin: 1.5rem 0 .75rem; }
+
+/* Mon compte : bouton de déconnexion aligné sous le formulaire */
+.gb-account-logout { margin-top: 1.5rem; }
+.gb-account-logout .gb-btn { width: 100%; }
+
+/* Où nous trouver : position de la carte */
+.gb-find-layout { display: flex; flex-direction: column; }
+.gb-find-map-dessus .gb-points-map-wrap { order: 0; }
+.gb-find-map-dessus .gb-quick-filter { order: 1; }
+.gb-find-map-dessus .gb-find-sections { order: 2; }
+.gb-find-map-dessous .gb-quick-filter { order: 0; }
+.gb-find-map-dessous .gb-find-sections { order: 1; }
+.gb-find-map-dessous .gb-points-map-wrap { order: 2; margin-top: 2rem; }
+@media (min-width: 900px) {
+  .gb-find-map-cote { display: grid; grid-template-columns: 1fr 1fr; column-gap: 2rem; align-items: start; }
+  .gb-find-map-cote .gb-quick-filter, .gb-find-map-cote .gb-find-sections { grid-column: 1; }
+  .gb-find-map-cote .gb-points-map-wrap { grid-column: 2; grid-row: 1 / span 2; position: sticky; top: 1rem; }
+}
+/* Admin : choix de disposition avec schémas */
+.gb-layout-choices { display: flex; flex-wrap: wrap; gap: 1rem; }
+.gb-layout-choice { cursor: pointer; }
+.gb-layout-choice input { position: absolute; opacity: 0; }
+.gb-layout-card { display: block; width: 11rem; padding: .6rem; border: 2px solid rgba(43, 33, 24, .15); border-radius: 12px; background: #fff; text-align: center; }
+.gb-layout-choice input:checked + .gb-layout-card { border-color: #f5b800; box-shadow: 0 0 0 3px rgba(245, 184, 0, .3); }
+.gb-layout-choice input:focus-visible + .gb-layout-card { outline: 3px solid #1a5fb4; }
+.gb-layout-schema { display: grid; gap: .3rem; height: 6rem; margin-bottom: .4rem; }
+.gb-layout-block { display: flex; align-items: center; justify-content: center; border-radius: 6px; font-size: .75rem; }
+.gb-layout-map { background: #cfe3c8; }
+.gb-layout-list { background: #eee3c4; }
+.gb-layout-schema-dessus { grid-template-rows: 1fr 1fr; }
+.gb-layout-schema-dessous { grid-template-rows: 1fr 1fr; }
+.gb-layout-schema-dessous .gb-layout-map { order: 2; }
+.gb-layout-schema-cote { grid-template-columns: 1fr 1fr; }
+.gb-layout-label { font-weight: 600; font-size: .9rem; }
+
+/* Admin : plan de la page Où nous trouver */
+.gb-plan { display: grid; gap: .4rem; padding: .6rem; border: 2px dashed rgba(43, 33, 24, .25); border-radius: 12px; background: #fff; max-width: 34rem; }
+.gb-plan-block { padding: .6rem; border-radius: 6px; font-size: .85rem; text-align: center; }
+.gb-plan-block[hidden] { display: none; }
+.gb-plan-filter { background: #e3e8f0; }
+.gb-plan-map { background: #cfe3c8; min-height: 4rem; display: flex; align-items: center; justify-content: center; }
+.gb-plan-markets { background: #f7d9a8; }
+.gb-plan-shops { background: #eee3c4; }
+.gb-plan-body { display: grid; gap: .4rem; }
+.gb-plan-lists { display: flex; flex-direction: column; gap: .4rem; }
+.gb-plan-reverse { flex-direction: column-reverse; }
+.gb-plan-map-dessous .gb-plan-map { order: 2; }
+.gb-plan-map-cote .gb-plan-body { grid-template-columns: 1fr 1fr; }
+.gb-plan-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+
+/* Où nous trouver : ordre des sections (explicite) */
+.gb-find-sections.gb-find-shops-first { flex-direction: column; }
+.gb-find-sections.gb-find-shops-first > [data-gb-group='commerce'] { order: 1; }
+.gb-find-sections.gb-find-shops-first > [data-gb-group='marche'] { order: 2; }

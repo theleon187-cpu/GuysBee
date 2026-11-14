@@ -1,0 +1,31 @@
+﻿/* Admin : choix de disposition avec schémas */
+.gb-layout-choices { display: flex; flex-wrap: wrap; gap: 1rem; }
+.gb-layout-choice { cursor: pointer; }
+.gb-layout-choice input { position: absolute; opacity: 0; }
+.gb-layout-card { display: block; width: 11rem; padding: .6rem; border: 2px solid rgba(43, 33, 24, .15); border-radius: 12px; background: #fff; text-align: center; }
+.gb-layout-choice input:checked + .gb-layout-card { border-color: #f5b800; box-shadow: 0 0 0 3px rgba(245, 184, 0, .3); }
+.gb-layout-choice input:focus-visible + .gb-layout-card { outline: 3px solid #1a5fb4; }
+.gb-layout-schema { display: grid; gap: .3rem; height: 6rem; margin-bottom: .4rem; }
+.gb-layout-block { display: flex; align-items: center; justify-content: center; border-radius: 6px; font-size: .75rem; }
+.gb-layout-map { background: #cfe3c8; }
+.gb-layout-list { background: #eee3c4; }
+.gb-layout-schema-dessus { grid-template-rows: 1fr 1fr; }
+.gb-layout-schema-dessous { grid-template-rows: 1fr 1fr; }
+.gb-layout-schema-dessous .gb-layout-map { order: 2; }
+.gb-layout-schema-cote { grid-template-columns: 1fr 1fr; }
+.gb-layout-label { font-weight: 600; font-size: .9rem; }
+
+/* Admin : plan de la page Où nous trouver */
+.gb-plan { display: grid; gap: .4rem; padding: .6rem; border: 2px dashed rgba(43, 33, 24, .25); border-radius: 12px; background: #fff; max-width: 34rem; }
+.gb-plan-block { padding: .6rem; border-radius: 6px; font-size: .85rem; text-align: center; }
+.gb-plan-block[hidden] { display: none; }
+.gb-plan-filter { background: #e3e8f0; }
+.gb-plan-map { background: #cfe3c8; min-height: 4rem; display: flex; align-items: center; justify-content: center; }
+.gb-plan-markets { background: #f7d9a8; }
+.gb-plan-shops { background: #eee3c4; }
+.gb-plan-body { display: grid; gap: .4rem; }
+.gb-plan-lists { display: flex; flex-direction: column; gap: .4rem; }
+.gb-plan-reverse { flex-direction: column-reverse; }
+.gb-plan-map-dessous .gb-plan-map { order: 2; }
+.gb-plan-map-cote .gb-plan-body { grid-template-columns: 1fr 1fr; }
+.gb-plan-actions { display: flex; gap: .5rem; flex-wrap: wrap; }

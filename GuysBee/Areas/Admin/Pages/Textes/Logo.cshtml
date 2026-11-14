@@ -11,7 +11,7 @@
         <div class="mb-2">
             <img src="@(string.IsNullOrEmpty(Model.LogoBaseName) ? "/img/logo.jpg" : GuysBee.Services.MediaUrls.Src(Model.LogoBaseName, 480))" alt="Logo actuel" width="72" height="72" />
         </div>
-        id="LogoFile" name="LogoFile" data-crop-ratio="1" class="form-control"
+        <input type="file" accept="image/jpeg,image/png,image/webp" id="LogoFile" name="LogoFile" data-crop-ratio="1" class="form-control" />
         <div class="gb-admin-help">Image carrée de préférence (JPG, PNG ou WebP). Elle remplace le logo actuel en haut du site.</div>
         @if (!string.IsNullOrEmpty(Model.LogoBaseName))
         {

@@ -1,0 +1,88 @@
+@page
+@model GuysBee.Areas.Admin.Pages.OuNousTrouver.IndexModel
+@{
+    ViewData["Title"] = "Affichage « Où nous trouver »";
+}
+<h1 class="h3 mb-3">Affichage de la page « Où nous trouver »</h1>
+<form method="post" class="gb-admin-card" id="gb-findus-form">
+    <section class="mb-4" aria-labelledby="gb-plan-title">
+        <h2 class="h5" id="gb-plan-title">Plan de la page</h2>
+        <p class="text-muted small">Cet aperçu se met à jour dès que vous changez une option ci-dessous. Utilisez les boutons pour monter ou descendre les sections.</p>
+        <div class="gb-plan" id="gb-plan" data-map-position="@Model.MapPosition">
+            <div class="gb-plan-block gb-plan-filter" data-block="filter">Recherche rapide</div>
+            <div class="gb-plan-body">
+                <div class="gb-plan-block gb-plan-map" data-block="map">Carte</div>
+                <div class="gb-plan-lists">
+                    <div class="gb-plan-block gb-plan-markets" data-block="markets"><span class="gb-plan-name">Marchés</span></div>
+                    <div class="gb-plan-block gb-plan-shops" data-block="shops"><span class="gb-plan-name">Commerces</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="gb-plan-actions mt-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm" id="gb-plan-up">↑ Marchés en premier</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm" id="gb-plan-down">↓ Commerces en premier</button>
+        </div>
+    </section>
+    <fieldset class="mb-3">
+        <legend class="form-label">Présentation des lieux</legend>
+        @foreach (var (value, label, help) in GuysBee.Areas.Admin.Pages.OuNousTrouver.IndexModel.Layouts)
+        {
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="Layout" id="l-@value" value="@value" checked="@(Model.Layout == value)" />
+                <label class="form-check-label" for="l-@value"><strong>@label</strong> : @help</label>
+            </div>
+        }
+    </fieldset>
+    <fieldset class="mb-3">
+        <legend class="form-label">Position de la carte</legend>
+        <div class="gb-layout-choices">
+            @foreach (var (value, label) in GuysBee.Areas.Admin.Pages.OuNousTrouver.IndexModel.MapPositions)
+            {
+                <label class="gb-layout-choice">
+                    <input type="radio" name="MapPosition" value="@value" checked="@(Model.MapPosition == value)" />
+                    <span class="gb-layout-card">
+                        <span class="gb-layout-schema gb-layout-schema-@value" aria-hidden="true">
+                            <span class="gb-layout-block gb-layout-map">Carte</span>
+                            <span class="gb-layout-block gb-layout-list">Liste</span>
+                        </span>
+                        <span class="gb-layout-label">@label</span>
+                    </span>
+                </label>
+            }
+        </div>
+    </fieldset>
+    <div class="form-check mb-2">
+        <input class="form-check-input" type="checkbox" id="ShowMap" name="ShowMap" value="true" checked="@Model.ShowMap" />
+        <input type="hidden" name="ShowMap" value="false" />
+        <label class="form-check-label" for="ShowMap">Afficher la carte</label>
+    </div>
+    <div class="form-check mb-2">
+        <input class="form-check-input" type="checkbox" id="ShowFilter" name="ShowFilter" value="true" checked="@Model.ShowFilter" />
+        <input type="hidden" name="ShowFilter" value="false" />
+        <label class="form-check-label" for="ShowFilter">Afficher la recherche rapide</label>
+    </div>
+    <div class="form-check mb-2">
+        <input class="form-check-input" type="checkbox" id="ShowPhotos" name="ShowPhotos" value="true" checked="@Model.ShowPhotos" />
+        <input type="hidden" name="ShowPhotos" value="false" />
+        <label class="form-check-label" for="ShowPhotos">Afficher les photos</label>
+    </div>
+    <input type="hidden" id="MarketsFirst" name="MarketsFirst" value="@(Model.MarketsFirst ? "true" : "false")" />
+    <div class="mb-3">
+        <label class="form-label" for="MarketsTitle">Titre de la section marchés</label>
+        <input id="MarketsTitle" name="MarketsTitle" class="form-control" value="@Model.MarketsTitle" maxlength="80" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="ShopsTitle">Titre de la section commerces</label>
+        <input id="ShopsTitle" name="ShopsTitle" class="form-control" value="@Model.ShopsTitle" maxlength="80" />
+    </div>
+    <button type="submit" class="btn btn-warning">Enregistrer</button>
+    <a class="btn btn-link" href="/OuNousTrouver" target="_blank" rel="noopener">Voir la page</a>
+</form>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-findus.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/admin-findus-plan.js" asp-append-version="true"></script>
+}
