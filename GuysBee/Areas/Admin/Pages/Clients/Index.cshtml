@@ -65,7 +65,7 @@ else
                                     <input type="hidden" name="block" value="@((!c.Blocked).ToString().ToLowerInvariant())" />
                                     <button type="submit" class="btn btn-sm btn-outline-dark">@(c.Blocked ? "Réactiver" : "Bloquer")</button>
                                 </form>
-                                <form method="post" asp-page-handler="Delete" onsubmit="return confirm('Supprimer définitivement ce compte ?');">
+                                data-gb-confirm="Supprimer définitivement ce compte ?"
                                     <input type="hidden" name="id" value="@c.UserId" />
                                     <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
                                 </form>

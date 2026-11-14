@@ -102,7 +102,7 @@
         {
             <form method="post" asp-page-handler="Delete" class="mt-2">
                 <input type="hidden" name="id" value="@s.Id" />
-                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Supprimer ce bloc ?');">Supprimer</button>
+                data-gb-confirm="Supprimer ce bloc ?"
             </form>
         }
     </div>

@@ -31,4 +31,16 @@ public class IndexModel : PageModel
         TempData["Message"] = "Message archivé.";
         return RedirectToPage();
     }
+
+    public async Task<IActionResult> OnPostDeleteAsync(int id)
+    {
+        var m = await _db.ContactMessages.FindAsync(id);
+        if (m is not null)
+        {
+            _db.ContactMessages.Remove(m);
+            await _db.SaveChangesAsync();
+            TempData["Message"] = "Message supprimé.";
+        }
+        return RedirectToPage();
+    }
 }

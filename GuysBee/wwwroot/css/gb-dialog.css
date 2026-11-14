@@ -12,3 +12,10 @@ dialog.gb-notice-dialog-error::before { content: "!"; background: #fbe4e1; color
 .gb-notice-dialog .gb-notice-dialog-ok-btn:hover, .gb-notice-dialog .gb-notice-dialog-ok-btn:focus-visible { background: #2b2118; color: #f5b700; outline: 3px solid rgba(245, 183, 0, .5); outline-offset: 2px; transform: translateY(-1px); }
 @keyframes gb-dialog-in { from { opacity: 0; transform: translateY(12px) scale(.97); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { dialog.gb-notice-dialog, .gb-notice-dialog .gb-notice-dialog-ok-btn { animation: none; transition: none; } }
+dialog.gb-notice-dialog-confirm { border-top-color: #c0392b; }
+dialog.gb-notice-dialog-confirm::before { content: "?"; background: #fbe4e1; color: #c0392b; }
+.gb-notice-dialog-actions { display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; }
+.gb-notice-dialog .gb-notice-dialog-cancel-btn { display: inline-block; min-width: 8rem; padding: .65rem 1.5rem; border: 2px solid #2b2118; border-radius: 999px; background: #fff; color: #2b2118; font: inherit; font-weight: 700; cursor: pointer; }
+.gb-notice-dialog .gb-notice-dialog-cancel-btn:hover, .gb-notice-dialog .gb-notice-dialog-cancel-btn:focus-visible { background: #2b2118; color: #fff; outline: 3px solid rgba(245, 183, 0, .5); outline-offset: 2px; }
+.gb-notice-dialog .gb-notice-dialog-danger-btn { background: linear-gradient(135deg, #e0574a, #c0392b); color: #fff; box-shadow: 0 6px 16px rgba(192, 57, 43, .35); }
+.gb-notice-dialog .gb-notice-dialog-danger-btn:hover, .gb-notice-dialog .gb-notice-dialog-danger-btn:focus-visible { background: #7f1d1d; color: #fff; outline: 3px solid rgba(192, 57, 43, .4); }

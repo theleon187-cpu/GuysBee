@@ -109,3 +109,55 @@
             .catch(function () { showError('Connexion impossible. Merci de r\u00e9essayer.'); });
     });
 })();
+
+// Confirmation stylée : <form data-gb-confirm="..."> ou <button data-gb-confirm="...">
+(function () {
+    document.addEventListener('submit', function (e) {
+        var form = e.target;
+        if (!(form instanceof HTMLFormElement) || form.hasAttribute('data-gb-confirmed')) return;
+        var submitter = e.submitter || null;
+        var message = (submitter && submitter.getAttribute('data-gb-confirm')) || form.getAttribute('data-gb-confirm');
+        if (!message || !window.HTMLDialogElement) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        openConfirm(message, function () {
+            form.setAttribute('data-gb-confirmed', '');
+            try { form.requestSubmit(submitter || undefined); } finally { form.removeAttribute('data-gb-confirmed'); }
+        });
+    }, true);
+
+    function openConfirm(message, onOk) {
+        var opener = document.activeElement;
+        var dialog = document.createElement('dialog');
+        dialog.className = 'gb-notice-dialog gb-notice-dialog-confirm';
+        dialog.setAttribute('role', 'alertdialog');
+        var body = document.createElement('div');
+        body.className = 'gb-notice-dialog-body';
+        body.textContent = message;
+        var actions = document.createElement('div');
+        actions.className = 'gb-notice-dialog-actions';
+        var cancel = document.createElement('button');
+        cancel.type = 'button';
+        cancel.className = 'gb-notice-dialog-cancel-btn';
+        cancel.textContent = 'Annuler';
+        var ok = document.createElement('button');
+        ok.type = 'button';
+        ok.className = 'gb-notice-dialog-ok-btn gb-notice-dialog-danger-btn';
+        ok.textContent = 'Supprimer';
+        var confirmed = false;
+        cancel.addEventListener('click', function () { dialog.close(); });
+        ok.addEventListener('click', function () { confirmed = true; dialog.close(); });
+        actions.appendChild(cancel);
+        actions.appendChild(ok);
+        dialog.appendChild(body);
+        dialog.appendChild(actions);
+        dialog.addEventListener('close', function () {
+            dialog.remove();
+            if (confirmed) { onOk(); }
+            else if (opener && document.contains(opener) && opener.focus) { opener.focus({ preventScroll: true }); }
+        });
+        document.body.appendChild(dialog);
+        try { dialog.showModal(); } catch (err) { dialog.remove(); return; }
+        cancel.focus();
+    }
+})();

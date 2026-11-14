@@ -63,7 +63,7 @@
 
         <div class="gb-menu-actions">
             <button type="submit" class="btn btn-warning btn-sm">Enregistrer</button>
-            <button type="submit" asp-page-handler="Delete" formnovalidate class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer le lien « @m.Label » ?');">Supprimer</button>
+            data-gb-confirm="Supprimer le lien « @m.Label » ?"
         </div>
     </form>
 </li>

@@ -109,7 +109,7 @@
                 <button type="submit" name="action" value="publier" class="btn btn-success btn-sm">Publier</button>
                 <button type="submit" name="action" value="masquer" class="btn btn-outline-secondary btn-sm">Masquer</button>
                 <button type="submit" name="action" value="brouillon" class="btn btn-outline-secondary btn-sm">Remettre en brouillon</button>
-                <button type="submit" name="action" value="supprimer" class="btn btn-outline-danger btn-sm" onclick="return confirm('Supprimer définitivement les photos cochées ?');">Supprimer</button>
+                data-gb-confirm="Supprimer définitivement les photos cochées ?"
             </div>
         </div>
     </form>
@@ -192,7 +192,7 @@
                 </form>
                 <form method="post" asp-page-handler="Delete" class="mt-2">
                     <input type="hidden" name="id" value="@m.Id" />
-                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Supprimer définitivement cette photo ?');">Supprimer</button>
+                    data-gb-confirm="Supprimer définitivement cette photo ?"
                 </form>
             </div>
         </div>
