@@ -5,8 +5,10 @@
 }
 <header class="gb-admin-head">
     <h1>Lieux de revente</h1>
-    <p class="gb-admin-help">Les boutiques et commerces qui vendent vos miels. Ils s'affichent en bas de la page « Où nous trouver ».</p>
-</header>
+    Ils s'affichent en bas de la page « Où nous trouver ».</p>
+        <p class="gb-admin-help">Chaque lieu est placé automatiquement sur la carte d'après son adresse (ou son lien Google Maps).</p>
+        <form method="post" asp-page-handler="LocateAll"><button type="submit" class="btn btn-outline-dark btn-sm">Placer sur la carte les lieux manquants</button></form>
+    </header>
 
 <div class="gb-admin-card">
     <h2>Ajouter un lieu de revente</h2>

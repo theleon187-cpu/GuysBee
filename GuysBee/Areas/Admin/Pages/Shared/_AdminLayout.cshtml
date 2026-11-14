@@ -4,6 +4,9 @@
         prefix == "/Admin" ? (path.TrimEnd('/').Equals("/Admin", StringComparison.OrdinalIgnoreCase) ? "gb-active" : "")
                            : (path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) ? "gb-active" : "");
     var signedIn = User.Identity?.IsAuthenticated == true && User.IsInRole(GuysBee.Services.DbInitializer.AdminRole);
+    var isAuthScreen = path.StartsWith("/Admin/Login", StringComparison.OrdinalIgnoreCase)
+        || path.StartsWith("/Admin/Logout", StringComparison.OrdinalIgnoreCase);
+    var showShell = signedIn && !isAuthScreen;
 }
 <!DOCTYPE html>
 <html lang="fr">
@@ -15,9 +18,11 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin-focus.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-motion.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
-<body class="gb-admin @(signedIn ? "gb-admin-shell" : "gb-admin-bare")">
-@if (signedIn)
+<body class="gb-admin @(showShell ? "gb-admin-shell" : "gb-admin-bare")" data-gb-admin-motion>
+@if (showShell)
 {
     <aside class="gb-sidebar">
         <div class="gb-sidebar-top">
@@ -44,6 +49,7 @@
                 <a class="gb-sidebar-link @Active("/Admin/Integrations")" href="/Admin/Integrations">Paiement et livraison</a>
                 <p class="gb-sidebar-label">Site</p>
                 <a class="gb-sidebar-link @Active("/Admin/Reglages")" href="/Admin/Reglages">R&eacute;glages</a>
+                <a class="gb-sidebar-link @Active("/Admin/MotDePasse")" href="/Admin/MotDePasse">Mot de passe</a>
                 <a class="gb-sidebar-link" href="/" target="_blank" rel="noopener">Voir le site &#8599;</a>
             </nav>
             <form method="post" asp-area="Admin" asp-page="/Logout" class="gb-sidebar-logout">
@@ -70,6 +76,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/gb-forms.js" asp-append-version="true"></script>
+    <script src="~/js/admin-motion.js" asp-append-version="true" defer></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

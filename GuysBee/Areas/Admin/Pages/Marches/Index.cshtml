@@ -28,8 +28,10 @@
 }
 <header class="gb-admin-head">
     <h1>Agenda des marchés</h1>
-    <p class="gb-admin-help">Les marchés et rendez-vous où l'on peut vous rencontrer. Ils s'affichent sur la page « Où nous trouver » avec leurs jours de la semaine.</p>
-</header>
+    avec leurs jours de la semaine.</p>
+        <p class="gb-admin-help">Chaque marché est placé automatiquement sur la carte d'après son lieu (ou son lien Google Maps).</p>
+        <form method="post" asp-page-handler="LocateAll"><button type="submit" class="btn btn-outline-dark btn-sm">Placer sur la carte les marchés manquants</button></form>
+    </header>
 
 <div class="gb-admin-card">
     <h2>Ajouter un rendez-vous</h2>

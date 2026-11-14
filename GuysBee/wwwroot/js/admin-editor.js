@@ -18,6 +18,24 @@ document.addEventListener('DOMContentLoaded', function () {
         convert_urls: false,
         // Le HTML est de toute façon assaini côté serveur avant enregistrement.
         paste_data_images: false,
+        image_title: true,
+        image_dimensions: false,
+        images_file_types: 'jpg,jpeg,png,webp',
+        automatic_uploads: true,
+        images_upload_handler: function (blobInfo) {
+            var area = document.querySelector('textarea.gb-richtext[data-upload-url]');
+            var tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+            if (!area) { return Promise.reject({ message: 'Envoi de photo indisponible ici.', remove: true }); }
+            var data = new FormData();
+            data.append('file', blobInfo.blob(), blobInfo.filename());
+            if (tokenInput) { data.append('__RequestVerificationToken', tokenInput.value); }
+            return fetch(area.dataset.uploadUrl, { method: 'POST', body: data, credentials: 'same-origin' })
+                .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+                .then(function (res) {
+                    if (!res.ok || !res.j.location) { throw { message: res.j.error || 'Envoi impossible.', remove: true }; }
+                    return res.j.location;
+                });
+        },
         content_style: 'body { font-family: sans-serif; font-size: 16px; line-height: 1.5; }'
     });
 });

@@ -21,7 +21,20 @@ public class LoginModel : PageModel
         public string Password { get; set; } = "";
     }
 
-    public void OnGet() { }
+    public IActionResult OnGet(string? returnUrl = null)
+    {
+        if (User.Identity?.IsAuthenticated == true && User.IsInRole(GuysBee.Services.DbInitializer.AdminRole))
+        {
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return LocalRedirect(returnUrl);
+            }
+
+            return RedirectToPage("/Index");
+        }
+
+        return Page();
+    }
 
     public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
     {

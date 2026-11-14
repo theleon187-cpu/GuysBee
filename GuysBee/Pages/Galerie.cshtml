@@ -1,4 +1,4 @@
-@page
+﻿@page
 @using GuysBee.Services
 @model GuysBee.Pages.GalerieModel
 @{
@@ -8,6 +8,9 @@
 <h1 class="gb-page-title">Galerie</h1>
 <section class="gb-section">
     <div class="gb-container">
+        <p class="gb-gallery-follow">Pour nous suivre au fil des saisons, rejoignez-nous sur
+            <a href="https://www.instagram.com/@Model.Instagram" rel="noopener" target="_blank">Instagram</a>@if (!string.IsNullOrWhiteSpace(Model.Facebook)) {<text> et </text><a href="@Model.Facebook" rel="noopener" target="_blank">Facebook</a>}.
+        </p>
         @if (Model.Items.Count == 0)
         {
             <p class="gb-lead">Les photos arrivent bientôt.</p>
@@ -18,7 +21,7 @@
                 @foreach (var m in Model.Items)
                 {
                     <figure class="gb-gallery-item">
-                        <img src="@MediaUrls.Src(m, 480)" srcset="@MediaUrls.SrcSet(m)" sizes="(min-width: 900px) 25vw, 50vw" alt="@MediaUrls.Alt(m)" data-full="@MediaUrls.Src(m, 1200)" loading="lazy" width="480" height="480" />
+                        <img src="@MediaUrls.Src(m, 480)" srcset="@MediaUrls.SrcSet(m)" sizes="(min-width: 1100px) 25vw, (min-width: 700px) 33vw, 50vw" alt="@MediaUrls.Alt(m)" data-full="@MediaUrls.Src(m, 1200)" data-caption="@m.Caption" loading="lazy" width="@(m.Width > 0 ? m.Width : 480)" height="@(m.Height > 0 ? m.Height : 480)" />
                         @if (!string.IsNullOrWhiteSpace(m.Caption))
                         {
                             <figcaption class="gb-gallery-caption">@m.Caption</figcaption>

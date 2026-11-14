@@ -206,3 +206,50 @@ body.theme-modern {
 
 .theme-modern .gb-card > img, .theme-modern .gb-card-media img { height: auto; aspect-ratio: 4 / 3; object-fit: contain; background: #FFF4D6; }
 .theme-modern .gb-card:hover > img, .theme-modern .gb-card:hover .gb-card-media img { transform: none; }
+
+/* Retours client : logo plus grand sans cercle, nom plus visible */
+.theme-modern .gb-logo { width: 72px; height: 72px; border-radius: 0; box-shadow: none; object-fit: contain; }
+.theme-modern .gb-brand-name { font-size: clamp(1.6rem, 3.5vw, 2.1rem); }
+
+/* Étapes « De la fleur au pot » : pastille numérotée nette */
+.theme-modern .gb-step::before { clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%); border: 0; border-radius: 0; background: var(--gb-amber); color: var(--gb-brown); }
+
+/* Galerie : invitation à suivre sur les réseaux */
+.gb-gallery-follow { text-align: center; margin: 0 auto 2rem; max-width: 60ch; }
+.gb-gallery-follow a { font-weight: 700; }
+
+/* Où nous trouver : listes marchés / commerces */
+.gb-find-list-title { margin-top: 2.5rem; }
+
+/* Où nous trouver : carte unique */
+.gb-points-map-wrap { margin-bottom: 1rem; }
+.gb-points-map { height: 420px; border-radius: 16px; overflow: hidden; box-shadow: 0 6px 24px rgba(30, 26, 20, .12); z-index: 0; }
+.gb-map-legend { display: flex; gap: 1.5rem; list-style: none; padding: 0; margin: .75rem 0 0; font-size: .95rem; }
+.gb-map-dot { display: inline-block; width: .9rem; height: .9rem; border-radius: 50%; vertical-align: middle; border: 2px solid #fff; box-shadow: 0 0 0 1px #1E1A14; }
+.gb-map-dot-marche, .gb-map-marker-marche { background: #E39E00; fill: #E39E00; }
+.gb-map-dot-commerce, .gb-map-marker-commerce { background: #5B7F3A; fill: #5B7F3A; }
+.gb-map-marker { stroke: #fff; stroke-width: 3; fill-opacity: .95; }
+.gb-map-popup p { margin: .25rem 0; }
+.gb-map-popup-type { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: #7A6A55; }
+@media (max-width: 600px) { .gb-points-map { height: 320px; } }
+
+/* Galerie : mosaïque respectant le format des photos */
+.theme-modern .gb-gallery { display: block; columns: 2 160px; column-gap: 1rem; }
+@media (min-width: 700px) { .theme-modern .gb-gallery { columns: 3 220px; } }
+@media (min-width: 1100px) { .theme-modern .gb-gallery { columns: 4 240px; } }
+.theme-modern .gb-gallery-item { break-inside: avoid; margin-bottom: 1rem; }
+.theme-modern .gb-gallery-item img { aspect-ratio: auto; height: auto; }
+
+/* Visionneuse : navigation */
+.gb-lightbox { overflow: visible; }
+.gb-lightbox-figure { margin: 0; }
+.gb-lightbox-caption { color: #fff; text-align: center; padding: .5rem 1rem 0; max-width: 80ch; margin: 0 auto; }
+.gb-lightbox-caption:empty { display: none; }
+.gb-lightbox-count { position: absolute; top: .75rem; left: .75rem; margin: 0; padding: .2rem .6rem; border-radius: 999px; background: rgba(0, 0, 0, .55); color: #fff; font-size: .9rem; }
+.gb-lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 3rem; height: 3rem; border: 0; border-radius: 50%; background: rgba(245, 183, 0, .92); color: #1E1A14; font-size: 2rem; line-height: 1; cursor: pointer; z-index: 1; }
+.gb-lightbox-prev { left: .5rem; }
+.gb-lightbox-next { right: .5rem; }
+.gb-lightbox-nav:focus-visible, .gb-lightbox-close:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+/* Calendrier : photo du mois */
+.gb-calendar-photo { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; margin-bottom: .75rem; }

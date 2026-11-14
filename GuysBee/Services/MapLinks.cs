@@ -18,7 +18,18 @@ public static partial class MapLinks
     [GeneratedRegex(@"!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)|@(-?\d+\.\d+),(-?\d+\.\d+)")]
     private static partial Regex CoordinatesRegex();
 
-    /// <summary>URL d'intégration de carte : coordonnées du lien Google Maps si présentes, sinon l'adresse fournie.</summary>
+    /// <summary>Coordonnées lues dans un lien Google Maps, si présentes.</summary>
+    public static (double Lat, double Lng)? Coordinates(string? mapUrl)
+    {
+        if (string.IsNullOrWhiteSpace(mapUrl)) return null;
+        var m = CoordinatesRegex().Match(Uri.UnescapeDataString(mapUrl));
+        if (!m.Success) return null;
+        var lat = m.Groups[1].Success ? m.Groups[1].Value : m.Groups[3].Value;
+        var lng = m.Groups[2].Success ? m.Groups[2].Value : m.Groups[4].Value;
+        return (double.Parse(lat, CultureInfo.InvariantCulture), double.Parse(lng, CultureInfo.InvariantCulture));
+    }
+
+    /// <summary>URL d'intégration de carte
     public static string? EmbedUrl(string? mapUrl, string? addressFallback)
     {
         if (string.IsNullOrWhiteSpace(mapUrl)) return null;

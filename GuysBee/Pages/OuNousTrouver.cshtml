@@ -8,14 +8,20 @@
 <h1 class="gb-page-title">Où nous trouver</h1>
 <section class="gb-section">
     <div class="gb-container">
-        <div class="gb-find-top">
-            <article class="gb-card gb-find-miellerie">
-                <h2 class="gb-card-title">À la miellerie</h2>
-                <p>69690 Saint-Julien-sur-Bibost</p>
-                <p>Retrait sur rendez-vous : <a href="tel:0650511236">06 50 51 12 36</a></p>
-            </article>
-            <aside class="gb-card gb-agenda" aria-labelledby="gb-agenda-title">
-                <h2 class="gb-card-title" id="gb-agenda-title">Agenda des marchés</h2>
+        @if (Model.MapPoints.Count > 0)
+        {
+            <section class="gb-points-map-wrap" aria-label="Carte des points de vente">
+                <div id="gb-points-map" class="gb-points-map" role="region" aria-label="Carte interactive : cliquez sur un repère pour voir les détails"></div>
+                <ul class="gb-map-legend">
+                    <li><span class="gb-map-dot gb-map-dot-marche" aria-hidden="true"></span> Marchés</li>
+                    <li><span class="gb-map-dot gb-map-dot-commerce" aria-hidden="true"></span> Commerces</li>
+                </ul>
+                <script type="application/json" id="gb-points-data">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MapPoints, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web) { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Default }))</script>
+            </section>
+        }
+        <section aria-labelledby="gb-agenda-title">
+            <h2 class="gb-find-subtitle gb-find-list-title" id="gb-agenda-title">Sur les marchés</h2>
+            <div class="gb-card gb-agenda">
                 @if (Model.Events.Count == 0)
                 {
                     <p class="gb-card-text">Aucun rendez-vous programmé pour le moment.</p>
@@ -35,14 +41,6 @@
                                     @if (!string.IsNullOrWhiteSpace(e.MapUrl))
                                     {
                                         <a class="gb-agenda-map" href="@e.MapUrl" target="_blank" rel="noopener">Itinéraire sur Google Maps</a>
-                                        var embed = GuysBee.Services.MapLinks.EmbedUrl(e.MapUrl, e.Place);
-                                        if (embed is not null)
-                                        {
-                                            <details class="gb-map" open>
-                                                <summary>Voir sur la carte</summary>
-                                                <iframe class="gb-map-frame" src="@embed" title="Carte : @e.Title" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
-                                            </details>
-                                        }
                                     }
                                     @if (!string.IsNullOrWhiteSpace(e.Details)) { <span class="gb-agenda-details">@e.Details</span> }
                                 </div>
@@ -50,12 +48,12 @@
                         }
                     </ul>
                 }
-            </aside>
-        </div>
+            </div>
+        </section>
 
         @if (Model.SalePoints.Count > 0)
         {
-            <h2 class="gb-find-subtitle">Nos lieux de revente</h2>
+            <h2 class="gb-find-subtitle gb-find-list-title">Dans les commerces</h2>
             <div class="gb-grid">
                 @foreach (var sp in Model.SalePoints)
                 {
@@ -69,14 +67,6 @@
                         @if (!string.IsNullOrWhiteSpace(sp.MapUrl))
                         {
                             <p><a href="@sp.MapUrl" target="_blank" rel="noopener">Itinéraire sur Google Maps</a></p>
-                            var embed = GuysBee.Services.MapLinks.EmbedUrl(sp.MapUrl, $"{sp.Name}, {sp.Address}, {sp.PostalCode} {sp.City}");
-                            if (embed is not null)
-                            {
-                                <details class="gb-map" open>
-                                    <summary>Voir sur la carte</summary>
-                                    <iframe class="gb-map-frame" src="@embed" title="Carte : @sp.Name" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
-                                </details>
-                            }
                         }
                     </article>
                 }
@@ -84,3 +74,12 @@
         }
     </div>
 </section>
+
+@section Scripts {
+    @if (Model.MapPoints.Count > 0)
+    {
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@("@")1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+        <script src="https://unpkg.com/leaflet@("@")1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        <script src="~/js/points-map.js" asp-append-version="true"></script>
+    }
+}

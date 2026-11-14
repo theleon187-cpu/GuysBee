@@ -48,6 +48,7 @@
             }
         </style>
     }
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="gb-body theme-modern">
     <a class="gb-skip" href="#contenu">Aller au contenu</a>
@@ -58,7 +59,7 @@
     <header class="gb-header">
         <div class="gb-container gb-header-inner">
             <a class="gb-brand" href="/" aria-label="GUY's Bee, retour à l'accueil">
-                <img class="gb-logo" src="~/img/logo.jpg" alt="" width="48" height="48" />
+                <img class="gb-logo" src="~/img/logo.jpg" alt="" width="72" height="72" />
                 <span class="gb-brand-name">@Html.Raw(brandHtml)</span>
             </a>
             <button class="gb-nav-toggle" type="button" aria-expanded="false" aria-controls="gb-nav">Menu</button>
@@ -87,12 +88,19 @@
             <div>
                 <p class="gb-footer-title">GUY's Bee</p>
                 <p>@Setting("business.postalCode") @Setting("business.city")</p>
-                <p><a href="tel:@Setting("business.phone").Replace(" ", "")">@Setting("business.phone")</a></p>
+                @if (!string.IsNullOrWhiteSpace(Setting("business.phone")))
+                {
+                    <p><a href="tel:@Setting("business.phone").Replace(" ", "")">@Setting("business.phone")</a></p>
+                }
                 <p><a href="mailto:@Setting("business.email")">@Setting("business.email")</a></p>
             </div>
             <div>
                 <p class="gb-footer-title">Suivez la ruche</p>
                 <p><a href="https://www.instagram.com/@Setting("social.instagram")" rel="noopener" target="_blank">Instagram</a></p>
+                @if (!string.IsNullOrWhiteSpace(Setting("social.facebook")))
+                {
+                    <p><a href="@Setting("social.facebook")" rel="noopener" target="_blank">Facebook</a></p>
+                }
             </div>
             <nav aria-label="Informations légales">
                 <vc:menu footer="true" />

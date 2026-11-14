@@ -13,6 +13,6 @@ public class CalendrierModel : PageModel
     public List<HiveCalendarEntry> Entries { get; private set; } = new();
 
     public async Task OnGetAsync() =>
-        Entries = await _db.HiveCalendarEntries.AsNoTracking()
+        Entries = await _db.HiveCalendarEntries.AsNoTracking().Include(e => e.Media)
             .Where(e => e.IsVisible).OrderBy(e => e.Month).ToListAsync();
 }

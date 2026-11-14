@@ -1,0 +1,205 @@
+/* Couche motion design globale pour l'administration (additive). */
+
+.gb-admin[data-gb-admin-motion] {
+    --gb-motion-shadow-soft: 0 14px 30px rgba(43, 33, 24, .08);
+    --gb-motion-shadow-deep: 0 24px 50px rgba(43, 33, 24, .14);
+    --gb-motion-border: rgba(43, 33, 24, .12);
+    --gb-motion-highlight: rgba(245, 183, 0, .22);
+}
+
+.gb-admin[data-gb-admin-motion] .gb-admin-main {
+    background:
+        radial-gradient(circle at 0% 0%, rgba(245, 183, 0, .12) 0, transparent 22rem),
+        radial-gradient(circle at 95% 8%, rgba(255, 255, 255, .4) 0, transparent 24rem),
+        transparent;
+}
+
+.gb-admin[data-gb-admin-motion] .gb-sidebar {
+    background: linear-gradient(180deg, #221910 0%, #2b2118 60%, #332517 100%);
+    box-shadow: 8px 0 28px rgba(20, 12, 6, .22);
+}
+
+.gb-admin[data-gb-admin-motion] .gb-sidebar-link {
+    transition: transform .2s ease, background-color .2s ease, color .2s ease;
+}
+
+.gb-admin[data-gb-admin-motion] .gb-sidebar-link:hover,
+.gb-admin[data-gb-admin-motion] .gb-sidebar-link:focus-visible {
+    transform: translateX(4px);
+}
+
+.gb-admin[data-gb-admin-motion] .gb-sidebar-link.gb-active {
+    box-shadow: 0 8px 18px rgba(245, 183, 0, .25);
+}
+
+.gb-admin[data-gb-admin-motion] .gb-admin-head {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    padding: clamp(1.2rem, 3.5vw, 2.2rem);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, .28);
+    background: linear-gradient(130deg, #3a2b1c 0%, #5b4128 55%, #7a582d 100%);
+    color: #fff9ec;
+    box-shadow: var(--gb-motion-shadow-deep);
+}
+
+.gb-admin[data-gb-admin-motion] .gb-admin-head h1,
+.gb-admin[data-gb-admin-motion] .gb-admin-head .h1,
+.gb-admin[data-gb-admin-motion] .gb-admin-head .h3 {
+    color: #fffaf2;
+    margin-bottom: .35rem;
+}
+
+.gb-admin[data-gb-admin-motion] .gb-admin-head .gb-admin-help {
+    color: #f5ebd0;
+    max-width: 68ch;
+}
+
+.gb-admin[data-gb-admin-motion] .gb-admin-head::after {
+    content: "";
+    position: absolute;
+    right: -4rem;
+    top: -6rem;
+    width: 14rem;
+    height: 14rem;
+    border-radius: 50%;
+    border: 1px solid rgba(245, 183, 0, .35);
+    box-shadow:
+        0 0 0 1.6rem rgba(245, 183, 0, .08),
+        0 0 0 3.2rem rgba(245, 183, 0, .04);
+    pointer-events: none;
+}
+
+.gb-admin[data-gb-admin-motion] .gb-admin-card,
+.gb-admin[data-gb-admin-motion] .gb-panel,
+.gb-admin[data-gb-admin-motion] .gb-stat,
+.gb-admin[data-gb-admin-motion] .gb-quick-item,
+.gb-admin[data-gb-admin-motion] .table {
+    border-color: var(--gb-motion-border);
+    box-shadow: var(--gb-motion-shadow-soft);
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+
+.gb-admin[data-gb-admin-motion] .gb-admin-card:hover,
+.gb-admin[data-gb-admin-motion] .gb-panel:hover,
+.gb-admin[data-gb-admin-motion] .gb-stat:hover,
+.gb-admin[data-gb-admin-motion] .gb-quick-item:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--gb-motion-shadow-deep);
+}
+
+.gb-admin[data-gb-admin-motion] .gb-admin-card:focus-within,
+.gb-admin[data-gb-admin-motion] .gb-panel:focus-within {
+    border-color: rgba(245, 183, 0, .5);
+    box-shadow: 0 0 0 .2rem var(--gb-motion-highlight), var(--gb-motion-shadow-soft);
+}
+
+.gb-admin[data-gb-admin-motion] .gb-admin .btn,
+.gb-admin[data-gb-admin-motion] .btn {
+    transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+
+.gb-admin[data-gb-admin-motion] .btn:hover,
+.gb-admin[data-gb-admin-motion] .btn:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(43, 33, 24, .16);
+}
+
+.gb-admin[data-gb-admin-motion] .table {
+    overflow: hidden;
+    border-radius: 14px;
+    background: #fff;
+}
+
+.gb-admin[data-gb-admin-motion] .table thead th {
+    background: linear-gradient(180deg, #fff7df, #ffeab8);
+    border-bottom: 1px solid rgba(43, 33, 24, .16);
+}
+
+.gb-admin[data-gb-admin-motion] .table tbody tr {
+    transition: background-color .2s ease;
+}
+
+.gb-admin[data-gb-admin-motion] .table tbody tr:hover {
+    background: #fff8df;
+}
+
+.gb-admin[data-gb-admin-motion] .form-control,
+.gb-admin[data-gb-admin-motion] .form-select,
+.gb-admin[data-gb-admin-motion] textarea.form-control {
+    transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+
+.gb-admin[data-gb-admin-motion] .form-control:hover,
+.gb-admin[data-gb-admin-motion] .form-select:hover,
+.gb-admin[data-gb-admin-motion] textarea.form-control:hover {
+    border-color: rgba(43, 33, 24, .35);
+}
+
+.gb-admin[data-gb-admin-motion] .gb-stats {
+    gap: 1.15rem;
+}
+
+.gb-admin[data-gb-admin-motion] .gb-stat {
+    border-left-width: 8px;
+    background: linear-gradient(180deg, #ffffff 0%, #fffef9 100%);
+}
+
+.gb-admin[data-gb-admin-motion] .gb-quick-item {
+    border: 1px solid rgba(43, 33, 24, .12);
+    background: linear-gradient(180deg, #fff4cc 0%, #ffe8a0 100%);
+}
+
+.gb-admin[data-gb-admin-motion] .gb-quick-item:hover {
+    background: linear-gradient(180deg, #ffd45f 0%, #f5b700 100%);
+}
+
+.gb-admin[data-gb-admin-motion] .gb-messages li {
+    transition: background-color .2s ease;
+}
+
+.gb-admin[data-gb-admin-motion] .gb-messages li:hover {
+    background: #fff8df;
+}
+
+@media (max-width: 991.98px) {
+    .gb-admin[data-gb-admin-motion] .gb-sidebar {
+        box-shadow: none;
+        border-bottom: 1px solid rgba(255, 255, 255, .14);
+    }
+
+    .gb-admin[data-gb-admin-motion] .gb-admin-content {
+        padding-inline: .9rem;
+    }
+
+    .gb-admin[data-gb-admin-motion] .gb-admin-head {
+        border-radius: 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gb-admin[data-gb-admin-motion] .gb-sidebar-link,
+    .gb-admin[data-gb-admin-motion] .gb-admin-card,
+    .gb-admin[data-gb-admin-motion] .gb-panel,
+    .gb-admin[data-gb-admin-motion] .gb-stat,
+    .gb-admin[data-gb-admin-motion] .gb-quick-item,
+    .gb-admin[data-gb-admin-motion] .table,
+    .gb-admin[data-gb-admin-motion] .btn,
+    .gb-admin[data-gb-admin-motion] .form-control,
+    .gb-admin[data-gb-admin-motion] .form-select,
+    .gb-admin[data-gb-admin-motion] textarea.form-control,
+    .gb-admin[data-gb-admin-motion] .table tbody tr,
+    .gb-admin[data-gb-admin-motion] .gb-messages li {
+        transition: none !important;
+    }
+
+    .gb-admin[data-gb-admin-motion] .gb-sidebar-link:hover,
+    .gb-admin[data-gb-admin-motion] .gb-admin-card:hover,
+    .gb-admin[data-gb-admin-motion] .gb-panel:hover,
+    .gb-admin[data-gb-admin-motion] .gb-stat:hover,
+    .gb-admin[data-gb-admin-motion] .gb-quick-item:hover,
+    .gb-admin[data-gb-admin-motion] .btn:hover {
+        transform: none;
+    }
+}

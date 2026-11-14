@@ -5,6 +5,11 @@
     ViewData["Title"] = "Apiculteur à Saint-Julien-sur-Bibost";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/accueil-motion.css" asp-append-version="true" />
+}
+
+<div class="gb-home-public" data-gb-motion>
 @foreach (var block in Model.Sections)
 {
     switch (block.Kind)
@@ -38,10 +43,10 @@
                 <div class="gb-container">
                     <h2 class="gb-section-title">@block.Title</h2>
                     <ol class="gb-steps">
-                        <li class="gb-step"><h3>La fleur</h3><p>Les abeilles butinent les floraisons de nos environs.</p></li>
-                        <li class="gb-step"><h3>La ruche</h3><p>Le nectar devient miel, au rythme des saisons.</p></li>
-                        <li class="gb-step"><h3>La récolte</h3><p>L'apiculteur récolte quand le miel est mûr.</p></li>
-                        <li class="gb-step"><h3>Le pot</h3><p>Mise en pots et étiquetage, prêt pour votre table.</p></li>
+                        @foreach (var (stepTitle, stepText) in GuysBee.Areas.Admin.Pages.Accueil.IndexModel.ParseSteps(block.BodyHtml))
+                        {
+                            <li class="gb-step"><h3>@stepTitle</h3>@if (!string.IsNullOrEmpty(stepText)) {<p>@stepText</p>}</li>
+                        }
                     </ol>
                 </div>
             </section>
@@ -124,4 +129,9 @@
             <p class="gb-teaser-more"><a class="gb-btn gb-btn-secondary" href="/Galerie">Toute la galerie</a></p>
         </div>
     </section>
+}
+</div>
+
+@section Scripts {
+    <script src="~/js/accueil-motion.js" asp-append-version="true" defer></script>
 }

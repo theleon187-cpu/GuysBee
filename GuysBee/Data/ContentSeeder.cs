@@ -15,10 +15,10 @@ public static class ContentSeeder
         {
             db.MenuItems.AddRange(
                 new MenuItem { Label = "Accueil", Url = "/", SortOrder = 1 },
-                new MenuItem { Label = "Nos miels", Url = "/Produits", SortOrder = 2 },
+                new MenuItem { Label = "Nos produits", Url = "/Produits", SortOrder = 2 },
                 new MenuItem { Label = "La ruche au fil des saisons", Url = "/Calendrier", SortOrder = 3 },
                 new MenuItem { Label = "Galerie", Url = "/Galerie", SortOrder = 4 },
-                new MenuItem { Label = "Notre histoire", Url = "/p/histoire", SortOrder = 5 },
+                new MenuItem { Label = "L'exploitation", Url = "/p/histoire", SortOrder = 5 },
                 new MenuItem { Label = "Où nous trouver", Url = "/OuNousTrouver", SortOrder = 6 },
                 new MenuItem { Label = "Contact", Url = "/Contact", SortOrder = 7 },
                 new MenuItem { Label = "Conditions de vente", Url = "/p/cgv", IsFooter = true, SortOrder = 1 },
@@ -31,7 +31,7 @@ public static class ContentSeeder
             db.ContentPages.AddRange(
                 new ContentPage
                 {
-                    Key = "histoire", Slug = "histoire", Title = "Notre histoire", SortOrder = 1,
+                    Title = "L'exploitation", SortOrder = 1,
                     MetaDescription = "L'histoire de GUY's Bee, apiculteur à Saint-Julien-sur-Bibost.",
                     BodyHtml = "<p>Ici, l'apiculteur racontera son histoire : comment il a commencé, ses ruches, ses lieux de butinage et sa façon de travailler.</p><p><em>Texte à rédiger dans l'administration, rubrique « Pages ».</em></p>"
                 },
@@ -86,8 +86,34 @@ public static class ContentSeeder
             db.HomeSections.AddRange(
                 new HomeSection { Kind = "Hero", Title = "Du miel récolté avec soin", Subtitle = "À Saint-Julien-sur-Bibost, GUY's Bee veille sur ses abeilles de la fleur au pot.", ButtonLabel = "Découvrir nos miels", ButtonUrl = "/Produits", SortOrder = 1 },
                 new HomeSection { Kind = "Etapes", Title = "De la fleur au pot", SortOrder = 2 },
-                new HomeSection { Kind = "ProduitsDeSaison", Title = "Nos miels", SortOrder = 3 },
+                new HomeSection { Kind = "ProduitsDeSaison", Title = "Nos produits", SortOrder = 3 },
                 new HomeSection { Kind = "Calendrier", Title = "La ruche ce mois-ci", SortOrder = 4 });
+        }
+
+        // Renommages demandés par l'apiculteur, appliqués seulement aux libellés d'origine non modifiés.
+        foreach (var m in await db.MenuItems.Where(m => m.Label == "Nos miels" || m.Label == "Notre histoire").ToListAsync())
+            m.Label = m.Label == "Nos miels" ? "Nos produits" : "L'exploitation";
+        foreach (var p in await db.ContentPages.Where(p => p.Key == "histoire" && p.Title == "Notre histoire").ToListAsync())
+            p.Title = "L'exploitation";
+        foreach (var h in await db.HomeSections.Where(h => h.Kind == "ProduitsDeSaison" && h.Title == "Nos miels").ToListAsync())
+            h.Title = "Nos produits";
+
+        if (!await db.ContentPages.AnyAsync(p => p.Key == "prestations"))
+        {
+            db.ContentPages.Add(new ContentPage
+            {
+                Key = "prestations", Slug = "prestations", Title = "Prestations personnalisées", SortOrder = 5,
+                MetaDescription = "Animations autour de l'abeille, événements et petits pots de miel pour mariages et baptêmes.",
+                BodyHtml = "<p>Envie de partager un moment autour des abeilles ou d'offrir un souvenir gourmand à vos invités ? GUY's Bee vous accompagne.</p>"
+                    + "<h2>Animations</h2><p>Découverte de la ruche et du métier d'apiculteur pour les écoles, associations et fêtes de village.</p>"
+                    + "<h2>Événements</h2><p>Stand de miel et dégustation lors de vos manifestations.</p>"
+                    + "<h2>Mariages, baptêmes et fêtes</h2><p>Petits pots de miel personnalisés à offrir à vos invités.</p>"
+                    + "<p>Chaque demande est unique : <a href=\"/Contact\">écrivez-nous</a> pour en parler.</p>"
+            });
+        }
+        if (!await db.MenuItems.AnyAsync(m => m.Url == "/p/prestations"))
+        {
+            db.MenuItems.Add(new MenuItem { Label = "Prestations", Url = "/p/prestations", SortOrder = 6 });
         }
 
         await db.SaveChangesAsync();

@@ -22,7 +22,7 @@ public class IndexModel : PageModel
     }
 
     public async Task<IActionResult> OnPostSaveAsync(int id, string title, int[]? weekDays, string? hours, string? place, string? mapUrl,
-        string? details, bool isVisible, IFormFile? photo, bool removePhoto)
+        string? details, bool isVisible, IFormFile? photo, bool removePhoto, [FromServices] GeoLocator geo)
     {
         var mask = WeekDays.ToMask(weekDays);
         if (string.IsNullOrWhiteSpace(title) || mask == 0)
@@ -47,6 +47,9 @@ public class IndexModel : PageModel
         e.Hours = hours?.Trim();
         e.Place = place?.Trim();
         e.MapUrl = MapLinks.Clean(mapUrl);
+        var spot = await geo.LocateAsync(e.MapUrl, e.Place);
+        e.Latitude = spot?.Lat;
+        e.Longitude = spot?.Lng;
         if (removePhoto) e.PhotoBaseName = null;
         if (photo is { Length: > 0 })
         {
@@ -56,7 +59,16 @@ public class IndexModel : PageModel
         e.Details = details?.Trim();
         e.IsVisible = isVisible;
         await _db.SaveChangesAsync();
-        TempData["Message"] = "Rendez-vous enregistré.";
+        TempData["Message"] = spot is null
+            ? "Rendez-vous enregistré, mais introuvable sur la carte : précisez le lieu (ville) ou collez un lien Google Maps."
+            : "Rendez-vous enregistré et placé sur la carte.";
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostLocateAllAsync([FromServices] GeoLocator geo)
+    {
+        await geo.FillMissingAsync(_db);
+        TempData["Message"] = "Les marchés ont été placés sur la carte quand leur lieu a été trouvé.";
         return RedirectToPage();
     }
 

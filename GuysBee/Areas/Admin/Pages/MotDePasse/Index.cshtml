@@ -1,0 +1,26 @@
+@page
+@model GuysBee.Areas.Admin.Pages.MotDePasse.IndexModel
+@{
+    ViewData["Title"] = "Mot de passe";
+}
+<h1 class="h3 mb-3">Changer mon mot de passe</h1>
+<form method="post" class="gb-admin-card">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Input.Current">Mot de passe actuel</label>
+        <input class="form-control" asp-for="Input.Current" autocomplete="current-password" />
+        <span class="text-danger" asp-validation-for="Input.Current"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Input.New">Nouveau mot de passe</label>
+        <input class="form-control" asp-for="Input.New" autocomplete="new-password" />
+        <div class="gb-admin-help">Au moins 10 caractères. Une petite phrase facile à retenir fait très bien l'affaire.</div>
+        <span class="text-danger" asp-validation-for="Input.New"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Input.Confirm">Confirmer le nouveau mot de passe</label>
+        <input class="form-control" asp-for="Input.Confirm" autocomplete="new-password" />
+        <span class="text-danger" asp-validation-for="Input.Confirm"></span>
+    </div>
+    <button type="submit" class="btn btn-warning">Changer le mot de passe</button>
+</form>

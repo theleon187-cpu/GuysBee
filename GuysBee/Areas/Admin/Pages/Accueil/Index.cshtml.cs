@@ -19,7 +19,7 @@ public class IndexModel : PageModel
     {
         "Hero" => "Bandeau d'accueil",
         "Etapes" => "De la fleur au pot",
-        "ProduitsDeSaison" => "Nos miels",
+        "ProduitsDeSaison" => "Nos produits",
         "Calendrier" => "Le mois à la ruche",
         "Actualites" => "Actualités",
         "PointsDeVente" => "Points de vente",
@@ -27,6 +27,20 @@ public class IndexModel : PageModel
     };
 
     public List<Category> Categories { get; private set; } = new();
+
+    public const string DefaultSteps =
+        "La fleur | Les abeilles butinent les floraisons de nos environs.\n" +
+        "La ruche | Le nectar devient miel, au rythme des saisons.\n" +
+        "La récolte | L'apiculteur récolte quand le miel est mûr.\n" +
+        "Le pot | Mise en pots et étiquetage, prêt pour votre table.";
+
+    /// <summary>Découpe le texte des étapes : une étape par ligne, « Titre | texte ».</summary>
+    public static List<(string Title, string Text)> ParseSteps(string? raw) =>
+        (string.IsNullOrWhiteSpace(raw) ? DefaultSteps : raw)
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(l => l.Split('|', 2, StringSplitOptions.TrimEntries))
+            .Select(p => (p[0], p.Length > 1 ? p[1] : ""))
+            .ToList();
 
     public static string? SlugOf(string? url)
     {
@@ -68,6 +82,7 @@ public class IndexModel : PageModel
         s.Title = title?.Trim();
         s.Subtitle = subtitle?.Trim();
         if (s.Kind == "Texte") s.BodyHtml = _cleaner.Clean(bodyHtml);
+        if (s.Kind == "Etapes") s.BodyHtml = bodyHtml?.Replace("\r", "").Trim();
         s.ButtonLabel = buttonLabel?.Trim();
         s.ButtonUrl = s.Kind == "ProduitsDeSaison"
             ? (string.IsNullOrEmpty(categorySlug) ? "/Produits" : "/Produits?gamme=" + categorySlug)

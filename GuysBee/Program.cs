@@ -78,6 +78,12 @@ builder.Services.AddScoped<GuysBee.Services.Shop.ShopSettings>();
 builder.Services.AddScoped<GuysBee.Services.Shop.CartService>();
 builder.Services.AddScoped<GuysBee.Services.Shop.IntegrationSettings>();
 builder.Services.AddHttpClient("integrations", c => c.Timeout = TimeSpan.FromSeconds(15));
+builder.Services.AddHttpClient("geo", c =>
+{
+    c.Timeout = TimeSpan.FromSeconds(8);
+    c.DefaultRequestHeaders.UserAgent.ParseAdd("GuysBee/1.0 (site apiculteur)");
+});
+builder.Services.AddScoped<GuysBee.Services.GeoLocator>();
 builder.Services.AddScoped<GuysBee.Services.Shop.IntegrationConnector>();
 
 var app = builder.Build();

@@ -18,7 +18,7 @@ public class IndexModel : PageModel
         Points = await _db.SalePoints.AsNoTracking().OrderBy(s => s.Name).ToListAsync();
 
     public async Task<IActionResult> OnPostSaveAsync(int id, string name, string? address, string? postalCode, string? city, string? schedule, string? phone,
-        string? mapUrl, string? details, bool isActive, IFormFile? photo, bool removePhoto)
+        string? mapUrl, string? details, bool isActive, IFormFile? photo, bool removePhoto, [FromServices] GuysBee.Services.GeoLocator geo)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -44,6 +44,9 @@ public class IndexModel : PageModel
         s.Phone = phone?.Trim();
         s.Details = details?.Trim();
         s.MapUrl = GuysBee.Services.MapLinks.Clean(mapUrl);
+        var spot = await geo.LocateAsync(s.MapUrl, $"{s.Address}, {s.PostalCode} {s.City}");
+        s.Latitude = spot?.Lat;
+        s.Longitude = spot?.Lng;
         if (removePhoto) s.PhotoBaseName = null;
         if (photo is { Length: > 0 })
         {
@@ -52,7 +55,16 @@ public class IndexModel : PageModel
         }
         s.IsActive = isActive;
         await _db.SaveChangesAsync();
-        TempData["Message"] = "Lieu de revente enregistré.";
+        TempData["Message"] = spot is null
+            ? "Lieu de revente enregistré, mais introuvable sur la carte : vérifiez l'adresse ou collez un lien Google Maps."
+            : "Lieu de revente enregistré et placé sur la carte.";
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostLocateAllAsync([FromServices] GuysBee.Services.GeoLocator geo)
+    {
+        await geo.FillMissingAsync(_db);
+        TempData["Message"] = "Les lieux ont été placés sur la carte quand leur adresse a été trouvée.";
         return RedirectToPage();
     }
 

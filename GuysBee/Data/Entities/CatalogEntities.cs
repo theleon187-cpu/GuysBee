@@ -116,6 +116,8 @@ public class MarketEvent
     public string? MapUrl { get; set; }
     public string? PhotoBaseName { get; set; }
     public string? Details { get; set; }
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
     public bool IsVisible { get; set; } = true;}
 
 public class SiteSetting

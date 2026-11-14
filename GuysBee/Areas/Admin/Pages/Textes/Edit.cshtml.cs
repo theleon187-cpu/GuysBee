@@ -47,6 +47,22 @@ public class EditModel : PageModel
         return Page();
     }
 
+    public async Task<IActionResult> OnPostImageAsync(IFormFile? file, [FromServices] MediaService media)
+    {
+        if (file is not { Length: > 0 }) return BadRequest(new { error = "Aucune photo reçue." });
+        try
+        {
+            var baseName = await media.SavePhotoAsync(file);
+            return baseName is null
+                ? BadRequest(new { error = "Photo illisible." })
+                : new JsonResult(new { location = MediaUrls.Src(baseName, 1200) });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
     public async Task<IActionResult> OnPostAsync()
     {
         var p = await _db.ContentPages.FindAsync(Input.Id);

@@ -18,7 +18,8 @@
     </div>
     <div class="mb-3">
         <label asp-for="Input.BodyHtml" class="form-label">Contenu</label>
-        <textarea asp-for="Input.BodyHtml" class="form-control gb-richtext" rows="14"></textarea>
+        <textarea asp-for="Input.BodyHtml" class="form-control gb-richtext" rows="14" data-upload-url="@Url.Page("Edit", "Image")"></textarea>
+                <div class="gb-admin-help">Pour ajouter une photo : cliquez sur l'icône image de la barre d'outils, puis « Envoyer », ou faites glisser la photo dans le texte.</div>
     </div>
     <div class="form-check mb-3">
         <input asp-for="Input.IsPublished" class="form-check-input" />

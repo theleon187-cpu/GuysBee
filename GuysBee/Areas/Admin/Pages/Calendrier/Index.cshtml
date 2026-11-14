@@ -14,8 +14,18 @@
 {
     <div class="gb-admin-card @(e.Month == DateTime.Now.Month ? "gb-current-card" : "")">
         <h2>@IndexModel.MonthNames[Math.Clamp(e.Month, 1, 12)]@(e.Month == DateTime.Now.Month ? " (mois en cours)" : "")</h2>
-        <form method="post" asp-page-handler="Save">
+        <form method="post" asp-page-handler="Save" enctype="multipart/form-data">
             <input type="hidden" name="id" value="@e.Id" />
+            @if (e.Media is { } photo)
+            {
+                <img class="gb-admin-thumb mb-2" src="@GuysBee.Services.MediaUrls.Src(photo, 480)" alt="Photo du mois" />
+                <div class="form-check mb-2">
+                    <input id="rp-@e.Id" name="removePhoto" type="checkbox" value="true" class="form-check-input" />
+                    <label class="form-check-label" for="rp-@e.Id">Retirer la photo</label>
+                </div>
+            }
+            <label class="form-label" for="ph-@e.Id">Photo du mois (facultatif)</label>
+            <input id="ph-@e.Id" name="photo" type="file" accept="image/jpeg,image/png,image/webp" class="form-control mb-2" />
             <label class="form-label" for="ti-@e.Id">Titre</label>
             <input id="ti-@e.Id" name="title" class="form-control mb-2" value="@e.Title" maxlength="150" required />
             <label class="form-label" for="b-@e.Id">Les abeilles</label>

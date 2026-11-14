@@ -37,6 +37,10 @@ public static class DbInitializer
             await AddColumnIfMissingAsync(db, "MarketEvents", "PhotoBaseName", "TEXT NULL");
             await AddColumnIfMissingAsync(db, "SalePoints", "PhotoBaseName", "TEXT NULL");
             await AddColumnIfMissingAsync(db, "SalePoints", "Details", "TEXT NULL");
+            await AddColumnIfMissingAsync(db, "SalePoints", "Latitude", "REAL NULL");
+            await AddColumnIfMissingAsync(db, "SalePoints", "Longitude", "REAL NULL");
+            await AddColumnIfMissingAsync(db, "MarketEvents", "Latitude", "REAL NULL");
+            await AddColumnIfMissingAsync(db, "MarketEvents", "Longitude", "REAL NULL");
         }
 
         await DbSeeder.SeedAsync(db);
