@@ -19,6 +19,11 @@
                 <script type="application/json" id="gb-points-data">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MapPoints, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web) { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Default }))</script>
             </section>
         }
+        <div class="gb-quick-filter" role="search">
+            <label for="gb-quick-filter-input" class="gb-quick-filter-label">Filtre rapide</label>
+            <input id="gb-quick-filter-input" class="gb-quick-filter-input" type="search" placeholder="Ville, nom, jour… (ex. Samedi, Tarare)" autocomplete="off" />
+            <p class="gb-quick-filter-empty" id="gb-quick-filter-empty" hidden aria-live="polite">Aucun résultat pour cette recherche.</p>
+        </div>
         <section aria-labelledby="gb-agenda-title">
             <h2 class="gb-find-subtitle gb-find-list-title" id="gb-agenda-title">Sur les marchés</h2>
             <div class="gb-card gb-agenda">
@@ -81,6 +86,7 @@
 </section>
 
 @section Scripts {
+    <script src="~/js/quick-filter.js" asp-append-version="true"></script>
     @if (Model.MapPoints.Count > 0)
     {
         <link rel="stylesheet" href="https://unpkg.com/leaflet@("@")1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />

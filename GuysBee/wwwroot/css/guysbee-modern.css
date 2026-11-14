@@ -225,6 +225,13 @@ body.theme-modern {
 /* Où nous trouver : listes marchés / commerces */
 .gb-find-list-title { margin-top: 2.5rem; }
 
+/* Où nous trouver : filtre rapide */
+.gb-quick-filter { margin: 1.5rem 0 0; }
+.gb-quick-filter-label { display: block; font-weight: 600; margin-bottom: .4rem; }
+.gb-quick-filter-input { width: 100%; max-width: 28rem; padding: .7rem 1rem; border: 1px solid rgba(0, 0, 0, .2); border-radius: 999px; font: inherit; background: #fff; }
+.gb-quick-filter-empty { margin-top: .6rem; }
+.gb-agenda-item[hidden] { display: none; }
+
 /* Où nous trouver : carte unique */
 .gb-points-map-wrap { margin-bottom: 1rem; }
 .gb-points-map { height: 420px; border-radius: 16px; overflow: hidden; box-shadow: 0 6px 24px rgba(30, 26, 20, .12); z-index: 0; }
