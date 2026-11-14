@@ -36,6 +36,7 @@ public class SiteBackupService
 
     public async Task<Stream> ExportAsync()
     {
+        await RegisterOrphanPhotosAsync();
         var temp = new FileStream(Path.Combine(Path.GetTempPath(), $"guysbee-{Guid.NewGuid():N}.zip"),
             FileMode.Create, FileAccess.ReadWrite, FileShare.None, 81920, FileOptions.DeleteOnClose);
 
@@ -96,6 +97,49 @@ public class SiteBackupService
     private async Task<List<object>> QueryAsync<T>() where T : class =>
         (await _db.Set<T>().AsNoTracking().ToListAsync()).Cast<object>().ToList();
 
+    /// <summary>
+    /// Les photos des marchés, des lieux de revente et du logo peuvent exister sans fiche dans le gestionnaire photo :
+    /// on crée la fiche manquante (en brouillon, donc non publiée dans la galerie).
+    /// </summary>
+    public async Task RegisterOrphanPhotosAsync()
+    {
+        var names = new HashSet<string>(StringComparer.Ordinal);
+        names.UnionWith(await _db.SalePoints.Where(s => s.PhotoBaseName != null).Select(s => s.PhotoBaseName!).ToListAsync());
+        names.UnionWith(await _db.MarketEvents.Where(e => e.PhotoBaseName != null).Select(e => e.PhotoBaseName!).ToListAsync());
+        names.UnionWith(await _db.SiteSettings.Where(s => s.Key == "site.logoMedia" && s.Value != "").Select(s => s.Value).ToListAsync());
+        names.RemoveWhere(string.IsNullOrWhiteSpace);
+        if (names.Count == 0) return;
+
+        var known = (await _db.MediaAssets.Select(m => m.BaseName).ToListAsync()).ToHashSet(StringComparer.Ordinal);
+        var order = await _db.MediaAssets.MaxAsync(m => (int?)m.SortOrder) ?? 0;
+        foreach (var name in names.Where(n => !known.Contains(n)))
+        {
+            int width = 0, height = 0;
+            var file = Path.Combine(WebRoot, "media", $"{name}-1200.webp");
+            if (File.Exists(file))
+            {
+                try
+                {
+                    var info = await SixLabors.ImageSharp.Image.IdentifyAsync(file);
+                    width = info.Width;
+                    height = info.Height;
+                }
+                catch (Exception) { }
+            }
+            _db.MediaAssets.Add(new MediaAsset
+            {
+                SourceFileName = name + ".webp",
+                BaseName = name,
+                Kind = MediaKind.Image,
+                Status = MediaStatus.Draft,
+                Width = width,
+                Height = height,
+                SortOrder = ++order
+            });
+        }
+        await _db.SaveChangesAsync();
+    }
+
     private async Task SaveLastExportAsync()
     {
         var s = await _db.SiteSettings.FirstOrDefaultAsync(x => x.Key == LastExportKey);
@@ -136,6 +180,7 @@ public class SiteBackupService
 
             ExtractFiles(zip);
         }
+        await RegisterOrphanPhotosAsync();
         return null;
     }
 
