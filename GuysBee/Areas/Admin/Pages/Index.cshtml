@@ -65,24 +65,25 @@
             <li class="@(Model.HasPhotos ? "gb-done" : "")"><a href="/Admin/Photos">Publier vos premi&egrave;res photos</a></li>
             <li class="@(Model.HasHero ? "gb-done" : "")"><a href="/Admin/Photos">Choisir les photos du bandeau d'accueil</a></li>
             <li class="@(Model.StockFilled ? "gb-done" : "")"><a href="/Admin/Miels">Indiquer le stock de chaque pot</a></li>
-            <li><a href="/Admin/Textes">Relire &laquo; Notre histoire &raquo; et les pages l&eacute;gales</a></li>
-            <li><a href="/Admin/Reglages">Renseigner vos coordonn&eacute;es</a></li>
+            <li class="@(Model.TextsReviewed ? "gb-done" : "")"><a href="/Admin/Textes">Relire
+            <li class="@(Model.CoordsFilled ? "gb-done" : "")"><a href="/Admin/Reglages">Renseigner
             <li class="@(Model.ShopEnabled ? "gb-done" : "")"><a href="/Admin/Boutique">Activer la boutique en ligne</a></li>
             <li class="@(Model.ShippingReady ? "gb-done" : "")"><a href="/Admin/Boutique">Choisir vos modes de livraison et vos tarifs</a></li>
             <li class="@(Model.PayPalReady ? "gb-done" : "")"><a href="/Admin/Integrations#paypal">Connecter votre compte PayPal</a></li>
             <li class="@(Model.InvoiceReady ? "gb-done" : "")"><a href="/Admin/Integrations#facturation">Compl&eacute;ter vos informations de facturation</a></li>
-            <li class="@(Model.ColissimoReady ? "gb-done" : "")"><a href="/Admin/Integrations#colissimo">Configurer Colissimo et les points relais</a></li>
+            Configurer Colissimo et les points relais</a></li>
+                        <li class="@(Model.BackupDone ? "gb-done" : "")"><a href="/Admin/Sauvegarde">Faire une sauvegarde compl&egrave;te du site</a></li>
         </ul>
     </section>
 
     <section class="gb-panel">
         <h2>&Eacute;tat de la boutique</h2>
         <ul class="gb-checklist">
-            @(Model.ShopEnabled ? "activée" : "désactivée")
-            (Model.PayPal.IsLive ? "connecté (mode réel)" : "connecté (mode test)") : "à configurer")
+            <li class="@(Model.ShopEnabled ? "gb-done" : "")"><a href="/Admin/Boutique">Boutique : @(Model.ShopEnabled ? "activée" : "désactivée")</a></li>
+            <li class="@(Model.PayPalReady ? "gb-done" : "")"><a href="/Admin/Integrations#paypal">PayPal : @(Model.PayPalReady ? (Model.PayPal.IsLive ? "connecté (mode réel)" : "connecté (mode test)") : "à configurer")</a></li>
             <li class="@(Model.ShippingReady ? "gb-done" : "")"><a href="/Admin/Boutique">Livraison : @Model.ActiveShippingMethods mode(s) propos&eacute;(s)</a></li>
-            @(Model.ColissimoReady ? "identifiants renseignés" : "à configurer")
-            @(Model.InvoiceReady ? "informations complètes" : "informations à compléter")
+            <li class="@(Model.ColissimoReady ? "gb-done" : "")"><a href="/Admin/Integrations#colissimo">Colissimo : @(Model.ColissimoReady ? "identifiants renseignés" : "à configurer")</a></li>
+            <li class="@(Model.InvoiceReady ? "gb-done" : "")"><a href="/Admin/Integrations#facturation">Facturation : @(Model.InvoiceReady ? "informations complètes" : "informations à compléter")</a></li>
         </ul>
     </section>
 

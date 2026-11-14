@@ -36,8 +36,8 @@
                 <a class="gb-sidebar-link @Active("/Admin")" href="/Admin">Tableau de bord</a>
                 <a class="gb-sidebar-link @Active("/Admin/Messages")" href="/Admin/Messages">Messages</a>
                 <p class="gb-sidebar-label">Contenu</p>
-                <a class="gb-sidebar-link @(path.StartsWith("/Admin/Photos/Gestionnaire", StringComparison.OrdinalIgnoreCase) ? "" : Active("/Admin/Photos"))" href="/Admin/Photos">Photos</a>
                 <a class="gb-sidebar-link @Active("/Admin/Photos/Gestionnaire")" href="/Admin/Photos/Gestionnaire">Gestionnaire photo</a>
+                <a class="gb-sidebar-link @(path.StartsWith("/Admin/Photos/Gestionnaire", StringComparison.OrdinalIgnoreCase) ? "" : Active("/Admin/Photos"))" href="/Admin/Photos">Photos</a>
                 <a class="gb-sidebar-link @Active("/Admin/Textes")" href="/Admin/Textes">Textes du site</a>
                 <a class="gb-sidebar-link @Active("/Admin/Prestations")" href="/Admin/Prestations">Prestations</a>
                 <a class="gb-sidebar-link @Active("/Admin/Accueil")" href="/Admin/Accueil">Page d'accueil</a>                <a class="gb-sidebar-link @Active("/Admin/Navigation")" href="/Admin/Navigation">Menu du site</a>
@@ -49,11 +49,13 @@
                 <a class="gb-sidebar-link @Active("/Admin/Miels")" href="/Admin/Miels">Gammes et produits</a>
                 <a class="gb-sidebar-link @Active("/Admin/Commandes")" href="/Admin/Commandes">Commandes</a>
                 <a class="gb-sidebar-link @Active("/Admin/Boutique")" href="/Admin/Boutique">Boutique en ligne</a>
+                <a class="gb-sidebar-link @Active("/Admin/Clients")" href="/Admin/Clients">Comptes clients</a>
                 <a class="gb-sidebar-link @Active("/Admin/Integrations")" href="/Admin/Integrations">Paiement et livraison</a>
                 <p class="gb-sidebar-label">Site</p>
                 <a class="gb-sidebar-link @Active("/Admin/Annonce")" href="/Admin/Annonce">Annonce</a>
                 <a class="gb-sidebar-link @Active("/Admin/Reglages")" href="/Admin/Reglages">R&eacute;glages</a>
                 <a class="gb-sidebar-link @Active("/Admin/Historique")" href="/Admin/Historique">Historique</a>
+                <a class="gb-sidebar-link @Active("/Admin/Sauvegarde")" href="/Admin/Sauvegarde">Sauvegarde du site</a>
                 <a class="gb-sidebar-link @Active("/Admin/MotDePasse")" href="/Admin/MotDePasse">Mot de passe</a>
                 <a class="gb-sidebar-link" href="/" target="_blank" rel="noopener">Voir le site &#8599;</a>
             </nav>

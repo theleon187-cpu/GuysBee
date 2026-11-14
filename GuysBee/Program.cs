@@ -69,6 +69,7 @@ builder.Services.AddRazorPages(options =>
 builder.Services.AddSingleton<IHtmlCleaner, HtmlCleaner>();
 builder.Services.AddSingleton<GuysBee.Services.FontLibrary>();
 builder.Services.AddScoped<MediaService>();
+builder.Services.AddScoped<SiteBackupService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(o =>

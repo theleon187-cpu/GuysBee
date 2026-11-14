@@ -1,0 +1,38 @@
+@page
+@model GuysBee.Areas.Admin.Pages.Sauvegarde.IndexModel
+@{
+    ViewData["Title"] = "Sauvegarde du site";
+}
+<header class="gb-admin-head">
+    <h1>Sauvegarde du site</h1>
+    <p class="gb-admin-help">Enregistrez tout votre site dans un seul fichier, ou restaurez-le sur cette installation ou une autre.</p>
+</header>
+
+<section class="gb-admin-card mb-4">
+    <h2 class="h5">Exporter le site</h2>
+    <p>Le fichier contient les textes, produits, stocks, commandes, r&eacute;glages, photos et polices.</p>
+    <p class="gb-admin-help">
+        Derni&egrave;re sauvegarde :
+        @(Model.LastExport is { } d ? d.ToString("dd/MM/yyyy HH:mm") : "jamais")
+    </p>
+    <p class="gb-admin-help">Ce fichier peut contenir des identifiants (PayPal, Colissimo) et des donn&eacute;es clients : conservez-le en lieu s&ucirc;r.</p>
+    <form method="post" asp-page-handler="Export">
+        <button type="submit" class="btn btn-primary">T&eacute;l&eacute;charger la sauvegarde</button>
+    </form>
+</section>
+
+<section class="gb-admin-card">
+    <h2 class="h5">Restaurer une sauvegarde</h2>
+    <p><strong>Attention :</strong> la restauration remplace tout le contenu actuel du site (textes, produits, commandes, r&eacute;glages). Les comptes administrateur et clients sont conserv&eacute;s.</p>
+    <form method="post" asp-page-handler="Import" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label class="form-label" for="sv-file">Fichier de sauvegarde (.zip)</label>
+            <input id="sv-file" type="file" name="archive" accept=".zip" class="form-control" required />
+        </div>
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="sv-confirm" name="confirm" value="true" />
+            <label class="form-check-label" for="sv-confirm">Je comprends que le contenu actuel sera remplac&eacute;</label>
+        </div>
+        <button type="submit" class="btn btn-outline-danger">Restaurer</button>
+    </form>
+</section>

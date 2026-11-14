@@ -1,5 +1,6 @@
 using GuysBee.Data;
 using GuysBee.Data.Entities;
+using GuysBee.Services;
 using GuysBee.Services.Shop;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +42,9 @@ public class IndexModel : PageModel
     public bool HasPhotos => PublishedPhotos > 0;
     public bool HasHero => HeroPhotos > 0;
     public bool StockFilled => ActiveVariants > 0 && OutOfStock == 0;
+    public bool TextsReviewed { get; private set; }
+    public bool CoordsFilled { get; private set; }
+    public bool BackupDone { get; private set; }
 
     public async Task OnGetAsync()
     {
@@ -61,5 +65,13 @@ public class IndexModel : PageModel
         PayPal = await _integrations.GetPayPalAsync();
         Invoice = await _integrations.GetInvoiceAsync();
         Colissimo = await _integrations.GetColissimoAsync();
+
+        TextsReviewed = await _db.AuditEntries.AnyAsync(a => a.EntityName == nameof(ContentPage));
+        var settings = await _db.SiteSettings.AsNoTracking()
+            .Where(s => s.Key.StartsWith("business.") || s.Key == SiteBackupService.LastExportKey)
+            .ToDictionaryAsync(s => s.Key, s => s.Value);
+        bool Filled(string key) => settings.TryGetValue(key, out var v) && !string.IsNullOrWhiteSpace(v);
+        CoordsFilled = Filled("business.phone") && Filled("business.email") && Filled("business.city");
+        BackupDone = Filled(SiteBackupService.LastExportKey);
     }
 }

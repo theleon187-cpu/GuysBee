@@ -301,3 +301,16 @@
 .gb-find-sections.gb-find-shops-first { flex-direction: column; }
 .gb-find-sections.gb-find-shops-first > [data-gb-group='commerce'] { order: 1; }
 .gb-find-sections.gb-find-shops-first > [data-gb-group='marche'] { order: 2; }
+
+/* Pages compte (inscription / connexion) */
+.gb-auth-card { max-width: 640px; margin-inline: auto; background: var(--gb-white); border-radius: var(--gb-radius); box-shadow: var(--gb-shadow); border-top: 6px solid var(--gb-yellow); padding: 2rem 1.5rem; }
+.gb-auth-title { margin-top: 0; }
+.gb-auth-intro { color: var(--gb-muted); margin-bottom: 1.5rem; }
+.gb-auth-form { max-width: none; }
+.gb-auth-group { border: 0; padding: 0; margin: 0; display: grid; gap: 1rem; }
+.gb-auth-group legend { font-weight: 700; font-size: 1.05rem; margin-bottom: .5rem; padding: 0; }
+.gb-auth-row { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+@media (min-width: 600px) { .gb-auth-row { grid-template-columns: 1fr 1fr; } .gb-auth-card { padding: 2.5rem; } }
+.gb-auth-submit { justify-self: start; }
+.gb-auth-alt { margin-top: 1.5rem; text-align: center; }
+.gb-form-errors:empty { display: none; }
