@@ -4,7 +4,7 @@
     ViewData["Title"] = "Modifier une page";
 }
 <h1 class="h3 mb-3">Modifier : @Model.Input.Title</h1>
-<form method="post" class="gb-admin-card">
+<form method="post" class="gb-admin-card" enctype="multipart/form-data">
     <input type="hidden" asp-for="Input.Id" />
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="mb-3">
@@ -17,9 +17,25 @@
         <input asp-for="Input.MetaDescription" class="form-control" />
     </div>
     <div class="mb-3">
+        <label class="form-label" for="heroPhoto">Photo d'en-tête (grande image en haut de la page)</label>
+        @if (Model.HasHero)
+        {
+            <div class="mb-2"><img src="@GuysBee.Services.MediaUrls.Src(Model.HeroBaseName!, 480)" alt="Photo actuelle" width="240" /></div>
+            <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" id="removeHero" name="removeHero" value="true" />
+                <label class="form-check-label" for="removeHero">Retirer la photo actuelle</label>
+            </div>
+        }
+        <input type="file" class="form-control" id="heroPhoto" name="heroPhoto" accept=".jpg,.jpeg,.png,.webp" />
+    </div>
+    <div class="mb-3">
         <label asp-for="Input.BodyHtml" class="form-label">Contenu</label>
         <textarea asp-for="Input.BodyHtml" class="form-control gb-richtext" rows="14" data-upload-url="@Url.Page("Edit", "Image")"></textarea>
-                <div class="gb-admin-help">Pour ajouter une photo : cliquez sur l'icône image de la barre d'outils, puis « Envoyer », ou faites glisser la photo dans le texte.</div>
+                @if (Model.Slug == "prestations")
+                {
+                    <div class="gb-admin-help">Cette page se gère plus simplement dans <a href="/Admin/Prestations">Prestations</a> (présentation, cartes, photos, ordre).</div>
+                }
+                <div class="gb-admin-help">Pour ajouter une photo
     </div>
     <div class="form-check mb-3">
         <input asp-for="Input.IsPublished" class="form-check-input" />
@@ -27,7 +43,7 @@
     </div>
     <button type="submit" class="btn btn-warning">Enregistrer</button>
     <a class="btn btn-outline-dark" asp-page="Index">Annuler</a>
-    <a class="btn btn-link" href="/p/@Model.Slug" target="_blank" rel="noopener">Voir la page</a>
+    href="@Model.PublicUrl"
 </form>
 
 @section Scripts {

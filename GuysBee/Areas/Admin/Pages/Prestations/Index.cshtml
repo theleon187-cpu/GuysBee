@@ -1,0 +1,103 @@
+﻿@page
+@model GuysBee.Areas.Admin.Pages.Prestations.IndexModel
+@using GuysBee.Services
+@{
+    ViewData["Title"] = "Prestations";
+}
+<header class="gb-admin-head">
+    <h1>Prestations</h1>
+    <p class="gb-admin-help">Gérez la page « Prestations » du site : son en-tête, puis chaque prestation proposée (animations, événements, pots personnalisés...). <a href="/Prestations" target="_blank" rel="noopener">Voir la page sur le site</a></p>
+</header>
+
+@if (Model.PageData is { } pg)
+{
+    <section class="gb-admin-card mb-4">
+        <h2>1. Présentation de la page</h2>
+        <form method="post" asp-page-handler="SavePage" enctype="multipart/form-data">
+            <label class="form-label" for="pg-title">Titre de la page</label>
+            <input id="pg-title" name="title" class="form-control mb-2" value="@pg.Title" maxlength="150" required />
+
+            <label class="form-label" for="pg-lead">Phrase d'accroche (sous le titre, sur la grande image)</label>
+            <input id="pg-lead" name="lead" class="form-control mb-1" value="@pg.MetaDescription" maxlength="300" />
+            <div class="gb-admin-help mb-2">Elle sert aussi de résumé pour Google.</div>
+
+            <label class="form-label" for="pg-intro">Texte d'introduction</label>
+            <textarea id="pg-intro" name="intro" class="form-control mb-1" rows="4">@Model.IntroText</textarea>
+            <div class="gb-admin-help mb-2">Une ligne vide sépare deux paragraphes.</div>
+
+            <label class="form-label" for="pg-hero">Grande photo d'en-tête (facultatif)</label>
+            @if (pg.HeroMedia is { } hero)
+            {
+                <div class="mb-2"><img class="gb-admin-thumb" src="@MediaUrls.Src(hero, 480)" alt="Photo actuelle" /></div>
+                <div class="form-check mb-2">
+                    <input id="pg-rm" name="removeHero" type="checkbox" value="true" class="form-check-input" />
+                    <label class="form-check-label" for="pg-rm">Retirer la photo</label>
+                </div>
+            }
+            <input id="pg-hero" name="heroPhoto" type="file" accept="image/jpeg,image/png,image/webp" class="form-control mb-2" />
+
+            <div class="form-check mb-3">
+                <input id="pg-pub" name="isPublished" type="checkbox" value="true" class="form-check-input" checked="@pg.IsPublished" />
+                <input type="hidden" name="isPublished" value="false" />
+                <label class="form-check-label" for="pg-pub">Page visible sur le site</label>
+            </div>
+            <button type="submit" class="btn btn-warning">Enregistrer la présentation</button>
+        </form>
+    </section>
+}
+
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h4 mb-0">2. Les prestations (@Model.Items.Count)</h2>
+        <form method="post" asp-page-handler="Add"><button type="submit" class="btn btn-warning">+ Ajouter une prestation</button></form>
+    </div>
+    @if (Model.Items.Count == 0)
+    {
+        <p class="gb-admin-help">Aucune prestation pour le moment. Cliquez sur « Ajouter une prestation ».</p>
+    }
+    <div class="gb-cal-grid">
+    @for (var i = 0; i < Model.Items.Count; i++)
+    {
+        var p = Model.Items[i];
+        <div class="gb-admin-card">
+            <h3 class="h5">@(i + 1). @p.Title @if (!p.IsVisible) { <span class="badge text-bg-secondary">masquée</span> }</h3>
+            <form method="post" asp-page-handler="Save" enctype="multipart/form-data">
+                <input type="hidden" name="id" value="@p.Id" />
+                @if (p.Media is { } photo)
+                {
+                    <img class="gb-admin-thumb mb-2" src="@MediaUrls.Src(photo, 480)" alt="Photo de la prestation" />
+                    <div class="form-check mb-2">
+                        <input id="rp-@p.Id" name="removePhoto" type="checkbox" value="true" class="form-check-input" />
+                        <label class="form-check-label" for="rp-@p.Id">Retirer la photo</label>
+                    </div>
+                }
+                <label class="form-label" for="ph-@p.Id">Photo (facultatif)</label>
+                <input id="ph-@p.Id" name="photo" type="file" accept="image/jpeg,image/png,image/webp" class="form-control mb-2" />
+                <label class="form-label" for="ti-@p.Id">Titre</label>
+                <input id="ti-@p.Id" name="title" class="form-control mb-2" value="@p.Title" maxlength="150" required />
+                <label class="form-label" for="de-@p.Id">Description</label>
+                <textarea id="de-@p.Id" name="description" class="form-control mb-2" rows="5">@p.Description</textarea>
+                <label class="form-label" for="pr-@p.Id">Tarif ou précision (ex. « Sur devis », « À partir de 50 € »)</label>
+                <input id="pr-@p.Id" name="priceInfo" class="form-control mb-2" value="@p.PriceInfo" maxlength="80" />
+                <div class="form-check mb-2">
+                    <input id="v-@p.Id" name="isVisible" type="checkbox" value="true" class="form-check-input" checked="@p.IsVisible" />
+                    <input type="hidden" name="isVisible" value="false" />
+                    <label class="form-check-label" for="v-@p.Id">Visible sur le site</label>
+                </div>
+                <button type="submit" class="btn btn-warning btn-sm">Enregistrer</button>
+            </form>
+            <div class="d-flex gap-2 mt-2">
+                <form method="post" asp-page-handler="Move"><input type="hidden" name="id" value="@p.Id" /><input type="hidden" name="direction" value="-1" />
+                    <button type="submit" class="btn btn-outline-dark btn-sm" disabled="@(i == 0)" aria-label="Monter">&uarr; Monter</button></form>
+                <form method="post" asp-page-handler="Move"><input type="hidden" name="id" value="@p.Id" /><input type="hidden" name="direction" value="1" />
+                    <button type="submit" class="btn btn-outline-dark btn-sm" disabled="@(i == Model.Items.Count - 1)" aria-label="Descendre">&darr; Descendre</button></form>
+                <form method="post" asp-page-handler="Delete" class="ms-auto" onsubmit="return confirm('Supprimer cette prestation ?');">
+                    <input type="hidden" name="id" value="@p.Id" />
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Supprimer</button></form>
+            </div>
+        </div>
+    }
+    </div>
+</section>
+
+

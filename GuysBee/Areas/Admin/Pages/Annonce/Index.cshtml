@@ -1,0 +1,98 @@
+@page
+@model GuysBee.Areas.Admin.Pages.Annonce.IndexModel
+@using GuysBee.Services
+@{
+    ViewData["Title"] = "Annonce";
+    string Sel(string key, string option, string def = "") => (string.IsNullOrEmpty(Model.V(key)) ? def : Model.V(key)) == option ? "selected" : "";
+}
+<h1 class="h3 mb-3">Annonce du site</h1>
+<form method="post" class="gb-admin-card">
+    <div class="form-check form-switch mb-3">
+        <input class="form-check-input" type="checkbox" id="a-enabled" name="enabled" value="true" @(Model.V(AnnouncementKeys.Enabled) == "1" ? "checked" : "") />
+        <label class="form-check-label" for="a-enabled">Afficher l'annonce sur le site</label>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label" for="a-title">Titre (facultatif)</label>
+        <input id="a-title" name="values[@AnnouncementKeys.Title]" class="form-control" maxlength="120" value="@Model.V(AnnouncementKeys.Title)" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="a-message">Message</label>
+        <textarea id="a-message" name="values[@AnnouncementKeys.Message]" class="form-control" rows="3" maxlength="600">@Model.V(AnnouncementKeys.Message)</textarea>
+        <div class="gb-admin-help">Ex. « Récolte de printemps disponible dès le 15 mai ! »</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="a-link">Lien du bouton (facultatif)</label>
+            <input id="a-link" name="values[@AnnouncementKeys.LinkUrl]" class="form-control" value="@Model.V(AnnouncementKeys.LinkUrl)" placeholder="/Produits" />
+            <div class="gb-admin-help">Une page du site (ex. /Produits) ou une adresse complète https://...</div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="a-label">Texte du bouton</label>
+            <input id="a-label" name="values[@AnnouncementKeys.LinkLabel]" class="form-control" maxlength="40" value="@Model.V(AnnouncementKeys.LinkLabel)" placeholder="En savoir plus" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label class="form-label" for="a-display">Présentation</label>
+            <select id="a-display" name="values[@AnnouncementKeys.Display]" class="form-select">
+                <option value="bandeau" selected="@(Sel(AnnouncementKeys.Display, "bandeau", "bandeau") == "selected")">Bandeau en haut des pages</option>
+                <option value="fenetre" selected="@(Sel(AnnouncementKeys.Display, "fenetre") == "selected")">Fenêtre au centre de l'écran</option>
+            </select>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label class="form-label" for="a-style">Couleur</label>
+            <select id="a-style" name="values[@AnnouncementKeys.Style]" class="form-select">
+                <option value="info" selected="@(Sel(AnnouncementKeys.Style, "info", "info") == "selected")">Information (miel)</option>
+                <option value="promo" selected="@(Sel(AnnouncementKeys.Style, "promo") == "selected")">Promotion (vert)</option>
+                <option value="alerte" selected="@(Sel(AnnouncementKeys.Style, "alerte") == "selected")">Important (rouge)</option>
+            </select>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label class="form-label" for="a-scope">Pages concernées</label>
+            <select id="a-scope" name="values[@AnnouncementKeys.Scope]" class="form-select">
+                <option value="toutes" selected="@(Sel(AnnouncementKeys.Scope, "toutes", "toutes") == "selected")">Toutes les pages</option>
+                <option value="accueil" selected="@(Sel(AnnouncementKeys.Scope, "accueil") == "selected")">Page d'accueil uniquement</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="a-start">Début d'affichage (facultatif)</label>
+            <input id="a-start" type="date" name="values[@AnnouncementKeys.Start]" class="form-control" value="@Model.V(AnnouncementKeys.Start)" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="a-end">Fin d'affichage (facultatif)</label>
+            <input id="a-end" type="date" name="values[@AnnouncementKeys.End]" class="form-control" value="@Model.V(AnnouncementKeys.End)" />
+            <div class="gb-admin-help">L'annonce disparaît automatiquement après cette date (incluse).</div>
+        </div>
+    </div>
+
+    <div class="form-check form-switch mb-3">
+        <input class="form-check-input" type="checkbox" id="a-closable" name="closable" value="true" @(Model.V(AnnouncementKeys.Closable) != "0" ? "checked" : "") />
+        <label class="form-check-label" for="a-closable">Le visiteur peut fermer l'annonce</label>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="a-cookie">Ne plus l'afficher après fermeture pendant (jours)</label>
+            <input id="a-cookie" type="number" min="0" max="365" name="values[@AnnouncementKeys.CookieDays]" class="form-control" value="@(string.IsNullOrEmpty(Model.V(AnnouncementKeys.CookieDays)) ? "7" : Model.V(AnnouncementKeys.CookieDays))" />
+            <div class="gb-admin-help">0 = réapparaît à chaque nouvelle visite (mémorisé uniquement le temps de la visite).</div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="a-delay">Délai avant affichage (secondes)</label>
+            <input id="a-delay" type="number" min="0" max="60" name="values[@AnnouncementKeys.Delay]" class="form-control" value="@(string.IsNullOrEmpty(Model.V(AnnouncementKeys.Delay)) ? "0" : Model.V(AnnouncementKeys.Delay))" />
+        </div>
+    </div>
+
+    <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" id="a-reset" name="resetCookie" value="true" />
+        <label class="form-check-label" for="a-reset">Réafficher l'annonce à tous les visiteurs, même ceux qui l'ont déjà fermée</label>
+        <div class="gb-admin-help">Fait automatiquement si vous modifiez le titre ou le message.</div>
+    </div>
+
+    <button type="submit" class="btn btn-warning">Enregistrer</button>
+</form>

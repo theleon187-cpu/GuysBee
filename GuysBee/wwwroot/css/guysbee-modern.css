@@ -17,6 +17,9 @@ body.theme-modern {
 .theme-modern .gb-menu-link:hover { background: transparent; color: var(--gb-black); }
 .theme-modern .gb-menu-link::after { content: ""; position: absolute; left: .7rem; right: .7rem; bottom: .2rem; height: 2px; background: var(--gb-amber); transform: scaleX(0); transform-origin: left; transition: transform .2s ease; }
 .theme-modern .gb-menu-link:hover::after, .theme-modern .gb-menu-link:focus-visible::after { transform: scaleX(1); }
+.theme-modern .gb-submenu { border-color: rgba(43, 33, 24, .12); background: #fffdf5; }
+.theme-modern .gb-submenu-link { color: var(--gb-brown); }
+.theme-modern .gb-submenu-link:hover, .theme-modern .gb-submenu-link:focus-visible { background: #fff1c9; }
 .theme-modern .gb-nav-toggle { background: var(--gb-brown); border-radius: 999px; }
 
 /* Boutons */

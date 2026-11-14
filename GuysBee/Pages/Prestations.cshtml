@@ -1,0 +1,74 @@
+@page "/Prestations"
+@using GuysBee.Services
+@model GuysBee.Pages.PrestationsModel
+@{
+    ViewData["Title"] = Model.PageData.MetaTitle ?? Model.PageData.Title;
+    ViewData["Description"] = Model.PageData.MetaDescription;
+    var hero = Model.PageData.HeroMedia;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/prestations.css" asp-append-version="true" />
+}
+
+<div class="gb-presta">
+    <section class="gb-presta-hero@(hero is null ? " gb-presta-hero-plain" : "")" aria-labelledby="presta-title">
+        @if (hero is not null)
+        {
+            <img class="gb-presta-hero-media" src="@MediaUrls.Src(hero, 1200)" srcset="@MediaUrls.SrcSet(hero)" sizes="100vw" alt="" loading="eager" />
+        }
+        <div class="gb-container gb-presta-hero-inner">
+            <h1 id="presta-title" class="gb-presta-title">@Model.PageData.Title</h1>
+            @if (!string.IsNullOrWhiteSpace(Model.PageData.MetaDescription))
+            {
+                <p class="gb-presta-lead">@Model.PageData.MetaDescription</p>
+            }
+            <a class="gb-btn" href="/Contact">Parler de votre projet</a>
+        </div>
+    </section>
+    <div class="gb-hex-divider" aria-hidden="true"></div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.IntroHtml))
+    {
+        <section class="gb-section">
+            <div class="gb-container gb-prose gb-presta-intro">
+                @Html.Raw(Model.IntroHtml)
+            </div>
+        </section>
+    }
+
+    @if (Model.Cards.Count > 0)
+    {
+        <section class="gb-section gb-section-alt">
+            <div class="gb-container">
+                <div class="gb-presta-grid">
+                    @for (var i = 0; i < Model.Cards.Count; i++)
+                    {
+                        var card = Model.Cards[i];
+                        <article class="gb-presta-card">
+                            @if (card.Media is { } photo)
+                            {
+                                <img class="gb-presta-card-media" src="@MediaUrls.Src(photo, 480)" srcset="@MediaUrls.SrcSet(photo)" sizes="(min-width: 900px) 33vw, 100vw" alt="@MediaUrls.Alt(photo)" loading="lazy" />
+                            }
+                            <span class="gb-presta-num" aria-hidden="true">@((i + 1).ToString("00"))</span>
+                            <h2 class="gb-presta-card-title">@card.Title</h2>
+                            <p class="gb-presta-text">@card.Description</p>
+                            @if (!string.IsNullOrWhiteSpace(card.PriceInfo))
+                            {
+                                <p class="gb-presta-price">@card.PriceInfo</p>
+                            }
+                        </article>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+
+    <section class="gb-section gb-presta-cta">
+        <div class="gb-container">
+            <h2 class="gb-section-title">Un projet en tête ?</h2>
+            <p>Chaque demande est unique : racontez-nous votre événement, nous vous répondons rapidement.</p>
+            <p><a class="gb-btn" href="/Contact">Nous écrire</a> <a class="gb-btn gb-btn-secondary" href="/Produits">Découvrir nos produits</a></p>
+        </div>
+    </section>
+</div>

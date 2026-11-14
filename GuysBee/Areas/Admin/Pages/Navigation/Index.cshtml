@@ -1,74 +1,114 @@
 @page
 @model GuysBee.Areas.Admin.Pages.Navigation.IndexModel
+@using GuysBee.Areas.Admin.Pages.Navigation
 @{
     ViewData["Title"] = "Menu du site";
 }
 <header class="gb-admin-head">
     <h1>Menu du site</h1>
-    <p class="gb-admin-help">Les liens affich&eacute;s en haut du site et dans le bas de page. Utilisez les fl&egrave;ches pour changer l'ordre.</p>
+    <p class="gb-admin-help">Le menu est présenté ici exactement comme sur le site : chaque titre, puis les liens de son menu déroulant juste en dessous (indentés). Utilisez les flèches pour changer l'ordre et « Placé dans » pour ranger un lien sous un titre.</p>
 </header>
 
-@foreach (var group in Model.Items.GroupBy(i => i.IsFooter))
+@foreach (var footer in new[] { false, true })
 {
+    var top = Model.TopLevel(footer);
     <section class="gb-admin-card">
-        <h2>@(group.Key ? "Bas de page" : "Menu principal")</h2>
-        @foreach (var m in group)
-        {
-            <div class="gb-row">
-                <form method="post" asp-page-handler="Save" class="gb-row-form">
-                    <input type="hidden" name="id" value="@m.Id" />
-                    <input name="label" class="form-control" value="@m.Label" maxlength="60" aria-label="Nom du lien" required />
-                    <select name="url" class="form-select" aria-label="Page du lien">
-                        @if (!Model.Links.Any(l => l.Url == m.Url))
-                        {
-                            <option value="@m.Url" selected>Autre : @m.Url</option>
-                        }
-                        @foreach (var g in Model.Links.GroupBy(l => l.Group))
-                        {
-                            <optgroup label="@g.Key">
-                                @foreach (var l in g)
+        <h2>@(footer ? "Bas de page" : "Menu principal")</h2>
+        <p class="gb-admin-help">@(footer ? "Liens affichés tout en bas de chaque page." : "Liens affichés en haut du site, dans l'ordre ci-dessous.")</p>
+        <ol class="gb-menu-list">
+            @for (var n = 0; n < top.Count; n++)
+            {
+                var m = top[n];
+                var children = footer ? new List<GuysBee.Data.Entities.MenuItem>() : Model.ChildrenOf(m.Id);
+                <partial name="_MenuRow" model="new MenuRowModel(Model, m, n, top.Count, false)" />
+                @if (Model.IsProductsParent(m))
+                {
+                    <li class="gb-menu-sub-wrap">
+                        <div class="gb-menu-sub">
+                            <p class="gb-menu-sub-title"><strong>Menu déroulant de « @m.Label »</strong> <span class="gb-menu-badge">Gammes de produits</span></p>
+                            <p class="gb-admin-help">Une entrée par gamme de produits, créée automatiquement.</p>
+                            @if (Model.Ranges.Count == 0)
+                            {
+                                <p class="gb-admin-help">Aucune gamme pour l'instant. Créez-en dans « Produits » pour alimenter ce sous-menu.</p>
+                            }
+                            <ul class="gb-menu-sub-list">
+                                @for (var r = 0; r < Model.Ranges.Count; r++)
                                 {
-                                    <option value="@l.Url" selected="@(l.Url == m.Url)">@l.Label</option>
+                                    var c = Model.Ranges[r];
+                                    <li class="gb-menu-sub-item">
+                                        <form method="post" asp-page-handler="SaveRange" class="gb-menu-form">
+                                            <input type="hidden" name="id" value="@c.Id" />
+                                            <div class="gb-menu-move" role="group" aria-label="Changer l'ordre">
+                                                <button type="submit" asp-page-handler="MoveRange" name="direction" value="-1" formnovalidate class="gb-menu-move-btn" aria-label="Monter « @c.Name »" disabled="@(r == 0)">&#9650;</button>
+                                                <button type="submit" asp-page-handler="MoveRange" name="direction" value="1" formnovalidate class="gb-menu-move-btn" aria-label="Descendre « @c.Name »" disabled="@(r == Model.Ranges.Count - 1)">&#9660;</button>
+                                            </div>
+                                            <div class="gb-menu-field">
+                                                <label for="range-@c.Id">Texte affiché (gamme : @c.Name)</label>
+                                                <input id="range-@c.Id" name="menuLabel" class="form-control" value="@(c.MenuLabel ?? c.Name)" maxlength="60" />
+                                            </div>
+                                            <div class="gb-menu-actions">
+                                                <button type="submit" class="btn btn-warning btn-sm">Enregistrer</button>
+                                            </div>
+                                        </form>
+                                    </li>
                                 }
-                            </optgroup>
-                        }
-                    </select>
-                    <span class="form-check">
-                        <input id="vis-@m.Id" name="isVisible" type="checkbox" value="true" class="form-check-input" checked="@m.IsVisible" />
-                        <input type="hidden" name="isVisible" value="false" />
-                        <label class="form-check-label" for="vis-@m.Id">Visible</label>
-                    </span>
-                    <button type="submit" class="btn btn-warning btn-sm">Enregistrer</button>
-                </form>
-                <div class="gb-card-actions">
-                    <form method="post" asp-page-handler="Move"><input type="hidden" name="id" value="@m.Id" /><input type="hidden" name="direction" value="-1" /><button class="btn btn-sm btn-outline-dark" aria-label="Monter">&uarr;</button></form>
-                    <form method="post" asp-page-handler="Move"><input type="hidden" name="id" value="@m.Id" /><input type="hidden" name="direction" value="1" /><button class="btn btn-sm btn-outline-dark" aria-label="Descendre">&darr;</button></form>
-                    <form method="post" asp-page-handler="Delete"><input type="hidden" name="id" value="@m.Id" /><button class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer ce lien ?');">Supprimer</button></form>
-                </div>
-            </div>
-        }
+                            </ul>
+                        </div>
+                    </li>
+                }
+                else if (children.Count > 0)
+                {
+                    @for (var k = 0; k < children.Count; k++)
+                    {
+                        <partial name="_MenuRow" model="new MenuRowModel(Model, children[k], k, children.Count, true)" />
+                    }
+                }
+            }
+        </ol>
     </section>
 }
 
 <section class="gb-admin-card">
     <h2>Ajouter un lien</h2>
-    <form method="post" asp-page-handler="Add" class="gb-row-form">
-        <input name="label" class="form-control" placeholder="Nom (ex. Actualit&eacute;s)" maxlength="60" aria-label="Nom du lien" required />
-        <select name="url" class="form-select" aria-label="Page du lien">
-            @foreach (var g in Model.Links.GroupBy(l => l.Group))
-            {
-                <optgroup label="@g.Key">
-                    @foreach (var l in g)
-                    {
-                        <option value="@l.Url">@l.Label</option>
-                    }
-                </optgroup>
-            }
-        </select>
-        <select name="isFooter" class="form-select" aria-label="Emplacement">
-            <option value="false">Menu principal</option>
-            <option value="true">Bas de page</option>
-        </select>
-        <button type="submit" class="btn btn-warning btn-sm">Ajouter</button>
+    <p class="gb-admin-help">Choisissez le texte, la page à ouvrir et l'endroit où il s'affichera. Pour créer un menu déroulant, ajoutez d'abord son titre, puis placez des liens « sous » ce titre.</p>
+    <form method="post" asp-page-handler="Add" class="gb-menu-form gb-menu-add">
+        <div class="gb-menu-field">
+            <label for="new-label">Texte affiché</label>
+            <input id="new-label" name="label" class="form-control" placeholder="Ex. Actualités" maxlength="60" required />
+        </div>
+        <div class="gb-menu-field">
+            <label for="new-url">Page ouverte</label>
+            <select id="new-url" name="url" class="form-select">
+                @foreach (var g in Model.Links.GroupBy(l => l.Group))
+                {
+                    <optgroup label="@g.Key">
+                        @foreach (var l in g)
+                        {
+                            <option value="@l.Url">@l.Label</option>
+                        }
+                    </optgroup>
+                }
+            </select>
+        </div>
+        <div class="gb-menu-field">
+            <label for="new-footer">Emplacement</label>
+            <select id="new-footer" name="isFooter" class="form-select">
+                <option value="false">Menu principal (en haut)</option>
+                <option value="true">Bas de page</option>
+            </select>
+        </div>
+        <div class="gb-menu-field">
+            <label for="new-parent">Placé dans (menu principal)</label>
+            <select id="new-parent" name="parentId" class="form-select">
+                <option value="">Au premier niveau</option>
+                @foreach (var p in Model.TopLevel(false))
+                {
+                    <option value="@p.Id">Sous « @p.Label »</option>
+                }
+            </select>
+        </div>
+        <div class="gb-menu-actions">
+            <button type="submit" class="btn btn-warning btn-sm">Ajouter le lien</button>
+        </div>
     </form>
 </section>

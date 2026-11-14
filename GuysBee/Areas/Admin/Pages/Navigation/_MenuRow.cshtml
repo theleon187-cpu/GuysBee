@@ -1,0 +1,69 @@
+@model GuysBee.Areas.Admin.Pages.Navigation.MenuRowModel
+@{
+    var page = Model.Page;
+    var m = Model.Item;
+    var n = Model.Position;
+    var hasChildren = !m.IsFooter && page.ChildrenOf(m.Id).Count > 0;
+    var canNest = !m.IsFooter && !hasChildren && !page.IsProductsParent(m);
+}
+<li class="gb-menu-entry @(m.IsVisible ? "" : "gb-menu-entry-off") @(Model.IsChild ? "gb-menu-entry-child" : "")">
+    <form method="post" asp-page-handler="Save" class="gb-menu-form">
+        <button type="submit" class="gb-menu-default" tabindex="-1" aria-hidden="true">Enregistrer</button>
+        <input type="hidden" name="id" value="@m.Id" />
+
+        <div class="gb-menu-move" role="group" aria-label="Changer l'ordre">
+            <button type="submit" asp-page-handler="Move" name="direction" value="-1" formnovalidate class="gb-menu-move-btn" aria-label="Monter « @m.Label »" title="Monter" disabled="@(n == 0)">&#9650;</button>
+            <span class="gb-menu-rank" aria-hidden="true">@(n + 1)</span>
+            <button type="submit" asp-page-handler="Move" name="direction" value="1" formnovalidate class="gb-menu-move-btn" aria-label="Descendre « @m.Label »" title="Descendre" disabled="@(n == Model.Count - 1)">&#9660;</button>
+        </div>
+
+        <div class="gb-menu-field">
+            <label for="label-@m.Id">Texte affiché</label>
+            <input id="label-@m.Id" name="label" class="form-control" value="@m.Label" maxlength="60" required />
+        </div>
+
+        <div class="gb-menu-field">
+            <label for="url-@m.Id">Page ouverte</label>
+            <select id="url-@m.Id" name="url" class="form-select">
+                @if (!page.Links.Any(l => l.Url == m.Url))
+                {
+                    <option value="@m.Url" selected>Autre : @m.Url</option>
+                }
+                @foreach (var g in page.Links.GroupBy(l => l.Group))
+                {
+                    <optgroup label="@g.Key">
+                        @foreach (var l in g)
+                        {
+                            <option value="@l.Url" selected="@(l.Url == m.Url)">@l.Label</option>
+                        }
+                    </optgroup>
+                }
+            </select>
+        </div>
+
+        @if (canNest)
+        {
+            <div class="gb-menu-field">
+                <label for="parent-@m.Id">Placé dans</label>
+                <select id="parent-@m.Id" name="parentId" class="form-select">
+                    <option value="" selected="@(m.ParentId is null)">Menu principal (en haut)</option>
+                    @foreach (var p in page.TopLevel(false).Where(p => p.Id != m.Id))
+                    {
+                        <option value="@p.Id" selected="@(m.ParentId == p.Id)">Sous « @p.Label »</option>
+                    }
+                </select>
+            </div>
+        }
+
+        <div class="gb-menu-visible form-check form-switch">
+            <input id="vis-@m.Id" name="isVisible" type="checkbox" value="true" role="switch" class="form-check-input" checked="@m.IsVisible" />
+            <input type="hidden" name="isVisible" value="false" />
+            <label class="form-check-label" for="vis-@m.Id">@(m.IsVisible ? "Affiché" : "Masqué")</label>
+        </div>
+
+        <div class="gb-menu-actions">
+            <button type="submit" class="btn btn-warning btn-sm">Enregistrer</button>
+            <button type="submit" asp-page-handler="Delete" formnovalidate class="btn btn-sm btn-outline-danger" onclick="return confirm('Supprimer le lien « @m.Label » ?');">Supprimer</button>
+        </div>
+    </form>
+</li>

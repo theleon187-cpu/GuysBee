@@ -42,6 +42,21 @@ public class HomeSection
     public int SortOrder { get; set; }
 }
 
+/// <summary>Prestation proposée (animation, événement, pots personnalisés...), affichée en carte sur /Prestations.</summary>
+public class Prestation
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = "";
+    /// <summary>Texte simple ; les retours à la ligne sont conservés à l'affichage.</summary>
+    public string Description { get; set; } = "";
+    /// <summary>Indication libre : « Sur devis », « À partir de 50 € »...</summary>
+    public string? PriceInfo { get; set; }
+    public int? MediaId { get; set; }
+    public MediaAsset? Media { get; set; }
+    public bool IsVisible { get; set; } = true;
+    public int SortOrder { get; set; }
+}
+
 /// <summary>Entrée du menu de navigation, modifiable en admin.</summary>
 public class MenuItem
 {
@@ -51,6 +66,8 @@ public class MenuItem
     public bool IsVisible { get; set; } = true;
     public bool IsFooter { get; set; }
     public int SortOrder { get; set; }
+    /// <summary>Entrée parente : si renseignée, le lien s'affiche dans le menu déroulant de ce titre.</summary>
+    public int? ParentId { get; set; }
 }
 
 /// <summary>Étape du calendrier de la ruche (une par mois ou par saison).</summary>

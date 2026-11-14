@@ -1,6 +1,10 @@
 @using GuysBee.Services
 @using GuysBee.Data.Entities
 @model Product
+@inject GuysBee.Services.Shop.ShopSettings Shop
+@{
+    var shopOn = (await Shop.GetAsync()).Enabled;
+}
 <article class="gb-card">
     @if (Model.MainMedia is { } img)
     {
@@ -11,9 +15,30 @@
     <ul class="gb-variants">
         @foreach (var v in Model.Variants.Where(v => v.IsActive))
         {
-            <li>
-                <span>@v.Label</span>
-                <span class="gb-price">@v.Price.ToString("0.00") €</span>
+            <li class="gb-variant-row">
+                <div class="gb-variant-info">
+                    <span class="gb-variant-label">@v.Label</span>
+                    <span class="gb-price">@v.Price.ToString("0.00") €</span>
+                </div>
+                @if (v.Stock <= 0)
+                {
+                    <span class="gb-tag gb-tag-out">Indisponible</span>
+                }
+                else if (shopOn)
+                {
+                    <form method="post" asp-page="/Panier" asp-page-handler="Add" class="gb-shop-inline">
+                        <input type="hidden" name="variantId" value="@v.Id" />
+                        <div class="gb-qty">
+                            <button type="button" class="gb-qty-btn" data-gb-qty-step="-1" aria-label="Diminuer la quantité">−</button>
+                            <input type="number" name="quantity" value="1" min="1" max="@Math.Min(v.Stock, 99)" inputmode="numeric" aria-label="Quantité" />
+                            <button type="button" class="gb-qty-btn" data-gb-qty-step="1" aria-label="Augmenter la quantité">+</button>
+                        </div>
+                        <button type="submit" class="gb-add-btn" aria-label="Ajouter @Model.Name, @v.Label, au panier" title="Ajouter au panier">
+                            <svg class="gb-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2l2.4 10.2a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.8L20 8H6.2M10 20h.01M17 20h.01" /></svg>
+                            <span>Ajouter</span>
+                        </button>
+                    </form>
+                }
             </li>
         }
     </ul>

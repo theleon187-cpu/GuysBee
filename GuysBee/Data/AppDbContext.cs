@@ -25,6 +25,7 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     public DbSet<ContentPage> ContentPages => Set<ContentPage>();
     public DbSet<HomeSection> HomeSections => Set<HomeSection>();
     public DbSet<MenuItem> MenuItems => Set<MenuItem>();
+    public DbSet<Prestation> Prestations => Set<Prestation>();
     public DbSet<HiveCalendarEntry> HiveCalendarEntries => Set<HiveCalendarEntry>();
     public DbSet<GlossaryTerm> GlossaryTerms => Set<GlossaryTerm>();
     public DbSet<FaqItem> FaqItems => Set<FaqItem>();
@@ -51,7 +52,7 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
         b.Entity<ContentPage>().HasOne(x => x.HeroMedia).WithMany().HasForeignKey(x => x.HeroMediaId).OnDelete(DeleteBehavior.SetNull);
         b.Entity<HomeSection>().HasOne(x => x.Media).WithMany().HasForeignKey(x => x.MediaId).OnDelete(DeleteBehavior.SetNull);
         b.Entity<HiveCalendarEntry>().HasOne(x => x.Media).WithMany().HasForeignKey(x => x.MediaId).OnDelete(DeleteBehavior.SetNull);
-
+        b.Entity<Prestation>().HasOne(x => x.Media).WithMany().HasForeignKey(x => x.MediaId).OnDelete(DeleteBehavior.SetNull);
         b.Entity<ProductVariant>().Property(x => x.Price).HasPrecision(18, 2);
         b.Entity<OrderLine>().Property(x => x.UnitPrice).HasPrecision(18, 2);
         b.Entity<Order>().Property(x => x.ItemsTotal).HasPrecision(18, 2);

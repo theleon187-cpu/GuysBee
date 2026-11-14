@@ -3,6 +3,7 @@ using GuysBee.Data;
 using GuysBee.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace GuysBee.Areas.Admin.Pages.Textes;
 
@@ -19,6 +20,9 @@ public class EditModel : PageModel
 
     [BindProperty] public InputModel Input { get; set; } = new();
     public string Slug { get; private set; } = "";
+    public string PublicUrl => Slug == "prestations" ? "/Prestations" : "/p/" + Slug;
+    public string? HeroBaseName { get; private set; }
+    public bool HasHero => HeroBaseName is not null;
 
     public class InputModel
     {
@@ -36,12 +40,13 @@ public class EditModel : PageModel
 
     public async Task<IActionResult> OnGetAsync(int id)
     {
-        var p = await _db.ContentPages.FindAsync(id);
+        var p = await _db.ContentPages.Include(x => x.HeroMedia).FirstOrDefaultAsync(x => x.Id == id);
         if (p is null) return NotFound();
         Slug = p.Slug;
+        HeroBaseName = p.HeroMedia?.BaseName;
         Input = new InputModel
         {
-            Id = p.Id, Title = p.Title, MetaDescription = p.MetaDescription,
+            Id = p.Id,
             BodyHtml = p.BodyHtml, IsPublished = p.IsPublished
         };
         return Page();
@@ -63,12 +68,29 @@ public class EditModel : PageModel
         }
     }
 
-    public async Task<IActionResult> OnPostAsync()
+    public async Task<IActionResult> OnPostAsync(IFormFile? heroPhoto, bool removeHero, [FromServices] MediaService media)
     {
-        var p = await _db.ContentPages.FindAsync(Input.Id);
+        var p = await _db.ContentPages.Include(x => x.HeroMedia).FirstOrDefaultAsync(x => x.Id == Input.Id);
         if (p is null) return NotFound();
         Slug = p.Slug;
+        HeroBaseName = p.HeroMedia?.BaseName;
         if (!ModelState.IsValid) return Page();
+
+        if (removeHero) p.HeroMediaId = null;
+        if (heroPhoto is { Length: > 0 })
+        {
+            try
+            {
+                var baseName = await media.SavePhotoAsync(heroPhoto);
+                var asset = baseName is null ? null : await _db.MediaAssets.FirstOrDefaultAsync(m => m.BaseName == baseName);
+                if (asset is not null) p.HeroMediaId = asset.Id;
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return Page();
+            }
+        }
 
         p.Title = Input.Title.Trim();
         p.MetaDescription = Input.MetaDescription?.Trim();

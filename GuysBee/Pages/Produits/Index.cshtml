@@ -3,27 +3,30 @@
 @using GuysBee.Data.Entities
 @model GuysBee.Pages.Produits.IndexModel
 @{
-    var title = Model.Current?.Name ?? "Boutique";
+    var title = Model.Current?.Name ?? "Nos produits";
     ViewData["Title"] = title;
     ViewData["Description"] = Model.Current?.Description ?? "Les produits de GUY's Bee, récoltés et préparés à Saint-Julien-sur-Bibost.";
-    var grouped = Model.Current is null && Model.Categories.Count > 1;
+    var grouped = Model.Current is null && Model.Categories.Count > 0;
 }
-<h1 class="gb-page-title">@title</h1>
 <section class="gb-section">
     <div class="gb-container">
-        @if (Model.Current?.Description is { Length: > 0 } intro)
+        @if (Model.Categories.Count > 0)
         {
-            <p class="gb-category-intro">@intro</p>
-        }
-        @if (Model.Categories.Count > 1)
-        {
-            <nav class="gb-category-nav" aria-label="Gammes de produits">
-                <a href="/Produits" aria-current="@(Model.Current is null ? "true" : "false")">Toute la boutique</a>
+            <nav class="gb-category-nav" aria-label="Gammes">
+                <a href="/Produits" aria-current="@(Model.Current is null ? "true" : "false")">Tous les produits</a>
                 @foreach (var c in Model.Categories)
                 {
                     <a href="/Produits?gamme=@c.Slug" aria-current="@(Model.Current?.Id == c.Id ? "true" : "false")">@c.Name</a>
                 }
             </nav>
+        }
+        @if (Model.Current is not null)
+        {
+            <h1 class="gb-section-title"><a href="/Produits?gamme=@Model.Current.Slug">@Model.Current.Name</a></h1>
+        }
+        @if (Model.Current?.Description is { Length: > 0 } intro)
+        {
+            <p class="gb-category-intro">@intro</p>
         }
 
         @if (grouped)
@@ -31,13 +34,20 @@
             foreach (var c in Model.Categories)
             {
                 <h2 class="gb-section-title"><a href="/Produits?gamme=@c.Slug">@c.Name</a></h2>
+                var inRange = Model.Products.Where(x => x.CategoryId == c.Id).ToList();
+                if (inRange.Count == 0)
+                {
+                    <p class="gb-category-intro">Bientôt de nouveaux produits dans cette gamme.</p>
+                    continue;
+                }
                 <div class="gb-grid">
-                    @foreach (var p in Model.Products.Where(x => x.CategoryId == c.Id))
+                    @foreach (var p in inRange)
                     {
                         <partial name="_ProductCard" model="p" />
                     }
                 </div>
             }
+
             var others = Model.Products.Where(x => x.CategoryId == null).ToList();
             if (others.Count > 0)
             {

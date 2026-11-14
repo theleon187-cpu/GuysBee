@@ -1,0 +1,31 @@
+@model GuysBee.Services.AnnouncementView
+@{
+    var isModal = Model.Display == "fenetre";
+}
+<div class="gb-annonce gb-annonce-@Model.Style @(isModal ? "gb-annonce-fenetre" : "gb-annonce-bandeau")"
+     data-gb-annonce
+     data-version="@Model.Version"
+     data-days="@Model.CookieDays"
+     data-delay="@Model.DelaySeconds"
+     hidden
+     role="@(isModal ? "dialog" : "region")"
+     aria-label="Annonce"
+     @(isModal ? "aria-modal=true" : "")>
+    <div class="gb-annonce-box">
+        <div class="gb-annonce-texte">
+            @if (!string.IsNullOrWhiteSpace(Model.Title))
+            {
+                <strong class="gb-annonce-titre">@Model.Title</strong>
+            }
+            <span class="gb-annonce-message">@Model.Message</span>
+            @if (!string.IsNullOrWhiteSpace(Model.LinkUrl))
+            {
+                <a class="gb-annonce-lien" href="@Model.LinkUrl">@Model.LinkLabel</a>
+            }
+        </div>
+        @if (Model.Closable)
+        {
+            <button type="button" class="gb-annonce-fermer" data-gb-annonce-close aria-label="Fermer l'annonce">&times;</button>
+        }
+    </div>
+</div>

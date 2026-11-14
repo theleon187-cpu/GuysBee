@@ -14,6 +14,7 @@
     {
         brandHtml = System.Net.WebUtility.HtmlEncode(string.IsNullOrWhiteSpace(Setting("site.brandName")) ? "GUY's Bee" : Setting("site.brandName"));
     }
+    var announcement = GuysBee.Services.AnnouncementResolver.Resolve(s, Context.Request.Path.Value ?? "/", DateTime.Now);
     var shopOn = GuysBee.Services.Shop.ShopKeys.IsOn(s, GuysBee.Services.Shop.ShopKeys.Enabled);
     var accountsOn = shopOn && GuysBee.Services.Shop.ShopKeys.IsOn(s, GuysBee.Services.Shop.ShopKeys.AccountsEnabled);
 }
@@ -31,6 +32,7 @@
     <link rel="stylesheet" href="~/css/guysbee.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/guysbee-modern.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/shop.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/annonce.css" asp-append-version="true" />
     @{
         var fontTitle = Fonts.StackFor(Setting(GuysBee.Services.FontChoices.TitleKey));
         var fontText = Fonts.StackFor(Setting(GuysBee.Services.FontChoices.TextKey));
@@ -55,6 +57,10 @@
     @if (!string.IsNullOrWhiteSpace(banner))
     {
         <div class="gb-banner" role="status">@banner</div>
+    }
+    @if (announcement is not null)
+    {
+        <partial name="_Annonce" model="announcement" />
     }
     <header class="gb-header">
         <div class="gb-container gb-header-inner">
@@ -111,6 +117,10 @@
 
     <script src="~/js/site-public.js" asp-append-version="true"></script>
     <script src="~/js/gb-forms.js" asp-append-version="true"></script>
+    @if (announcement is not null)
+    {
+        <script src="~/js/annonce.js" asp-append-version="true"></script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

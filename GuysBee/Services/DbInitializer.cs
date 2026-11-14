@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using GuysBee.Data;
+using GuysBee.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +24,7 @@ public static class DbInitializer
         {
             await db.Database.EnsureCreatedAsync();
             await AddColumnIfMissingAsync(db, "MediaAssets", "ShowInHero", "INTEGER NOT NULL DEFAULT 0");
+            await AddColumnIfMissingAsync(db, "MenuItems", "ParentId", "INTEGER NULL");
             await AddColumnIfMissingAsync(db, "Categories", "MenuLabel", "TEXT NULL");
             foreach (var col in new[] { "UserId", "BillingName", "BillingAddressLine", "BillingPostalCode", "BillingCity", "RelayPointLabel", "TrackingNumber" })
                 await AddColumnIfMissingAsync(db, "Orders", col, "TEXT NULL");
@@ -39,13 +41,70 @@ public static class DbInitializer
             await AddColumnIfMissingAsync(db, "SalePoints", "Details", "TEXT NULL");
             await AddColumnIfMissingAsync(db, "SalePoints", "Latitude", "REAL NULL");
             await AddColumnIfMissingAsync(db, "SalePoints", "Longitude", "REAL NULL");
+            await db.Database.ExecuteSqlRawAsync("CREATE TABLE IF NOT EXISTS Prestations (Id INTEGER NOT NULL CONSTRAINT PK_Prestations PRIMARY KEY AUTOINCREMENT, Title TEXT NOT NULL, Description TEXT NOT NULL, PriceInfo TEXT NULL, MediaId INTEGER NULL, IsVisible INTEGER NOT NULL, SortOrder INTEGER NOT NULL)");
             await AddColumnIfMissingAsync(db, "MarketEvents", "Latitude", "REAL NULL");
             await AddColumnIfMissingAsync(db, "MarketEvents", "Longitude", "REAL NULL");
         }
 
         await DbSeeder.SeedAsync(db);
         await ContentSeeder.SeedAsync(db);
+        await MigrateMenuHierarchyAsync(db);
         await SeedAdminAsync(services, logger);
+    }
+
+    private const string MenuHierarchyKey = "Menu.Hierarchy";
+
+    /// <summary>
+    /// Ancien menu : le groupe « Découvrir » était déduit automatiquement. On le transforme une fois
+    /// en vrai titre principal avec ses sous-liens, et on fige l'ordre d'affichage historique.
+    /// </summary>
+    private static async Task MigrateMenuHierarchyAsync(AppDbContext db)
+    {
+        if (await db.SiteSettings.AnyAsync(s => s.Key == MenuHierarchyKey)) return;
+
+        var all = await db.MenuItems.Where(m => !m.IsFooter).OrderBy(m => m.SortOrder).ThenBy(m => m.Id).ToListAsync();
+        var visible = all.Where(m => m.IsVisible).ToList();
+        var products = Components.MenuViewComponent.FindProductsRoot(visible.Where(m => m.ParentId is null));
+        var pool = visible.Where(i => !Components.MenuViewComponent.IsRangeLink(i) || i.Id == products?.Id).ToList();
+
+        MenuItem? Take(Func<MenuItem, bool> predicate)
+        {
+            var found = pool.FirstOrDefault(predicate);
+            if (found is not null) pool.Remove(found);
+            return found;
+        }
+
+        var ordered = new List<MenuItem>();
+        void Add(MenuItem? m) { if (m is not null) ordered.Add(m); }
+        Add(Take(Components.MenuViewComponent.IsHomeLink));
+        if (products is not null) { pool.RemoveAll(x => x.Id == products.Id); ordered.Add(products); }
+        Add(Take(Components.MenuViewComponent.HasExploitationLabel));
+        Add(Take(Components.MenuViewComponent.HasPrestationsLabel));
+        Add(Take(Components.MenuViewComponent.HasFindUsLabel));
+        Add(Take(Components.MenuViewComponent.HasContactLabel));
+
+        if (pool.Count > 0)
+        {
+            var label = await db.SiteSettings.Where(s => s.Key == "Menu.DiscoverLabel").Select(s => s.Value).FirstOrDefaultAsync();
+            var group = new MenuItem
+            {
+                Label = string.IsNullOrWhiteSpace(label) ? "Découvrir" : label.Trim(),
+                Url = pool[0].Url,
+                IsVisible = true
+            };
+            db.MenuItems.Add(group);
+            await db.SaveChangesAsync();
+            var order = 1;
+            foreach (var child in pool) { child.ParentId = group.Id; child.SortOrder = order++; }
+            ordered.Add(group);
+        }
+
+        var rank = 1;
+        foreach (var m in ordered) m.SortOrder = rank++;
+        foreach (var m in all.Where(m => !ordered.Contains(m) && m.ParentId is null && !pool.Contains(m))) m.SortOrder = rank++;
+
+        db.SiteSettings.Add(new Data.Entities.SiteSetting { Key = MenuHierarchyKey, Value = "1" });
+        await db.SaveChangesAsync();
     }
 
     private static async Task AddColumnIfMissingAsync(AppDbContext db, string table, string column, string definition)

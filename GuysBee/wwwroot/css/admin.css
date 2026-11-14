@@ -99,6 +99,28 @@
 .gb-row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-bottom:.5rem}
 .gb-row-form{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;flex:1}
 .gb-row-form .form-control{flex:1 1 180px}
+.gb-menu-list{list-style:none;margin:0;padding:0;display:grid;gap:.6rem}
+.gb-menu-entry{padding:.6rem .75rem;border:1px solid rgba(43,33,24,.15);border-radius:12px;background:#fff}
+.gb-menu-entry-off{background:#f6f2ea;opacity:.8}
+.gb-menu-form{display:flex;flex-wrap:wrap;align-items:flex-end;gap:.75rem}
+.gb-menu-default{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);border:0;padding:0}
+.gb-menu-move{display:flex;flex-direction:column;align-items:center;gap:.1rem}
+.gb-menu-move-btn{width:2rem;height:1.6rem;border:1px solid rgba(43,33,24,.3);border-radius:8px;background:#fff;color:#2b2118;font-size:.7rem;line-height:1;cursor:pointer}
+.gb-menu-move-btn:hover:not(:disabled){background:#fff4cc}
+.gb-menu-move-btn:disabled{opacity:.3;cursor:not-allowed}
+.gb-menu-rank{font-weight:700;font-size:.85rem}
+.gb-menu-sub{margin:.75rem 0 0 2.5rem;padding:.75rem;border-left:4px solid #F5B700;border-radius:8px;background:#fffaf0}
+.gb-menu-sub-title{margin:0 0 .25rem}
+.gb-menu-group{padding:.75rem;border:1px solid rgba(43,33,24,.15);border-left:4px solid #F5B700;border-radius:12px;background:#fffaf0}
+.gb-menu-entry-child{margin-left:2.5rem;border-left:4px solid #F5B700}
+.gb-menu-badge{display:inline-block;margin-left:.4rem;padding:.1rem .5rem;border-radius:999px;background:#F5B700;color:#2b2118;font-size:.75rem;font-weight:700}
+.gb-menu-sub-list{list-style:none;margin:.5rem 0 0;padding:0;display:grid;gap:.5rem}
+.gb-menu-sub-item{padding:.5rem .6rem;border:1px solid rgba(43,33,24,.15);border-radius:10px;background:#fff}
+.gb-menu-field{display:flex;flex-direction:column;gap:.2rem;flex:1 1 200px;min-width:0}
+.gb-menu-field label{font-size:.8rem;font-weight:600;color:#6b5a48}
+.gb-menu-visible{margin:0 0 .4rem;white-space:nowrap}
+.gb-menu-actions{display:flex;gap:.4rem;margin-bottom:.1rem}
+.gb-menu-add{align-items:flex-end}
 .gb-cal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem}
 
 .gb-admin-bare .gb-admin-content { margin-inline: auto; width: min(460px, 100% - 2rem); }

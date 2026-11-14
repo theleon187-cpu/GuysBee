@@ -1,0 +1,19 @@
+.gb-annonce[hidden] { display: none; }
+.gb-annonce { --gb-annonce-bg: #f6b93b; --gb-annonce-fg: #2b1d00; }
+.gb-annonce-promo { --gb-annonce-bg: #3d7a4a; --gb-annonce-fg: #fff; }
+.gb-annonce-alerte { --gb-annonce-bg: #b3261e; --gb-annonce-fg: #fff; }
+
+.gb-annonce-box { display: flex; align-items: center; justify-content: center; gap: 1rem; }
+.gb-annonce-texte { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem .75rem; }
+.gb-annonce-lien { color: inherit; font-weight: 700; text-decoration: underline; }
+.gb-annonce-fermer { background: transparent; border: 0; color: inherit; font-size: 1.5rem; line-height: 1; cursor: pointer; padding: .25rem .5rem; }
+
+.gb-annonce-bandeau { background: var(--gb-annonce-bg); color: var(--gb-annonce-fg); padding: .6rem 1rem; text-align: center; }
+
+.gb-annonce-fenetre { position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, .55); padding: 1rem; }
+.gb-annonce-fenetre[hidden] { display: none; }
+.gb-annonce-fenetre .gb-annonce-box { position: relative; max-width: 32rem; width: 100%; background: var(--gb-annonce-bg); color: var(--gb-annonce-fg); border-radius: .75rem; padding: 2rem 1.5rem; text-align: center; box-shadow: 0 10px 40px rgba(0, 0, 0, .35); }
+.gb-annonce-fenetre .gb-annonce-texte { flex-direction: column; justify-content: center; }
+.gb-annonce-fenetre .gb-annonce-titre { font-size: 1.4rem; }
+.gb-annonce-fenetre .gb-annonce-fermer { position: absolute; top: .25rem; right: .5rem; }
+body.gb-annonce-ouverte { overflow: hidden; }

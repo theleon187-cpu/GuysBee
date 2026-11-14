@@ -111,11 +111,38 @@ public static class ContentSeeder
                     + "<p>Chaque demande est unique : <a href=\"/Contact\">écrivez-nous</a> pour en parler.</p>"
             });
         }
-        if (!await db.MenuItems.AnyAsync(m => m.Url == "/p/prestations"))
+        foreach (var m in await db.MenuItems.Where(m => m.Url == "/p/prestations").ToListAsync())
+            m.Url = "/Prestations";
+        if (!await db.MenuItems.AnyAsync(m => m.Url == "/Prestations"))
         {
-            db.MenuItems.Add(new MenuItem { Label = "Prestations", Url = "/p/prestations", SortOrder = 6 });
+            db.MenuItems.Add(new MenuItem { Label = "Prestations", Url = "/Prestations", SortOrder = 6 });
         }
 
         await db.SaveChangesAsync();
+
+        if (!await db.Prestations.AnyAsync())
+        {
+            var page = await db.ContentPages.FirstOrDefaultAsync(p => p.Key == "prestations");
+            var body = page?.BodyHtml ?? string.Empty;
+            var sections = System.Text.RegularExpressions.Regex.Matches(body,
+                @"<h2[^>]*>(.*?)</h2>(.*?)(?=<h2[ >]|$)", System.Text.RegularExpressions.RegexOptions.Singleline | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            var order = 1;
+            foreach (System.Text.RegularExpressions.Match m in sections)
+            {
+                var text = System.Text.RegularExpressions.Regex.Replace(m.Groups[2].Value, @"</p>\s*", "\n\n");
+                text = System.Net.WebUtility.HtmlDecode(System.Text.RegularExpressions.Regex.Replace(text, "<[^>]+>", ""));
+                var cut = text.IndexOf("Chaque demande est unique", StringComparison.Ordinal);
+                if (cut >= 0) text = text[..cut];
+                db.Prestations.Add(new Prestation
+                {
+                    Title = System.Net.WebUtility.HtmlDecode(System.Text.RegularExpressions.Regex.Replace(m.Groups[1].Value, "<[^>]+>", "")).Trim(),
+                    Description = text.Trim(),
+                    PriceInfo = "Sur devis",
+                    SortOrder = order++
+                });
+            }
+            if (page is not null && sections.Count > 0) page.BodyHtml = body[..sections[0].Index];
+            await db.SaveChangesAsync();
+        }
     }
 }

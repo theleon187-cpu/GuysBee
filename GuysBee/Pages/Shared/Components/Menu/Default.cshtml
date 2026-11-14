@@ -1,7 +1,25 @@
-@model IEnumerable<GuysBee.Data.Entities.MenuItem>
+@model IEnumerable<GuysBee.Components.MenuEntry>
 <ul class="gb-menu">
-    @foreach (var item in Model)
+    @foreach (var entry in Model)
     {
-        <li class="gb-menu-item"><a class="gb-menu-link" href="@item.Url">@item.Label</a></li>
+        var hasChildren = entry.Children.Count > 0;
+        var hasProductRanges = entry.Children.Any(c => (c.Url ?? string.Empty).StartsWith("/Produits?gamme=", StringComparison.OrdinalIgnoreCase));
+        var isProductsMenu = (entry.Item.Label ?? string.Empty).Contains("produit", StringComparison.OrdinalIgnoreCase)
+            || (entry.Item.Url ?? string.Empty).StartsWith("/Produits", StringComparison.OrdinalIgnoreCase)
+            || hasProductRanges;
+        var topUrl = hasChildren && isProductsMenu ? "/Produits" : entry.Item.Url;
+        var subMenuLabel = isProductsMenu ? "Gammes de produits" : $"Sous-menu {entry.Item.Label}";
+        <li class="gb-menu-item @(hasChildren ? "gb-menu-item-parent" : "")">
+            <a class="gb-menu-link" href="@topUrl" aria-haspopup="@(hasChildren ? "true" : "false")">@entry.Item.Label</a>
+            @if (hasChildren)
+            {
+                <ul class="gb-submenu" aria-label="@subMenuLabel">
+                    @foreach (var child in entry.Children)
+                    {
+                        <li class="gb-submenu-item"><a class="gb-submenu-link" href="@child.Url">@child.Label</a></li>
+                    }
+                </ul>
+            }
+        </li>
     }
 </ul>

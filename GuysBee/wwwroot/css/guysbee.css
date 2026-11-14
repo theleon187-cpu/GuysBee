@@ -46,14 +46,81 @@
 .gb-nav-toggle { display: none; background: var(--gb-black); color: var(--gb-yellow); border: 0; border-radius: 8px; padding: .5rem 1rem; font-weight: 700; cursor: pointer; }
 .gb-nav { display: block; }
 .gb-menu { list-style: none; margin: 0; padding: 0; display: flex; gap: .25rem 1rem; flex-wrap: wrap; }
+.gb-menu-item { position: relative; }
 .gb-menu-link { display: inline-block; padding: .4rem .5rem; font-weight: 600; text-decoration: none; border-radius: 8px; }
 .gb-menu-link:hover { background: var(--gb-black); color: var(--gb-yellow); }
+
+.gb-menu-item-parent::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    height: .45rem;
+}
+
+.gb-submenu {
+    list-style: none;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    margin: 0;
+    padding: .45rem;
+    min-width: 220px;
+    border-radius: 12px;
+    background: var(--gb-white);
+    border: 1px solid rgba(30, 26, 20, .1);
+    box-shadow: var(--gb-shadow);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    pointer-events: none;
+    z-index: 60;
+    transition: opacity .2s ease, transform .2s ease, visibility .2s ease;
+}
+
+.gb-submenu-item + .gb-submenu-item { margin-top: .2rem; }
+
+.gb-submenu-link {
+    display: block;
+    padding: .45rem .6rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--gb-black);
+    font-weight: 600;
+}
+
+.gb-submenu-link:hover,
+.gb-submenu-link:focus-visible {
+    background: var(--gb-cream);
+}
+
+.gb-menu-item-parent:hover > .gb-submenu,
+.gb-menu-item-parent:focus-within > .gb-submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
 
 @media (max-width: 860px) {
     .gb-nav-toggle { display: inline-block; }
     .gb-nav { display: none; width: 100%; }
     .gb-nav.gb-nav-open { display: block; }
     .gb-menu { flex-direction: column; }
+    .gb-submenu {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        pointer-events: auto;
+        min-width: 0;
+        margin: .25rem 0 .35rem 1rem;
+        padding: .25rem;
+        border: 0;
+        box-shadow: none;
+        background: transparent;
+    }
 }
 
 /* Mise en page */

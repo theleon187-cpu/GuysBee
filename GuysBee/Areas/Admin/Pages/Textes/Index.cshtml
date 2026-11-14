@@ -66,7 +66,7 @@
         <div>
             <strong>@p.Title</strong>
             @if (!p.IsPublished) { <span class="badge bg-secondary">Non publiée</span> }
-            <div class="gb-admin-help">Adresse : /p/@p.Slug · modifiée le @p.UpdatedUtc.ToLocalTime().ToString("d")</div>
+            Adresse : @(p.Slug == "prestations" ? "/Prestations" : "/p/" + p.Slug)
         </div>
         <a class="btn btn-warning btn-sm" asp-page="Edit" asp-route-id="@p.Id">Modifier</a>
     </div>

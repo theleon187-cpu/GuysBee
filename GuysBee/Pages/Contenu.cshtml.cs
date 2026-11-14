@@ -16,6 +16,8 @@ public class ContenuModel : PageModel
 
     public async Task<IActionResult> OnGetAsync(string slug)
     {
+        if (string.Equals(slug, "prestations", StringComparison.OrdinalIgnoreCase))
+            return RedirectToPagePermanent("/Prestations");
         var page = await _db.ContentPages.AsNoTracking()
             .FirstOrDefaultAsync(p => p.Slug == slug && p.IsPublished);
         if (page is null) return NotFound();
