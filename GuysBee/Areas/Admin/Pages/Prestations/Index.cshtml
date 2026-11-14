@@ -22,8 +22,8 @@
             <div class="gb-admin-help mb-2">Elle sert aussi de résumé pour Google.</div>
 
             <label class="form-label" for="pg-intro">Texte d'introduction</label>
-            <textarea id="pg-intro" name="intro" class="form-control mb-1" rows="4">@Model.IntroText</textarea>
-            <div class="gb-admin-help mb-2">Une ligne vide sépare deux paragraphes.</div>
+            <textarea id="pg-intro" name="intro" class="form-control mb-1 gb-richtext" rows="4">@Model.IntroText</textarea>
+            <div class="gb-admin-help mb-2">Mettez en forme le texte directement : ce que vous voyez est ce qui s'affichera sur le site.</div>
 
             <label class="form-label" for="pg-hero">Grande photo d'en-tête (facultatif)</label>
             @if (pg.HeroMedia is { } hero)
@@ -76,7 +76,7 @@
                 <label class="form-label" for="ti-@p.Id">Titre</label>
                 <input id="ti-@p.Id" name="title" class="form-control mb-2" value="@p.Title" maxlength="150" required />
                 <label class="form-label" for="de-@p.Id">Description</label>
-                <textarea id="de-@p.Id" name="description" class="form-control mb-2" rows="5">@p.Description</textarea>
+                <textarea id="de-@p.Id" name="description" class="form-control mb-2 gb-richtext-compact" rows="5">@p.Description</textarea>
                 <label class="form-label" for="pr-@p.Id">Tarif ou précision (ex. « Sur devis », « À partir de 50 € »)</label>
                 <input id="pr-@p.Id" name="priceInfo" class="form-control mb-2" value="@p.PriceInfo" maxlength="80" />
                 <div class="form-check mb-2">
@@ -100,4 +100,6 @@
     </div>
 </section>
 
-
+@section Scripts {
+    <partial name="_RichTextEditor" />
+}

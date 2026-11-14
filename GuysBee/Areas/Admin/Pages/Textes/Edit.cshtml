@@ -31,19 +31,19 @@
     <div class="mb-3">
         <label asp-for="Input.BodyHtml" class="form-label">Contenu</label>
         <textarea asp-for="Input.BodyHtml" class="form-control gb-richtext" rows="14" data-upload-url="@Url.Page("Edit", "Image")"></textarea>
-                @if (Model.Slug == "prestations")
-                {
-                    <div class="gb-admin-help">Cette page se gère plus simplement dans <a href="/Admin/Prestations">Prestations</a> (présentation, cartes, photos, ordre).</div>
-                }
-                <div class="gb-admin-help">Pour ajouter une photo
-    </div>
+                    @if (Model.Slug == "prestations")
+                    {
+                        <div class="gb-admin-help">Cette page se gère plus simplement dans <a href="/Admin/Prestations">Prestations</a> (présentation, cartes, photos, ordre).</div>
+                    }
+                    <div class="gb-admin-help">Pour ajouter une photo, utilisez le bouton image de la barre d'outils.</div>
+                </div>
     <div class="form-check mb-3">
         <input asp-for="Input.IsPublished" class="form-check-input" />
         <label asp-for="Input.IsPublished" class="form-check-label">Page publiée</label>
     </div>
     <button type="submit" class="btn btn-warning">Enregistrer</button>
     <a class="btn btn-outline-dark" asp-page="Index">Annuler</a>
-    href="@Model.PublicUrl"
+    <a class="btn btn-outline-secondary" href="@Model.PublicUrl" target="_blank" rel="noopener">Voir la page sur le site</a>
 </form>
 
 @section Scripts {

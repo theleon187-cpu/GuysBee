@@ -22,7 +22,7 @@
 
         @if (!string.IsNullOrWhiteSpace(Model.Product.LongDescription))
         {
-            <p>@Model.Product.LongDescription</p>
+            <div>@GuysBee.Services.RichText.Render(Model.Product.LongDescription)</div>
         }
 
         <h2>Conditionnements</h2>
@@ -53,7 +53,7 @@
         @if (!string.IsNullOrWhiteSpace(Model.Product.UsageTips))
         {
             <h2>Conseils</h2>
-            <p>@Model.Product.UsageTips</p>
+            <div>@GuysBee.Services.RichText.Render(Model.Product.UsageTips)</div>
         }
 
         <p><a class="gb-btn" href="/Contact">Commander ou poser une question</a></p>

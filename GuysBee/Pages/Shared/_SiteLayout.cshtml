@@ -65,7 +65,7 @@
     <header class="gb-header">
         <div class="gb-container gb-header-inner">
             <a class="gb-brand" href="/" aria-label="GUY's Bee, retour à l'accueil">
-                <img class="gb-logo" src="~/img/logo.jpg" alt="" width="72" height="72" />
+                <img class="gb-logo" src="@(string.IsNullOrWhiteSpace(Setting("site.logoMedia")) ? Url.Content("~/img/logo.jpg") : GuysBee.Services.MediaUrls.Src(Setting("site.logoMedia"), 480))" alt=""
                 <span class="gb-brand-name">@Html.Raw(brandHtml)</span>
             </a>
             <button class="gb-nav-toggle" type="button" aria-expanded="false" aria-controls="gb-nav">Menu</button>

@@ -52,7 +52,7 @@
                             }
                             <span class="gb-presta-num" aria-hidden="true">@((i + 1).ToString("00"))</span>
                             <h2 class="gb-presta-card-title">@card.Title</h2>
-                            <p class="gb-presta-text">@card.Description</p>
+                            <div class="gb-presta-text">@GuysBee.Services.RichText.Render(card.Description)</div>
                             @if (!string.IsNullOrWhiteSpace(card.PriceInfo))
                             {
                                 <p class="gb-presta-price">@card.PriceInfo</p>

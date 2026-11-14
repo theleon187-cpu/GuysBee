@@ -18,8 +18,10 @@
                         <img class="gb-calendar-photo" src="@GuysBee.Services.MediaUrls.Src(photo, 800)" srcset="@GuysBee.Services.MediaUrls.SrcSet(photo)" sizes="(min-width: 900px) 33vw, 100vw" alt="@(string.IsNullOrWhiteSpace(photo.AltText) ? e.Title : photo.AltText)" loading="lazy" />
                     }
                     <h2>@e.Title</h2>
-                    <p><strong>Les abeilles :</strong> @e.WhatBeesDo</p>
-                    <p><strong>L'apiculteur :</strong> @e.WhatBeekeeperDoes</p>
+                    <p><strong>Les abeilles :</strong></p>
+                    <div>@GuysBee.Services.RichText.Render(e.WhatBeesDo)</div>
+                    <p><strong>L'apiculteur :</strong></p>
+                    <div>@GuysBee.Services.RichText.Render(e.WhatBeekeeperDoes)</div>
                 </article>
             }
         </div>

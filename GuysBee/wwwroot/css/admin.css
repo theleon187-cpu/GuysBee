@@ -50,6 +50,7 @@
 .gb-days-preset { border: 1px solid #e3d3a8; background: #fff; color: #6b4e00; border-radius: 999px; padding: .3rem .9rem; font-size: .875rem; cursor: pointer; transition: background .15s; }
 .gb-days-preset:hover { background: #fff3cf; }
 .gb-days-preset:focus-visible { outline: 3px solid #1a5fb4; outline-offset: 2px; }
+.gb-admin-preview { display: block; max-width: 240px; max-height: 180px; margin: 0 0 .5rem; border-radius: 12px; object-fit: cover; background: #eee; }
 .gb-admin-thumb { width: 110px; height: 110px; object-fit: cover; border-radius: 12px; background: #eee; }
 .gb-admin-stat { font-size: 2rem; font-weight: 700; }
 .gb-admin-help { color: #6B6253; font-size: .9rem; }

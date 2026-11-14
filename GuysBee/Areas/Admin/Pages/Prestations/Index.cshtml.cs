@@ -29,7 +29,7 @@ public class IndexModel : PageModel
     public async Task OnGetAsync()
     {
         PageData = await _db.ContentPages.AsNoTracking().Include(p => p.HeroMedia).FirstOrDefaultAsync(p => p.Key == "prestations");
-        IntroText = ToPlainText(PageData?.BodyHtml);
+        IntroText = PageData?.BodyHtml ?? string.Empty;
         Items = await _db.Prestations.AsNoTracking().Include(p => p.Media).OrderBy(p => p.SortOrder).ThenBy(p => p.Id).ToListAsync();
     }
 
@@ -45,7 +45,7 @@ public class IndexModel : PageModel
         }
         page.Title = title.Trim();
         page.MetaDescription = lead?.Trim();
-        page.BodyHtml = ToHtml(intro);
+        page.BodyHtml = _cleaner.Clean(intro);
         page.IsPublished = isPublished;
         page.UpdatedUtc = DateTime.UtcNow;
         if (removeHero) page.HeroMediaId = null;
@@ -75,7 +75,7 @@ public class IndexModel : PageModel
             return RedirectToPage();
         }
         p.Title = title.Trim();
-        p.Description = description?.Trim() ?? "";
+        p.Description = _cleaner.Clean(description);
         p.PriceInfo = string.IsNullOrWhiteSpace(priceInfo) ? null : priceInfo.Trim();
         p.IsVisible = isVisible;
         if (removePhoto) p.MediaId = null;

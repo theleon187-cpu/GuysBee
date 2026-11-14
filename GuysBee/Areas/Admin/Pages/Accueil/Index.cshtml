@@ -84,8 +84,8 @@
                 @if (s.Kind == "Texte")
                 {
                     <div class="col-12">
-                        <label class="form-label" for="b-@s.Id">Texte (HTML simple autoris&eacute;)</label>
-                        <textarea id="b-@s.Id" name="bodyHtml" class="form-control" rows="5">@s.BodyHtml</textarea>
+                        <label class="form-label" for="b-@s.Id">Texte</label>
+                        <textarea id="b-@s.Id" name="bodyHtml" class="form-control gb-richtext" rows="5">@s.BodyHtml</textarea>
                     </div>
                 }
                 <div class="col-12">
@@ -120,5 +120,6 @@
 </div>
 
 @section Scripts {
+    <partial name="_RichTextEditor" />
     <script src="~/js/accueil-motion.js" asp-append-version="true" defer></script>
 }

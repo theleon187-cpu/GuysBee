@@ -3,15 +3,19 @@
 document.addEventListener('DOMContentLoaded', function () {
     if (typeof tinymce === 'undefined') { return; }
 
+    var canUpload = !!document.querySelector('textarea.gb-richtext[data-upload-url]');
+
     tinymce.init({
         selector: 'textarea.gb-richtext',
         license_key: 'gpl',
         height: 420,
+        min_height: 200,
+        resize: true,
         menubar: false,
         branding: false,
         promotion: false,
-        plugins: 'lists link image table autoresize charmap wordcount',
-        toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link image table | removeformat',
+        plugins: 'lists link image table charmap wordcount',
+        toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link ' + (canUpload ? 'image ' : '') + 'table | removeformat',
         block_formats: 'Paragraphe=p; Titre 2=h2; Titre 3=h3',
         link_default_target: '_blank',
         relative_urls: false,
@@ -37,5 +41,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
         },
         content_style: 'body { font-family: sans-serif; font-size: 16px; line-height: 1.5; }'
+    });
+
+    tinymce.init({
+        selector: 'textarea.gb-richtext-compact',
+        license_key: 'gpl',
+        height: 220,
+        min_height: 120,
+        resize: true,
+        menubar: false,
+        branding: false,
+        promotion: false,
+        plugins: 'lists link',
+        toolbar: 'bold italic underline | bullist numlist | link | removeformat',
+        link_default_target: '_blank',
+        relative_urls: false,
+        convert_urls: false,
+        content_style: 'body { font-family: sans-serif; font-size: 15px; line-height: 1.5; }'
     });
 });

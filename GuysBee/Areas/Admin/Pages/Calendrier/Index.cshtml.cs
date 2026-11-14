@@ -10,7 +10,8 @@ public class IndexModel : PageModel
 {
     private readonly AppDbContext _db;
     private readonly GuysBee.Services.MediaService _media;
-    public IndexModel(AppDbContext db, GuysBee.Services.MediaService media) { _db = db; _media = media; }
+    private readonly GuysBee.Services.IHtmlCleaner _cleaner;
+    public IndexModel(AppDbContext db, GuysBee.Services.MediaService media, GuysBee.Services.IHtmlCleaner cleaner) { _db = db; _media = media; _cleaner = cleaner; }
 
     public List<HiveCalendarEntry> Entries { get; private set; } = new();
 
@@ -31,8 +32,8 @@ public class IndexModel : PageModel
             return RedirectToPage();
         }
         e.Title = title.Trim();
-        e.WhatBeesDo = whatBeesDo?.Trim() ?? "";
-        e.WhatBeekeeperDoes = whatBeekeeperDoes?.Trim() ?? "";
+        e.WhatBeesDo = _cleaner.Clean(whatBeesDo);
+        e.WhatBeekeeperDoes = _cleaner.Clean(whatBeekeeperDoes);
         e.IsVisible = isVisible;
         if (removePhoto) e.MediaId = null;
         if (photo is { Length: > 0 })

@@ -93,8 +93,10 @@
                         <h2 class="gb-section-title">@block.Title</h2>
                         <article class="gb-calendar-item gb-calendar-item-current">
                             <h3>@c.Title</h3>
-                            <p><strong>Les abeilles :</strong> @c.WhatBeesDo</p>
-                            <p><strong>L'apiculteur :</strong> @c.WhatBeekeeperDoes</p>
+                            <p><strong>Les abeilles :</strong></p>
+                            <div>@GuysBee.Services.RichText.Render(c.WhatBeesDo)</div>
+                            <p><strong>L'apiculteur :</strong></p>
+                            <div>@GuysBee.Services.RichText.Render(c.WhatBeekeeperDoes)</div>
                             <p><a href="/Calendrier">Voir toute l'année</a></p>
                         </article>
                     </div>

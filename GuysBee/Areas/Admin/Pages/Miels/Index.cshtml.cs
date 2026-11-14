@@ -10,7 +10,8 @@ namespace GuysBee.Areas.Admin.Pages.Miels;
 public class IndexModel : PageModel
 {
     private readonly AppDbContext _db;
-    public IndexModel(AppDbContext db) => _db = db;
+    private readonly IHtmlCleaner _cleaner;
+    public IndexModel(AppDbContext db, IHtmlCleaner cleaner) { _db = db; _cleaner = cleaner; }
 
     public List<Product> Products { get; private set; } = new();
     public List<MediaAsset> Medias { get; private set; } = new();
@@ -206,9 +207,9 @@ public class IndexModel : PageModel
         }
         p.Name = name.Trim();
         p.ShortDescription = shortDescription.Trim();
-        p.LongDescription = longDescription?.Trim();
+        p.LongDescription = string.IsNullOrWhiteSpace(longDescription) ? null : _cleaner.Clean(longDescription);
         p.Origin = origin?.Trim();
-        p.UsageTips = usageTips?.Trim();
+        p.UsageTips = string.IsNullOrWhiteSpace(usageTips) ? null : _cleaner.Clean(usageTips);
         p.IsActive = isActive;
         p.MainMediaId = mainMediaId;
         p.UpdatedUtc = DateTime.UtcNow;

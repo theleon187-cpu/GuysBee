@@ -1,10 +1,26 @@
 @page
 @model GuysBee.Areas.Admin.Pages.Textes.LogoModel
 @{
-    ViewData["Title"] = "Texte à côté du logo";
+    ViewData["Title"] = "Logo et texte";
 }
-<h1 class="h3 mb-3">Texte à côté du logo</h1>
-<form method="post" class="gb-admin-card">
+<h1 class="h3 mb-3">Logo et texte</h1>
+<form method="post" enctype="multipart/form-data" class="gb-admin-card">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <label class="form-label" for="LogoFile">Logo (image)</label>
+        <div class="mb-2">
+            <img src="@(string.IsNullOrEmpty(Model.LogoBaseName) ? "/img/logo.jpg" : GuysBee.Services.MediaUrls.Src(Model.LogoBaseName, 480))" alt="Logo actuel" width="72" height="72" />
+        </div>
+        <input type="file" id="LogoFile" name="LogoFile" class="form-control" accept=".webp,.jpg,.jpeg,.png" />
+        <div class="gb-admin-help">Image carrée de préférence (JPG, PNG ou WebP). Elle remplace le logo actuel en haut du site.</div>
+        @if (!string.IsNullOrEmpty(Model.LogoBaseName))
+        {
+            <div class="form-check mt-2">
+                <input type="checkbox" class="form-check-input" id="RemoveLogo" name="RemoveLogo" value="true" />
+                <label class="form-check-label" for="RemoveLogo">Revenir au logo d'origine</label>
+            </div>
+        }
+    </div>
     <div class="mb-3">
         <label class="form-label" for="BrandHtml">Texte</label>
         <textarea id="BrandHtml" name="BrandHtml" class="form-control gb-richtext" rows="4">@Model.BrandHtml</textarea>

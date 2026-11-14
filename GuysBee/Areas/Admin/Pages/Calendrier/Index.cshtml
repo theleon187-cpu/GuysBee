@@ -29,9 +29,9 @@
             <label class="form-label" for="ti-@e.Id">Titre</label>
             <input id="ti-@e.Id" name="title" class="form-control mb-2" value="@e.Title" maxlength="150" required />
             <label class="form-label" for="b-@e.Id">Les abeilles</label>
-            <textarea id="b-@e.Id" name="whatBeesDo" class="form-control mb-2" rows="3">@e.WhatBeesDo</textarea>
+            <textarea id="b-@e.Id" name="whatBeesDo" class="form-control mb-2 gb-richtext-compact" rows="3">@e.WhatBeesDo</textarea>
             <label class="form-label" for="k-@e.Id">L'apiculteur</label>
-            <textarea id="k-@e.Id" name="whatBeekeeperDoes" class="form-control mb-2" rows="3">@e.WhatBeekeeperDoes</textarea>
+            <textarea id="k-@e.Id" name="whatBeekeeperDoes" class="form-control mb-2 gb-richtext-compact" rows="3">@e.WhatBeekeeperDoes</textarea>
             <div class="form-check mb-2">
                 <input id="v-@e.Id" name="isVisible" type="checkbox" value="true" class="form-check-input" checked="@e.IsVisible" />
                 <input type="hidden" name="isVisible" value="false" />
@@ -42,3 +42,7 @@
     </div>
 }
 </div>
+
+@section Scripts {
+    <partial name="_RichTextEditor" />
+}

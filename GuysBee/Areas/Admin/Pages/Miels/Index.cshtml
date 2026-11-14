@@ -90,11 +90,11 @@
                 </div>
                 <div class="col-12">
                     <label class="form-label" for="long-@p.Id">Description détaillée</label>
-                    <textarea id="long-@p.Id" name="longDescription" class="form-control" rows="3">@p.LongDescription</textarea>
+                    <textarea id="long-@p.Id" name="longDescription" class="form-control gb-richtext-compact" rows="3">@p.LongDescription</textarea>
                 </div>
                 <div class="col-12">
                     <label class="form-label" for="tips-@p.Id">Conseils de dégustation</label>
-                    <textarea id="tips-@p.Id" name="usageTips" class="form-control" rows="2">@p.UsageTips</textarea>
+                    <textarea id="tips-@p.Id" name="usageTips" class="form-control gb-richtext-compact" rows="2">@p.UsageTips</textarea>
                 </div>
                 <div class="col-md-8">
                     <label class="form-label" for="media-@p.Id">Photo principale</label>
@@ -154,4 +154,8 @@
             </form>
         }
     </div>
+}
+
+@section Scripts {
+    <partial name="_RichTextEditor" />
 }
