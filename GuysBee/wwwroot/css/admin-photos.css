@@ -1,0 +1,13 @@
+.gb-photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+.gb-photo-tile { background: #fff; border: 1px solid #e5e0d3; border-radius: 12px; padding: .5rem; }
+.gb-photo-frame { position: relative; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 8px; background: #eee; }
+.gb-photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gb-photo-badge { position: absolute; top: .4rem; left: .4rem; padding: .1rem .5rem; border-radius: 999px; font-size: .75rem; color: #fff; }
+.gb-photo-badge-ok { background: #2e7d32; }
+.gb-photo-badge-off { background: #6c757d; }
+.gb-photo-badge-draft { background: #c77d00; }
+.gb-photo-badge-hero { top: auto; bottom: .4rem; background: #212529; }
+.gb-photo-caption { margin: .4rem 0; font-size: .85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gb-photo-actions { display: flex; flex-wrap: wrap; gap: .25rem; }
+.gb-photo-actions form { margin: 0; }
+.gb-photo-edit { margin-top: .5rem; font-size: .85rem; }

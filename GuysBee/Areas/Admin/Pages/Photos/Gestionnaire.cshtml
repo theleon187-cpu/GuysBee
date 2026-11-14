@@ -1,0 +1,132 @@
+@page
+@using GuysBee.Data.Entities
+@using GuysBee.Services
+@model GuysBee.Areas.Admin.Pages.Photos.GestionnaireModel
+@{
+    ViewData["Title"] = "Gestionnaire photo";
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-photos.css" asp-append-version="true" />
+}
+
+<h1 class="h3 mb-1">Gestionnaire photo</h1>
+<p class="gb-admin-help">Toutes vos photos en un coup d'œil. Utilisez les boutons sous chaque photo : publier, masquer, mettre dans le carrousel, déplacer, modifier ou supprimer.</p>
+
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item"><a class="nav-link" asp-page="./Index">Photos (liste détaillée)</a></li>
+    <li class="nav-item"><a class="nav-link active" aria-current="page" asp-page="./Gestionnaire">Gestionnaire photo</a></li>
+</ul>
+
+<div class="gb-admin-card">
+    <form method="post" asp-page-handler="Upload" enctype="multipart/form-data" class="row g-2 align-items-end">
+        <div class="col-md-6">
+            <label for="files" class="form-label">Ajouter des photos (JPG, PNG, WebP)</label>
+            <input id="files" name="files" type="file" class="form-control" accept=".jpg,.jpeg,.png,.webp" multiple required />
+        </div>
+        <div class="col-md-3">
+            <label for="maxWidth" class="form-label">Taille</label>
+            <select id="maxWidth" name="maxWidth" class="form-select">
+                <option value="">Taille d'origine</option>
+                <option value="1200">1200 px</option>
+                <option value="800">800 px</option>
+            </select>
+        </div>
+        <div class="col-md-3"><button type="submit" class="btn btn-warning w-100">Envoyer</button></div>
+    </form>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-5">
+        <label for="q" class="form-label">Rechercher</label>
+        <input id="q" name="q" class="form-control" value="@Model.Q" placeholder="Légende, description ou nom du fichier" />
+    </div>
+    <div class="col-md-4">
+        <label for="theme" class="form-label">Thème</label>
+        <select id="theme" name="theme" class="form-select">
+            @foreach (var t in Model.Themes)
+            {
+                <option value="@t" selected="@(t == (Model.Theme ?? ""))">@(t == "" ? "(tous)" : t)</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3 d-flex align-items-end"><button type="submit" class="btn btn-outline-dark w-100">Filtrer</button></div>
+</form>
+
+@if (Model.Items.Count == 0)
+{
+    <p>Aucune photo à afficher.</p>
+}
+
+<div class="gb-photo-grid">
+    @foreach (var m in Model.Items)
+    {
+        var badge = m.Status switch
+        {
+            MediaStatus.Published => ("gb-photo-badge-ok", "Publiée"),
+            MediaStatus.Hidden => ("gb-photo-badge-off", "Masquée"),
+            _ => ("gb-photo-badge-draft", "Brouillon")
+        };
+        <div class="gb-photo-tile">
+            <div class="gb-photo-frame">
+                <img src="@MediaUrls.Src(m, 480)" alt="@MediaUrls.Alt(m)" loading="lazy" />
+                <span class="gb-photo-badge @badge.Item1">@badge.Item2</span>
+                @if (m.ShowInHero)
+                {
+                    <span class="gb-photo-badge gb-photo-badge-hero">★ Carrousel</span>
+                }
+            </div>
+            <p class="gb-photo-caption">@(string.IsNullOrWhiteSpace(m.Caption) ? "(sans légende)" : m.Caption)</p>
+            <div class="gb-photo-actions">
+                <form method="post" asp-page-handler="Move" asp-route-q="@Model.Q" asp-route-theme="@Model.Theme">
+                    <input type="hidden" name="id" value="@m.Id" />
+                    <button type="submit" name="direction" value="-1" class="btn btn-outline-secondary btn-sm" title="Déplacer avant" aria-label="Déplacer avant">←</button>
+                    <button type="submit" name="direction" value="1" class="btn btn-outline-secondary btn-sm" title="Déplacer après" aria-label="Déplacer après">→</button>
+                </form>
+                <form method="post" asp-page-handler="Status" asp-route-q="@Model.Q" asp-route-theme="@Model.Theme">
+                    <input type="hidden" name="id" value="@m.Id" />
+                    @if (m.Status == MediaStatus.Published)
+                    {
+                        <button type="submit" name="status" value="@((int)MediaStatus.Hidden)" class="btn btn-outline-dark btn-sm">Masquer</button>
+                    }
+                    else
+                    {
+                        <button type="submit" name="status" value="@((int)MediaStatus.Published)" class="btn btn-success btn-sm">Publier</button>
+                    }
+                </form>
+                <form method="post" asp-page-handler="Hero" asp-route-q="@Model.Q" asp-route-theme="@Model.Theme">
+                    <input type="hidden" name="id" value="@m.Id" />
+                    <button type="submit" class="btn btn-sm @(m.ShowInHero ? "btn-dark" : "btn-outline-dark")" title="Carrousel de l'accueil">★</button>
+                </form>
+                <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#edit-@m.Id" aria-expanded="false">Modifier</button>
+                <form method="post" asp-page-handler="Delete" asp-route-q="@Model.Q" asp-route-theme="@Model.Theme">
+                    <input type="hidden" name="id" value="@m.Id" />
+                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Supprimer définitivement cette photo ?');">Supprimer</button>
+                </form>
+            </div>
+            <div class="collapse gb-photo-edit" id="edit-@m.Id">
+                <form method="post" asp-page-handler="Save" asp-route-q="@Model.Q" asp-route-theme="@Model.Theme">
+                    <input type="hidden" name="id" value="@m.Id" />
+                    <label class="form-label" for="cap-@m.Id">Légende</label>
+                    <input id="cap-@m.Id" name="caption" class="form-control form-control-sm mb-1" value="@m.Caption" maxlength="200" />
+                    <label class="form-label" for="alt-@m.Id">Description pour malvoyants</label>
+                    <input id="alt-@m.Id" name="alt" class="form-control form-control-sm mb-1" value="@m.AltText" maxlength="200" />
+                    <label class="form-label" for="th-@m.Id">Thème</label>
+                    <select id="th-@m.Id" name="theme" class="form-select form-select-sm mb-1">
+                        @foreach (var t in Model.Themes)
+                        {
+                            <option value="@t" selected="@(t == (m.Theme ?? ""))">@(t == "" ? "(aucun)" : t)</option>
+                        }
+                    </select>
+                    <label class="form-label" for="se-@m.Id">Saison</label>
+                    <select id="se-@m.Id" name="season" class="form-select form-select-sm mb-2">
+                        @foreach (var s in IndexModel.Seasons)
+                        {
+                            <option value="@s" selected="@(s == (m.Season ?? ""))">@(s == "" ? "(aucune)" : s)</option>
+                        }
+                    </select>
+                    <button type="submit" class="btn btn-warning btn-sm">Enregistrer</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>

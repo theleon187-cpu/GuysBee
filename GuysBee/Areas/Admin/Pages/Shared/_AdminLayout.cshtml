@@ -36,7 +36,8 @@
                 <a class="gb-sidebar-link @Active("/Admin")" href="/Admin">Tableau de bord</a>
                 <a class="gb-sidebar-link @Active("/Admin/Messages")" href="/Admin/Messages">Messages</a>
                 <p class="gb-sidebar-label">Contenu</p>
-                <a class="gb-sidebar-link @Active("/Admin/Photos")" href="/Admin/Photos">Photos</a>
+                <a class="gb-sidebar-link @(path.StartsWith("/Admin/Photos/Gestionnaire", StringComparison.OrdinalIgnoreCase) ? "" : Active("/Admin/Photos"))" href="/Admin/Photos">Photos</a>
+                <a class="gb-sidebar-link @Active("/Admin/Photos/Gestionnaire")" href="/Admin/Photos/Gestionnaire">Gestionnaire photo</a>
                 <a class="gb-sidebar-link @Active("/Admin/Textes")" href="/Admin/Textes">Textes du site</a>
                 <a class="gb-sidebar-link @Active("/Admin/Prestations")" href="/Admin/Prestations">Prestations</a>
                 <a class="gb-sidebar-link @Active("/Admin/Accueil")" href="/Admin/Accueil">Page d'accueil</a>                <a class="gb-sidebar-link @Active("/Admin/Navigation")" href="/Admin/Navigation">Menu du site</a>

@@ -25,8 +25,61 @@ public class IndexModel : PageModel
         ["", "Ruches", "Abeilles", "Récolte", "Pots de miel", "Paysage et fleurs", "Matériel", "Apiculteur", "Marché et événements", "Autre"];
     public static readonly string[] Seasons = ["", "Printemps", "Été", "Automne", "Hiver"];
 
-    public async Task OnGetAsync() =>
-        Items = await _db.MediaAssets.AsNoTracking().OrderBy(m => m.SortOrder).ToListAsync();
+    [Microsoft.AspNetCore.Mvc.BindProperty(SupportsGet = true)] public string? Filter { get; set; }
+    public int CountAll { get; private set; }    public int CountDraft { get; private set; }
+    public int CountPublished { get; private set; }
+    public int CountHidden { get; private set; }
+    public int CountNoAlt { get; private set; }
+
+    public async Task OnGetAsync()
+    {
+        var all = await _db.MediaAssets.AsNoTracking().OrderBy(m => m.SortOrder).ToListAsync();
+        CountAll = all.Count;
+        CountDraft = all.Count(m => m.Status == MediaStatus.Draft);
+        CountPublished = all.Count(m => m.Status == MediaStatus.Published);
+        CountHidden = all.Count(m => m.Status == MediaStatus.Hidden);
+        CountNoAlt = all.Count(m => string.IsNullOrWhiteSpace(m.AltText));
+        Items = Filter switch
+        {
+            "brouillon" => all.Where(m => m.Status == MediaStatus.Draft).ToList(),
+            "publiee" => all.Where(m => m.Status == MediaStatus.Published).ToList(),
+            "masquee" => all.Where(m => m.Status == MediaStatus.Hidden).ToList(),
+            "sansdescription" => all.Where(m => string.IsNullOrWhiteSpace(m.AltText)).ToList(),
+            _ => all
+        };
+    }
+
+    public async Task<IActionResult> OnPostBulkAsync(List<int> ids, string? action, string? theme, string? season, string? filter)
+    {
+        if (ids is null || ids.Count == 0)
+        {
+            TempData["Error"] = "Cochez d'abord une ou plusieurs photos.";
+            return RedirectToPage(new { Filter = filter });
+        }
+        if (action == "supprimer")
+        {
+            foreach (var id in ids) await _media.DeleteAsync(id);
+            TempData["Message"] = $"{ids.Count} photo(s) supprimée(s).";
+            return RedirectToPage(new { Filter = filter });
+        }
+        var items = await _db.MediaAssets.Where(m => ids.Contains(m.Id)).ToListAsync();
+        foreach (var m in items)
+        {
+            switch (action)
+            {
+                case "publier": m.Status = MediaStatus.Published; break;
+                case "masquer": m.Status = MediaStatus.Hidden; m.ShowInHero = false; break;
+                case "brouillon": m.Status = MediaStatus.Draft; m.ShowInHero = false; break;
+                case "classer":
+                    if (!string.IsNullOrEmpty(theme)) m.Theme = theme;
+                    if (!string.IsNullOrEmpty(season)) m.Season = season;
+                    break;
+            }
+        }
+        await _db.SaveChangesAsync();
+        TempData["Message"] = $"{items.Count} photo(s) mise(s) à jour.";
+        return RedirectToPage(new { Filter = filter });
+    }
 
     public async Task<IActionResult> OnPostImportAsync(int? maxWidth)
     {
