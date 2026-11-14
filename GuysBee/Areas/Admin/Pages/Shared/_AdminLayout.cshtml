@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin-focus.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin-motion.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-cropper.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="gb-admin @(showShell ? "gb-admin-shell" : "gb-admin-bare")" data-gb-admin-motion>
@@ -77,6 +78,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/gb-forms.js" asp-append-version="true"></script>
+    <script src="~/js/admin-cropper.js" asp-append-version="true"></script>
     <script src="~/js/admin-preview.js" asp-append-version="true" defer></script>
     <script src="~/js/admin-motion.js" asp-append-version="true" defer></script>
     @await RenderSectionAsync("Scripts", required: false)

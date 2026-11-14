@@ -92,6 +92,7 @@ body.theme-modern {
 .theme-modern .gb-footer-title { font-size: 1.25rem; }
 
 /* Lisibilité du texte */
+.theme-modern .gb-prose img { max-width: 100%; height: auto; display: block; margin: 1rem auto; border-radius: var(--gb-radius); }
 .theme-modern .gb-prose { font-size: 1.1rem; line-height: 1.8; }
 .theme-modern .gb-prose h2, .theme-modern .gb-prose h3 { margin-top: 2rem; }
 

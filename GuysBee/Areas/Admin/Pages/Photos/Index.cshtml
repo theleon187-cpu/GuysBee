@@ -13,13 +13,26 @@
         <div class="col-lg-6">
             <form method="post" asp-page-handler="Import">
                 <p class="gb-admin-help">Importe les photos du dossier fourni (<code>@Model.SourceFolder</code>). Les doublons sont ignorés. Les photos arrivent en brouillon.</p>
-                <button type="submit" class="btn btn-warning">Importer le dossier des photos</button>
-            </form>
+                <label for="maxWidthImport" class="form-label">Taille des photos</label>
+                <select id="maxWidthImport" name="maxWidth" class="form-select mb-2">
+                    <option value="">Conserver la taille d'origine</option>
+                    <option value="1200">Réduire à 1200 px de large</option>
+                    <option value="800">Réduire à 800 px de large</option>
+                    <option value="480">Réduire à 480 px de large</option>
+                </select>
+                <button type="submit" class="btn btn-warning">Importer le dossier des photos</button>            </form>
         </div>
         <div class="col-lg-6">
             <form method="post" asp-page-handler="Upload" enctype="multipart/form-data">
                 <label for="files" class="form-label">Envoyer de nouvelles photos (JPG, PNG, WebP)</label>
                 <input id="files" name="files" type="file" class="form-control mb-2" accept=".jpg,.jpeg,.png,.webp" multiple />
+                <label for="maxWidthUpload" class="form-label">Taille des photos</label>
+                <select id="maxWidthUpload" name="maxWidth" class="form-select mb-2">
+                    <option value="">Conserver la taille d'origine</option>
+                    <option value="1200">Réduire à 1200 px de large</option>
+                    <option value="800">Réduire à 800 px de large</option>
+                    <option value="480">Réduire à 480 px de large</option>
+                </select>
                 <button type="submit" class="btn btn-outline-dark">Envoyer</button>
             </form>
         </div>

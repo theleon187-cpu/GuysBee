@@ -54,22 +54,27 @@
         @if (Model.SalePoints.Count > 0)
         {
             <h2 class="gb-find-subtitle gb-find-list-title">Dans les commerces</h2>
-            <div class="gb-grid">
-                @foreach (var sp in Model.SalePoints)
-                {
-                    <article class="gb-card">
-                        @if (!string.IsNullOrEmpty(sp.PhotoBaseName)) { <img class="gb-find-photo" src="@GuysBee.Services.MediaUrls.Src(sp.PhotoBaseName, 480)" srcset="@GuysBee.Services.MediaUrls.SrcSet(sp.PhotoBaseName)" sizes="(min-width: 900px) 33vw, 100vw" alt="@sp.Name" loading="lazy" /> }
-                        <h3 class="gb-card-title">@sp.Name</h3>
-                        <p>@sp.Address<br />@sp.PostalCode @sp.City</p>
-                        @if (!string.IsNullOrWhiteSpace(sp.Schedule)) { <p>@sp.Schedule</p> }
-                        @if (!string.IsNullOrWhiteSpace(sp.Details)) { <p class="gb-agenda-details">@sp.Details</p> }
-                        @if (!string.IsNullOrWhiteSpace(sp.Phone)) { <p><a href="tel:@sp.Phone.Replace(" ", "")">@sp.Phone</a></p> }
-                        @if (!string.IsNullOrWhiteSpace(sp.MapUrl))
-                        {
-                            <p><a href="@sp.MapUrl" target="_blank" rel="noopener">Itinéraire sur Google Maps</a></p>
-                        }
-                    </article>
-                }
+            <div class="gb-card gb-agenda">
+                <ul class="gb-agenda-list">
+                    @foreach (var sp in Model.SalePoints)
+                    {
+                        <li class="gb-agenda-item">
+                            <span class="gb-agenda-date">@sp.City</span>
+                            <div class="gb-agenda-body">
+                                @if (!string.IsNullOrEmpty(sp.PhotoBaseName)) { <img class="gb-agenda-photo" src="@GuysBee.Services.MediaUrls.Src(sp.PhotoBaseName, 480)" srcset="@GuysBee.Services.MediaUrls.SrcSet(sp.PhotoBaseName)" sizes="(min-width: 900px) 20vw, 50vw" alt="@sp.Name" loading="lazy" /> }
+                                <strong>@sp.Name</strong>
+                                @if (!string.IsNullOrWhiteSpace(sp.Schedule)) { <span class="gb-agenda-hours">@sp.Schedule</span> }
+                                <span class="gb-agenda-place">@sp.Address, @sp.PostalCode @sp.City</span>
+                                @if (!string.IsNullOrWhiteSpace(sp.Phone)) { <a class="gb-agenda-map" href="tel:@sp.Phone.Replace(" ", "")">@sp.Phone</a> }
+                                @if (!string.IsNullOrWhiteSpace(sp.MapUrl))
+                                {
+                                    <a class="gb-agenda-map" href="@sp.MapUrl" target="_blank" rel="noopener">Itinéraire sur Google Maps</a>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(sp.Details)) { <span class="gb-agenda-details">@sp.Details</span> }
+                            </div>
+                        </li>
+                    }
+                </ul>
             </div>
         }
     </div>

@@ -19,14 +19,14 @@ public class HtmlCleaner : IHtmlCleaner
         foreach (var tag in new[]
                  {
                      "p", "br", "h2", "h3", "strong", "b", "em", "i", "u", "ul", "ol", "li",
-                     "a", "img", "blockquote", "table", "thead", "tbody", "tr", "th", "td", "hr"
+                     "a", "img", "blockquote", "table", "thead", "tbody", "tr", "th", "td", "hr", "span", "s", "strike"
                  })
         {
             _sanitizer.AllowedTags.Add(tag);
         }
 
         _sanitizer.AllowedAttributes.Clear();
-        foreach (var attr in new[] { "href", "target", "rel", "src", "alt", "title", "width", "height", "colspan", "rowspan" })
+        foreach (var attr in new[] { "href", "target", "rel", "src", "alt", "title", "width", "height", "colspan", "rowspan", "style" })
         {
             _sanitizer.AllowedAttributes.Add(attr);
         }
@@ -36,8 +36,12 @@ public class HtmlCleaner : IHtmlCleaner
         {
             _sanitizer.AllowedSchemes.Add(scheme);
         }
-        // Pas de style inline autorisé (règle du projet).
+        // Seules la mise en forme du texte (couleur, taille, alignement) est tolérée en style inline, produite par l'éditeur visuel.
         _sanitizer.AllowedCssProperties.Clear();
+        foreach (var prop in new[] { "color", "background-color", "font-size", "text-align", "text-decoration", "margin-left", "padding-left" })
+        {
+            _sanitizer.AllowedCssProperties.Add(prop);
+        }
     }
 
     public string Clean(string? html) => string.IsNullOrWhiteSpace(html) ? "" : _sanitizer.Sanitize(html);

@@ -28,20 +28,20 @@ public class IndexModel : PageModel
     public async Task OnGetAsync() =>
         Items = await _db.MediaAssets.AsNoTracking().OrderBy(m => m.SortOrder).ToListAsync();
 
-    public async Task<IActionResult> OnPostImportAsync()
+    public async Task<IActionResult> OnPostImportAsync(int? maxWidth)
     {
-        var r = await _media.ImportFolderAsync();
+        var r = await _media.ImportFolderAsync(maxWidth);
         TempData["Message"] = $"Import terminé : {r.Imported} photo(s) ajoutée(s), {r.Duplicates} doublon(s) ignoré(s), {r.Errors} erreur(s).";
         return RedirectToPage();
     }
 
-    public async Task<IActionResult> OnPostUploadAsync(List<IFormFile> files)
+    public async Task<IActionResult> OnPostUploadAsync(List<IFormFile> files, int? maxWidth)
     {
         var added = 0;
         var errors = new List<string>();
         foreach (var f in files.Where(f => f.Length > 0))
         {
-            try { if (await _media.AddUploadAsync(f) is not null) added++; }
+            try { if (await _media.AddUploadAsync(f, maxWidth) is not null) added++; }
             catch (InvalidOperationException ex) { errors.Add($"{f.FileName} : {ex.Message}"); }
             catch (Exception ex) when (ex is SixLabors.ImageSharp.ImageFormatException or SixLabors.ImageSharp.UnknownImageFormatException)
             {

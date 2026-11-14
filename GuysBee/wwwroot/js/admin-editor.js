@@ -5,6 +5,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var canUpload = !!document.querySelector('textarea.gb-richtext[data-upload-url]');
 
+    // Reprend les polices choisies pour le site : ce qui est vu dans l'éditeur est ce qui s'affichera.
+    var fonts = window.gbEditorFonts || {};
+    function fontFor(el) { return (el.dataset.font === 'brand' ? fonts.brand : null) || fonts.text || 'sans-serif'; }
+    var IMG_CSS = 'img { max-width: 100%; height: auto; display: block; margin: 1rem 0; border-radius: 8px; }';
+    function setupEditor(editor) {
+        editor.on('init', function () {
+            var el = editor.getElement();
+            var css = (fonts.css || '') + IMG_CSS + (fonts.title ? ' h1, h2, h3 { font-family: ' + fonts.title + '; }' : '');
+            editor.dom.addStyle(css);
+            editor.getBody().style.fontFamily = fontFor(el);
+            if (el.dataset.font === 'brand') {
+                var select = document.getElementById('BrandFont');
+                if (select) {
+                    select.addEventListener('change', function () {
+                        editor.getBody().style.fontFamily = (fonts.stacks && fonts.stacks[select.value]) || fonts.brand || fonts.text || 'sans-serif';
+                    });
+                    select.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+    }
+
     tinymce.init({
         selector: 'textarea.gb-richtext',
         license_key: 'gpl',
@@ -15,8 +37,9 @@ document.addEventListener('DOMContentLoaded', function () {
         branding: false,
         promotion: false,
         plugins: 'lists link image table charmap wordcount',
-        toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link ' + (canUpload ? 'image ' : '') + 'table | removeformat',
-        block_formats: 'Paragraphe=p; Titre 2=h2; Titre 3=h3',
+        toolbar: 'undo redo | blocks fontsize | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link ' + (canUpload ? 'image ' : '') + 'table charmap | removeformat',
+        font_size_formats: '12px 14px 16px 18px 20px 24px 28px 32px 40px 48px',
+        block_formats: 'Paragraphe=p; Titre 2=h2; Titre 3=h3; Citation=blockquote',
         link_default_target: '_blank',
         relative_urls: false,
         convert_urls: false,
@@ -40,7 +63,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     return res.j.location;
                 });
         },
-        content_style: 'body { font-family: sans-serif; font-size: 16px; line-height: 1.5; }'
+        setup: setupEditor,
+        content_style: 'body { font-size: 16px; line-height: 1.5; }'
     });
 
     tinymce.init({
@@ -53,10 +77,12 @@ document.addEventListener('DOMContentLoaded', function () {
         branding: false,
         promotion: false,
         plugins: 'lists link',
-        toolbar: 'bold italic underline | bullist numlist | link | removeformat',
+        toolbar: 'fontsize | bold italic underline | forecolor backcolor | alignleft aligncenter alignright | bullist numlist | link | removeformat',
+        font_size_formats: '12px 14px 16px 18px 20px 24px 28px 32px',
         link_default_target: '_blank',
         relative_urls: false,
         convert_urls: false,
-        content_style: 'body { font-family: sans-serif; font-size: 15px; line-height: 1.5; }'
+        setup: setupEditor,
+        content_style: 'body { font-size: 15px; line-height: 1.5; }'
     });
 });

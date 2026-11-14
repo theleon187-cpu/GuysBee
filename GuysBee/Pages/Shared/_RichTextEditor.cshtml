@@ -1,5 +1,28 @@
 @* Éditeur de texte visuel (TinyMCE, hébergé en local). Usage :
-   <textarea asp-for="Page.BodyHtml" class="gb-richtext"></textarea>
-   @await Html.PartialAsync("_RichTextEditor")  (dans la section Scripts des pages admin) *@
+   <textarea asp-for="Page.BodyHtml" class="gb-richtext"></textarea>   (ou class="gb-richtext-compact")
+   <partial name="_RichTextEditor" />  (dans la section Scripts des pages admin)
+   data-font="brand" sur le textarea : l'éditeur utilise la police du nom du site.
+   Les polices choisies pour le site (titres, texte, nom) sont reprises dans l'éditeur. *@
+@using Microsoft.EntityFrameworkCore
+@inject GuysBee.Data.AppDbContext Db
+@inject GuysBee.Services.FontLibrary Fonts
+@{
+    var settings = await Db.SiteSettings.AsNoTracking()
+        .Where(x => x.Key == GuysBee.Services.FontChoices.TitleKey || x.Key == GuysBee.Services.FontChoices.TextKey || x.Key == GuysBee.Services.FontChoices.BrandKey)
+        .ToDictionaryAsync(x => x.Key, x => x.Value);
+    string? Stack(string key) => Fonts.StackFor(settings.TryGetValue(key, out var v) ? v : null);
+    var defaultText = Fonts.StackFor("system");
+    var defaultTitle = Fonts.StackFor("palatino");
+    var titleStack = Stack(GuysBee.Services.FontChoices.TitleKey) ?? defaultTitle;
+    var editorFonts = new
+    {
+        title = titleStack,
+        text = Stack(GuysBee.Services.FontChoices.TextKey) ?? defaultText,
+        brand = Stack(GuysBee.Services.FontChoices.BrandKey) ?? titleStack,
+        css = Fonts.FontFaceCss(),
+        stacks = Fonts.All().Where(f => !string.IsNullOrEmpty(f.Stack)).ToDictionary(f => f.Id, f => f.Stack)
+    };
+}
+<script>window.gbEditorFonts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(editorFonts, new System.Text.Json.JsonSerializerOptions { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Default }));</script>
 <script src="~/lib/tinymce/tinymce.min.js"></script>
 <script src="~/js/admin-editor.js" asp-append-version="true"></script>

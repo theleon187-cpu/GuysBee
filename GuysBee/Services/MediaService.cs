@@ -55,7 +55,7 @@ public class MediaService
             ? custom
             : Path.Combine(_env.ContentRootPath, "posts");
 
-    public async Task<ImportResult> ImportFolderAsync(CancellationToken ct = default)
+    public async Task<ImportResult> ImportFolderAsync(int? maxWidth = null, CancellationToken ct = default)
     {
         if (!Directory.Exists(SourceFolder)) return new ImportResult(0, 0, 0);
 
@@ -69,7 +69,7 @@ public class MediaService
             try
             {
                 var bytes = await File.ReadAllBytesAsync(file, ct);
-                var asset = await AddAsync(bytes, Path.GetFileName(file), ct);
+                var asset = await AddAsync(bytes, Path.GetFileName(file), maxWidth, ct);
                 if (asset is null) dups++; else imported++;
             }
             catch (Exception ex)
@@ -94,10 +94,11 @@ public class MediaService
         var hash = Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
         var existing = await _db.MediaAssets.FirstOrDefaultAsync(m => m.ContentHash == hash, ct);
         if (existing is not null) return existing.BaseName;
-        return (await AddAsync(bytes, Path.GetFileName(file.FileName), ct))?.BaseName;
+        return (await AddAsync(bytes, Path.GetFileName(file.FileName), null, ct))?.BaseName;
     }
 
-    public async Task<MediaAsset?> AddUploadAsync(IFormFile file, CancellationToken ct = default)    {
+    public async Task<MediaAsset?> AddUploadAsync(IFormFile file, int? maxWidth = null, CancellationToken ct = default)
+    {
         if (!Extensions.Contains(Path.GetExtension(file.FileName).ToLowerInvariant()))
             throw new InvalidOperationException("Format non accepté (WebP, JPG ou PNG).");
         if (file.Length > 15 * 1024 * 1024)
@@ -105,17 +106,19 @@ public class MediaService
 
         using var ms = new MemoryStream();
         await file.CopyToAsync(ms, ct);
-        return await AddAsync(ms.ToArray(), Path.GetFileName(file.FileName), ct);
+        return await AddAsync(ms.ToArray(), Path.GetFileName(file.FileName), maxWidth, ct);
     }
 
     /// <summary>Retourne null si l'image existe déjà (même contenu).</summary>
-    private async Task<MediaAsset?> AddAsync(byte[] bytes, string sourceName, CancellationToken ct)
+    private async Task<MediaAsset?> AddAsync(byte[] bytes, string sourceName, int? maxWidth, CancellationToken ct)
     {
         var hash = Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
         if (await _db.MediaAssets.AnyAsync(m => m.ContentHash == hash, ct)) return null;
 
         using var source = new MemoryStream(bytes, writable: false);
         using var image = await Image.LoadAsync(source, ct);
+        if (maxWidth is > 0 && image.Width > maxWidth)
+            image.Mutate(c => c.Resize(maxWidth.Value, 0));
         var width = image.Width;
         var height = image.Height;
 
