@@ -91,7 +91,7 @@
                     <button type="submit" class="btn btn-outline-dark btn-sm" disabled="@(i == 0)" aria-label="Monter">&uarr; Monter</button></form>
                 <form method="post" asp-page-handler="Move"><input type="hidden" name="id" value="@p.Id" /><input type="hidden" name="direction" value="1" />
                     <button type="submit" class="btn btn-outline-dark btn-sm" disabled="@(i == Model.Items.Count - 1)" aria-label="Descendre">&darr; Descendre</button></form>
-                data-gb-confirm="Supprimer cette prestation ?"
+                <form method="post" asp-page-handler="Delete" class="ms-auto" data-gb-confirm="Supprimer cette prestation ?">
                     <input type="hidden" name="id" value="@p.Id" />
                     <button type="submit" class="btn btn-outline-danger btn-sm">Supprimer</button></form>
             </div>

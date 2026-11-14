@@ -100,7 +100,7 @@
                 <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#edit-@m.Id" aria-expanded="false">Modifier</button>
                 <form method="post" asp-page-handler="Delete" asp-route-q="@Model.Q" asp-route-theme="@Model.Theme">
                     <input type="hidden" name="id" value="@m.Id" />
-                    data-gb-confirm="Supprimer définitivement cette photo ?"
+                    <button type="submit" class="btn btn-outline-danger btn-sm" data-gb-confirm="Supprimer définitivement cette photo ?">Supprimer</button>
                 </form>
             </div>
             <div class="collapse gb-photo-edit" id="edit-@m.Id">

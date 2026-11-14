@@ -24,7 +24,7 @@
                 <form method="post" asp-page-handler="MoveCategory"><input type="hidden" name="id" value="@c.Id" /><input type="hidden" name="direction" value="-1" /><button class="btn btn-sm btn-outline-dark" aria-label="Monter">&uarr;</button></form>
                 <form method="post" asp-page-handler="MoveCategory"><input type="hidden" name="id" value="@c.Id" /><input type="hidden" name="direction" value="1" /><button class="btn btn-sm btn-outline-dark" aria-label="Descendre">&darr;</button></form>
                 <form method="post" asp-page-handler="AddCategoryMenu"><input type="hidden" name="id" value="@c.Id" /><button class="btn btn-sm btn-outline-dark">Ajouter au menu</button></form>
-                data-gb-confirm="Supprimer cette gamme ?"
+                <form method="post" asp-page-handler="DeleteCategory"><input type="hidden" name="id" value="@c.Id" /><button class="btn btn-sm btn-outline-danger" data-gb-confirm="Supprimer cette gamme ?">Supprimer</button></form>
             </div>
         </div>
     }
