@@ -26,7 +26,7 @@ public class IndexModel : PageModel
             .Where(p => p.IsActive).OrderBy(p => p.SortOrder).ToListAsync();
 
         var month = DateTime.Now.Month;
-        CurrentMonth = await _db.HiveCalendarEntries.AsNoTracking()
+        CurrentMonth = await _db.HiveCalendarEntries.AsNoTracking().Include(c => c.Media)
             .FirstOrDefaultAsync(c => c.Month == month && c.IsVisible);
 
         GalleryTeaser = await _db.MediaAssets.AsNoTracking()

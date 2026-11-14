@@ -1,0 +1,95 @@
+@page
+@model GuysBee.Areas.Admin.Pages.Historique.IndexModel
+@{
+    ViewData["Title"] = "Historique";
+    var fr = new System.Globalization.CultureInfo("fr-FR");
+    string Local(DateTime utc) => TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc), TimeZoneInfo.Local).ToString("dd/MM/yyyy HH:mm", fr);
+}
+<h1 class="h3 mb-3">Historique des modifications</h1>
+
+<section class="gb-admin-card mb-4" aria-labelledby="h-semaine">
+    <h2 id="h-semaine" class="h5">Ce qui a été fait cette semaine</h2>
+    <ul class="gb-history-summary">
+        @foreach (var item in IndexModel.WeekSummary)
+        {
+            <li><strong>@item.Title</strong> : @item.Text</li>
+        }
+    </ul>
+    <p class="gb-admin-help mb-0">
+        Depuis le @Model.WeekStartUtc.ToString("dd/MM/yyyy", fr) :
+        @Model.WeekCreated création(s), @Model.WeekModified modification(s), @Model.WeekDeleted suppression(s) enregistrée(s).
+    </p>
+</section>
+
+<section class="gb-admin-card" aria-labelledby="h-journal">
+    <h2 id="h-journal" class="h5">Journal détaillé</h2>
+    <form method="get" class="row g-2 mb-3">
+        <div class="col-md-4">
+            <label class="form-label" for="f-action">Type d'action</label>
+            <select id="f-action" name="Action" class="form-select">
+                <option value="">Toutes</option>
+                @foreach (var a in IndexModel.Actions)
+                {
+                    <option value="@a" selected="@(Model.Action == a)">@a</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="f-entity">Élément</label>
+            <select id="f-entity" name="Entity" class="form-select">
+                <option value="">Tous</option>
+                @foreach (var n in Model.Entities)
+                {
+                    <option value="@n" selected="@(Model.Entity == n)">@n</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-outline-secondary">Filtrer</button>
+        </div>
+    </form>
+
+    @if (Model.Entries.Count == 0)
+    {
+        <p class="mb-0">Aucune modification enregistrée pour le moment.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-sm align-middle">
+                <thead>
+                    <tr><th>Date</th><th>Auteur</th><th>Action</th><th>Élément</th><th>Détail</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var e in Model.Entries)
+                    {
+                        <tr>
+                            <td>@Local(e.CreatedUtc)</td>
+                            <td>@e.UserName</td>
+                            <td>@e.Action</td>
+                            <td>@e.EntityName@(e.EntityId is null ? "" : " n°" + e.EntityId)</td>
+                            <td>@e.Details</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <nav class="d-flex justify-content-between align-items-center" aria-label="Pagination">
+            <span class="gb-admin-help">@Model.TotalCount ligne(s) · page @Model.PageNumber / @Model.TotalPages</span>
+            <span>
+                @if (Model.PageNumber > 1)
+                {
+                    <a class="btn btn-sm btn-outline-secondary" asp-route-PageNumber="@(Model.PageNumber - 1)" asp-route-Action="@Model.Action" asp-route-Entity="@Model.Entity">Précédent</a>
+                }
+                @if (Model.PageNumber < Model.TotalPages)
+                {
+                    <a class="btn btn-sm btn-outline-secondary" asp-route-PageNumber="@(Model.PageNumber + 1)" asp-route-Action="@Model.Action" asp-route-Entity="@Model.Entity">Suivant</a>
+                }
+            </span>
+        </nav>
+    }
+
+    <form method="post" asp-page-handler="Purge" class="mt-3">
+        <button type="submit" class="btn btn-sm btn-outline-danger" data-gb-confirm="Supprimer les lignes de plus d'un an ?">Nettoyer l'historique de plus d'un an</button>
+    </form>
+</section>

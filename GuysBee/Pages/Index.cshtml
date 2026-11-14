@@ -92,6 +92,10 @@
                     <div class="gb-container">
                         <h2 class="gb-section-title">@block.Title</h2>
                         <article class="gb-calendar-item gb-calendar-item-current">
+                            @if (c.Media is { } photo)
+                            {
+                                <img class="gb-calendar-photo" src="@GuysBee.Services.MediaUrls.Src(photo, 800)" srcset="@GuysBee.Services.MediaUrls.SrcSet(photo)" sizes="(min-width: 900px) 33vw, 100vw" alt="@(string.IsNullOrWhiteSpace(photo.AltText) ? c.Title : photo.AltText)" loading="lazy" />
+                            }
                             <h3>@c.Title</h3>
                             <p><strong>Les abeilles :</strong></p>
                             <div>@GuysBee.Services.RichText.Render(c.WhatBeesDo)</div>

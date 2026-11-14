@@ -8,7 +8,11 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("Default") ?? "Data Source=guysbee.db";
-builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlite(connectionString));
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<AuditInterceptor>();
+builder.Services.AddDbContext<AppDbContext>((sp, o) => o
+    .UseSqlite(connectionString)
+    .AddInterceptors(sp.GetRequiredService<AuditInterceptor>()));
 
 builder.Services
     .AddIdentity<IdentityUser, IdentityRole>(options =>
