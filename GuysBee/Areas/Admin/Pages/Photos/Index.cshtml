@@ -45,7 +45,7 @@
 </div>
 
 <div class="gb-admin-card">
-    <h2 class="h5">Carrousel de la page d'accueil (5 photos maximum)</h2>
+    <h2 class="h5">Carrousel de la page d'accueil</h2>
     @{ var heroItems = Model.Items.Where(x => x.ShowInHero && x.Status == MediaStatus.Published).ToList(); }
     @if (heroItems.Count == 0)
     {
@@ -190,6 +190,9 @@
                         <button type="submit" class="btn btn-outline-dark btn-sm">Ajouter au carrousel</button>
                     }
                 </form>
+                <div class="mt-2">
+                    <a class="btn btn-outline-dark btn-sm" href="@MediaUrls.Src(m, 1200)" download="@($"{m.BaseName}-1200.webp")">Télécharger</a>
+                </div>
                 <form method="post" asp-page-handler="Delete" class="mt-2">
                     <input type="hidden" name="id" value="@m.Id" />
                     <button type="submit" class="btn btn-outline-danger btn-sm" data-gb-confirm="Supprimer définitivement cette photo ?">Supprimer</button>

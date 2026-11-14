@@ -3,8 +3,14 @@
 body.gb-crop-open { overflow: hidden; }
 .gb-crop-dialog { background: #fff; border-radius: 12px; padding: 1.25rem; max-width: 900px; width: 100%; max-height: 95vh; overflow: auto; }
 .gb-crop-counter { font-weight: 400; color: #6c757d; }
+.gb-crop-layout { display: grid; gap: 1rem; align-items: start; }
+@media (min-width: 900px) { .gb-crop-layout { grid-template-columns: minmax(0, 1fr) 280px; } }
 .gb-crop-stage { position: relative; display: inline-block; max-width: 100%; line-height: 0; touch-action: none; user-select: none; background: #222; }
 .gb-crop-stage img { display: block; max-width: 100%; max-height: 55vh; }
+.gb-crop-live { background: #faf8f2; border: 1px solid #e7dcc2; border-radius: 12px; padding: .75rem; }
+.gb-crop-live-title { font-weight: 700; margin: 0 0 .5rem; }
+.gb-crop-preview { display: block; width: 100%; max-width: 260px; height: auto; margin: 0 auto; border-radius: 10px; border: 1px solid #d9c79e; background: repeating-conic-gradient(#f3ead1 0 25%, #fff9eb 0 50%) 50% / 16px 16px; }
+.gb-crop-live-help { margin: .5rem 0 0; font-size: .875rem; color: #6b5a3a; }
 .gb-crop-box { position: absolute; border: 2px solid #f5b301; box-shadow: 0 0 0 9999px rgba(0, 0, 0, .55); cursor: move; box-sizing: border-box; }
 .gb-crop-handle { position: absolute; width: 18px; height: 18px; background: #f5b301; border: 2px solid #fff; border-radius: 50%; }
 .gb-crop-nw { left: -10px; top: -10px; cursor: nwse-resize; }
@@ -14,3 +20,9 @@ body.gb-crop-open { overflow: hidden; }
 .gb-crop-options { display: flex; flex-wrap: wrap; gap: 1rem; margin: .75rem 0 .25rem; }
 .gb-crop-options label { font-size: .875rem; }
 .gb-crop-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.gb-crop-final-wrap { margin-top: .75rem; }
+.gb-crop-final-title { margin: 0 0 .4rem; font-weight: 600; }
+.gb-crop-final-list { display: flex; flex-wrap: wrap; gap: .6rem; }
+.gb-crop-final-item { margin: 0; width: min(210px, 100%); }
+.gb-crop-final-img { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid #d9c79e; background: #fffdf6; }
+.gb-crop-final-item figcaption { margin-top: .3rem; font-size: .82rem; color: #5f5136; word-break: break-word; }

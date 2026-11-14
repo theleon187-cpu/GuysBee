@@ -112,12 +112,6 @@ public class IndexModel : PageModel
         if (m is null) return NotFound();
         if (!m.ShowInHero)
         {
-            var count = await _db.MediaAssets.CountAsync(x => x.ShowInHero && x.Status == MediaStatus.Published);
-            if (count >= 5)
-            {
-                TempData["Error"] = "Le carrousel est limité à 5 photos. Retirez-en une avant d'en ajouter.";
-                return RedirectToPage();
-            }
             m.ShowInHero = true;
             m.Status = MediaStatus.Published;
             TempData["Message"] = "Photo ajoutée au carrousel de l'accueil.";
@@ -135,12 +129,6 @@ public class IndexModel : PageModel
     {
         var m = await _db.MediaAssets.FindAsync(id);
         if (m is null) return NotFound();
-        if (showInHero && !m.ShowInHero
-            && await _db.MediaAssets.CountAsync(x => x.ShowInHero && x.Status == MediaStatus.Published) >= 5)
-        {
-            TempData["Error"] = "Le carrousel est limité à 5 photos. Retirez-en une avant d'en ajouter.";
-            return RedirectToPage();
-        }
         m.Caption = caption?.Trim();
         m.AltText = alt?.Trim();
         m.Theme = theme;

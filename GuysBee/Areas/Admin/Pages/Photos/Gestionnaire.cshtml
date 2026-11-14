@@ -10,7 +10,7 @@
 }
 
 <h1 class="h3 mb-1">Gestionnaire photo</h1>
-<p class="gb-admin-help">Toutes vos photos en un coup d'œil. Utilisez les boutons sous chaque photo : publier, masquer, mettre dans le carrousel, déplacer, modifier ou supprimer.</p>
+<p class="gb-admin-help">Toutes vos photos en un coup d'œil. Utilisez les boutons sous chaque photo : publier, masquer, mettre dans le carrousel, déplacer, télécharger, modifier ou supprimer.</p>
 
 <ul class="nav nav-tabs mb-3">
     <li class="nav-item"><a class="nav-link" asp-page="./Index">Photos (liste détaillée)</a></li>
@@ -97,6 +97,7 @@
                     <input type="hidden" name="id" value="@m.Id" />
                     <button type="submit" class="btn btn-sm @(m.ShowInHero ? "btn-dark" : "btn-outline-dark")" title="Carrousel de l'accueil">★</button>
                 </form>
+                <a class="btn btn-outline-dark btn-sm" href="@MediaUrls.Src(m, 1200)" download="@($"{m.BaseName}-1200.webp")">Télécharger</a>
                 <button class="btn btn-outline-primary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#edit-@m.Id" aria-expanded="false">Modifier</button>
                 <form method="post" asp-page-handler="Delete" asp-route-q="@Model.Q" asp-route-theme="@Model.Theme">
                     <input type="hidden" name="id" value="@m.Id" />
@@ -111,14 +112,14 @@
                     <label class="form-label" for="alt-@m.Id">Description pour malvoyants</label>
                     <input id="alt-@m.Id" name="alt" class="form-control form-control-sm mb-1" value="@m.AltText" maxlength="200" />
                     <label class="form-label" for="th-@m.Id">Thème</label>
-                    <select id="th-@m.Id" name="theme" class="form-select form-select-sm mb-1">
+                    <select id="th-@m.Id" name="photoTheme" class="form-select form-select-sm mb-1">
                         @foreach (var t in Model.Themes)
                         {
                             <option value="@t" selected="@(t == (m.Theme ?? ""))">@(t == "" ? "(aucun)" : t)</option>
                         }
                     </select>
                     <label class="form-label" for="se-@m.Id">Saison</label>
-                    <select id="se-@m.Id" name="season" class="form-select form-select-sm mb-2">
+                    <select id="se-@m.Id" name="photoSeason" class="form-select form-select-sm mb-2">
                         @foreach (var s in IndexModel.Seasons)
                         {
                             <option value="@s" selected="@(s == (m.Season ?? ""))">@(s == "" ? "(aucune)" : s)</option>

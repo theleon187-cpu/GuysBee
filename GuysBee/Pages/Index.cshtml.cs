@@ -35,7 +35,7 @@ public class IndexModel : PageModel
         var hero = Sections.FirstOrDefault(s => s.Kind == "Hero");
         HeroMedias = await _db.MediaAssets.AsNoTracking()
             .Where(m => m.Status == MediaStatus.Published && m.Kind == MediaKind.Image && m.ShowInHero)
-            .OrderBy(m => m.SortOrder).Take(5).ToListAsync();
+            .OrderBy(m => m.SortOrder).ToListAsync();
         if (HeroMedias.Count == 0)
         {
             var fallback = hero?.Media ?? await _db.MediaAssets.AsNoTracking()

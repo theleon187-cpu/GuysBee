@@ -9,7 +9,6 @@ namespace GuysBee.Areas.Admin.Pages.Photos;
 
 public class GestionnaireModel : PageModel
 {
-    private const int HeroMax = 5;
     private readonly AppDbContext _db;
     private readonly MediaService _media;
 
@@ -89,12 +88,6 @@ public class GestionnaireModel : PageModel
         }
         else
         {
-            var count = await _db.MediaAssets.CountAsync(x => x.ShowInHero && x.Status == MediaStatus.Published);
-            if (count >= HeroMax)
-            {
-                TempData["Error"] = "Le carrousel est limité à 5 photos. Retirez-en une avant d'en ajouter.";
-                return Back();
-            }
             m.ShowInHero = true;
             m.Status = MediaStatus.Published;
             TempData["Message"] = "Photo ajoutée au carrousel de l'accueil.";
@@ -103,14 +96,14 @@ public class GestionnaireModel : PageModel
         return Back();
     }
 
-    public async Task<IActionResult> OnPostSaveAsync(int id, string? caption, string? alt, string? theme, string? season)
+    public async Task<IActionResult> OnPostSaveAsync(int id, string? caption, string? alt, string? photoTheme, string? photoSeason)
     {
         var m = await _db.MediaAssets.FindAsync(id);
         if (m is null) return NotFound();
         m.Caption = caption?.Trim();
         m.AltText = alt?.Trim();
-        m.Theme = theme;
-        m.Season = season;
+        m.Theme = photoTheme;
+        m.Season = photoSeason;
         await _db.SaveChangesAsync();
         TempData["Message"] = "Photo enregistrée.";
         return Back();
