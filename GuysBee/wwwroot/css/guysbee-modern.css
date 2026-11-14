@@ -276,9 +276,9 @@ body.theme-modern {
 .gb-lightbox-caption { color: #fff; text-align: center; padding: .5rem 1rem 0; max-width: 80ch; margin: 0 auto; }
 .gb-lightbox-caption:empty { display: none; }
 .gb-lightbox-count { position: absolute; top: .75rem; left: .75rem; margin: 0; padding: .2rem .6rem; border-radius: 999px; background: rgba(0, 0, 0, .55); color: #fff; font-size: .9rem; }
-.gb-lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 3rem; height: 3rem; border: 0; border-radius: 50%; background: rgba(245, 183, 0, .92); color: #1E1A14; font-size: 2rem; line-height: 1; cursor: pointer; z-index: 1; }
-.gb-lightbox-prev { left: .5rem; }
-.gb-lightbox-next { right: .5rem; }
+.gb-lightbox-nav { position: fixed; top: 50%; transform: translateY(-50%); width: 3rem; height: 3rem; border: 0; border-radius: 50%; background: rgba(245, 183, 0, .92); color: #1E1A14; font-size: 2rem; line-height: 1; cursor: pointer; z-index: 1200; }
+.gb-lightbox-prev { left: max(.75rem, env(safe-area-inset-left)); }
+.gb-lightbox-next { right: max(.75rem, env(safe-area-inset-right)); }
 .gb-lightbox-nav:focus-visible, .gb-lightbox-close:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
 
 /* Calendrier : photo du mois */

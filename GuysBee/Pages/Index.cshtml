@@ -15,7 +15,7 @@
     switch (block.Kind)
     {
         case "Hero":
-            <section class="gb-hero gb-hero-premium" aria-label="Photos de l'exploitation" data-gb-hero>
+            <section class="gb-hero gb-hero-premium" aria-label="Photos de l'exploitation" data-gb-hero tabindex="0" aria-roledescription="carrousel">
                 @for (var i = 0; i < Model.HeroMedias.Count; i++)
                 {
                     var hero = Model.HeroMedias[i];
@@ -23,6 +23,11 @@
                 }
                 @if (Model.HeroMedias.Count > 1)
                 {
+                    <div class="gb-hero-meta" aria-live="polite">
+                        <button type="button" class="gb-hero-toggle" data-gb-hero-toggle aria-pressed="false">Pause</button>
+                        <p class="gb-hero-count"><span data-gb-hero-current>1</span> / <span>@Model.HeroMedias.Count</span></p>
+                    </div>
+                    <div class="gb-hero-progress" aria-hidden="true"><span class="gb-hero-progress-bar" data-gb-hero-progress></span></div>
                     <div class="gb-hero-nav" aria-label="Navigation du carrousel">
                         <button type="button" class="gb-hero-nav-btn gb-hero-nav-prev" data-gb-hero-prev aria-label="Photo précédente">
                             <span aria-hidden="true">‹</span>

@@ -91,12 +91,40 @@ document.addEventListener('DOMContentLoaded', function () {
         var slides = Array.prototype.slice.call(hero.querySelectorAll('.gb-hero-media'));
         if (slides.length < 2) { return; }
 
+        var autoplayDelay = 3800;
         var dots = Array.prototype.slice.call(hero.querySelectorAll('[data-gb-hero-dot]'));
         var prev = hero.querySelector('[data-gb-hero-prev]');
         var next = hero.querySelector('[data-gb-hero-next]');
+        var toggle = hero.querySelector('[data-gb-hero-toggle]');
+        var progressBar = hero.querySelector('[data-gb-hero-progress]');
+        var currentLabel = hero.querySelector('[data-gb-hero-current]');
         var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
         var current = Math.max(0, slides.findIndex(function (s) { return s.classList.contains('gb-hero-active'); }));
         var timer = null;
+        var timerStartedAt = 0;
+        var remainingDelay = autoplayDelay;
+        var startX = null;
+        var startY = null;
+        var isPaused = false;
+
+        function resetProgress() {
+            if (!progressBar) { return; }
+            progressBar.style.transition = 'none';
+            progressBar.style.transform = 'scaleX(0)';
+        }
+
+        function animateProgress(delay, elapsed) {
+            if (!progressBar || reducedMotion.matches || isPaused) { return; }
+            var ratio = Math.max(0, Math.min(1, elapsed / autoplayDelay));
+            progressBar.style.transition = 'none';
+            progressBar.style.transform = 'scaleX(' + ratio + ')';
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    progressBar.style.transition = 'transform ' + delay + 'ms linear';
+                    progressBar.style.transform = 'scaleX(1)';
+                });
+            });
+        }
 
         function setActive(index) {
             current = (index + slides.length) % slides.length;
@@ -107,35 +135,95 @@ document.addEventListener('DOMContentLoaded', function () {
                 var isActive = i === current;
                 dot.classList.toggle('gb-hero-dot-active', isActive);
                 dot.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                dot.setAttribute('tabindex', isActive ? '0' : '-1');
             });
-        }
-
-        function stopAutoplay() {
-            if (timer) {
-                clearInterval(timer);
-                timer = null;
+            if (currentLabel) {
+                currentLabel.textContent = (current + 1).toString();
             }
         }
 
-        function startAutoplay() {
-            stopAutoplay();
-            if (reducedMotion.matches) { return; }
-            timer = setInterval(function () {
+        function stopAutoplay(keepProgress) {
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+                if (keepProgress) {
+                    var elapsed = Date.now() - timerStartedAt;
+                    remainingDelay = Math.max(120, remainingDelay - elapsed);
+                }
+            }
+
+            if (keepProgress) {
+                if (progressBar) {
+                    var keptElapsed = autoplayDelay - remainingDelay;
+                    progressBar.style.transition = 'none';
+                    progressBar.style.transform = 'scaleX(' + Math.max(0, Math.min(1, keptElapsed / autoplayDelay)) + ')';
+                }
+                return;
+            }
+
+            remainingDelay = autoplayDelay;
+            resetProgress();
+        }
+
+        function scheduleAutoplay(keepProgress) {
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
+            if (!keepProgress) {
+                remainingDelay = autoplayDelay;
+                resetProgress();
+            }
+            if (reducedMotion.matches || isPaused) { return; }
+
+            var delay = keepProgress ? Math.max(120, remainingDelay) : autoplayDelay;
+            var elapsed = autoplayDelay - delay;
+            animateProgress(delay, elapsed);
+            timerStartedAt = Date.now();
+            remainingDelay = delay;
+            timer = setTimeout(function () {
+                remainingDelay = autoplayDelay;
                 setActive(current + 1);
-            }, 6500);
+                scheduleAutoplay(false);
+            }, delay);
+        }
+
+        function setPaused(paused) {
+            isPaused = paused;
+            hero.classList.toggle('gb-hero-paused', paused);
+            if (toggle) {
+                toggle.textContent = paused ? 'Reprendre' : 'Pause';
+                toggle.setAttribute('aria-pressed', paused ? 'true' : 'false');
+            }
+            if (paused) {
+                stopAutoplay(true);
+            } else {
+                scheduleAutoplay(true);
+            }
+        }
+
+        function moveTo(index) {
+            setActive(index);
+            if (!isPaused) {
+                scheduleAutoplay(false);
+            }
         }
 
         if (prev) {
             prev.addEventListener('click', function () {
-                setActive(current - 1);
-                startAutoplay();
+                moveTo(current - 1);
             });
         }
 
         if (next) {
             next.addEventListener('click', function () {
-                setActive(current + 1);
-                startAutoplay();
+                moveTo(current + 1);
+            });
+        }
+
+        if (toggle) {
+            toggle.addEventListener('click', function () {
+                setPaused(!isPaused);
             });
         }
 
@@ -143,23 +231,57 @@ document.addEventListener('DOMContentLoaded', function () {
             dot.addEventListener('click', function () {
                 var index = parseInt(dot.getAttribute('data-gb-index'), 10);
                 if (isNaN(index)) { return; }
-                setActive(index);
-                startAutoplay();
+                moveTo(index);
             });
         });
 
-        hero.addEventListener('mouseenter', stopAutoplay);
-        hero.addEventListener('mouseleave', startAutoplay);
-        hero.addEventListener('focusin', stopAutoplay);
-        hero.addEventListener('focusout', function (event) {
-            if (hero.contains(event.relatedTarget)) { return; }
-            startAutoplay();
+        hero.addEventListener('keydown', function (event) {
+            if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                moveTo(current - 1);
+            } else if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                moveTo(current + 1);
+            } else if (event.key === ' ' || event.key === 'Spacebar') {
+                event.preventDefault();
+                setPaused(!isPaused);
+            }
         });
 
-        reducedMotion.addEventListener('change', startAutoplay);
+        hero.addEventListener('pointerdown', function (event) {
+            if (event.pointerType === 'mouse') { return; }
+            startX = event.clientX;
+            startY = event.clientY;
+        });
+
+        hero.addEventListener('pointerup', function (event) {
+            if (startX === null || startY === null) { return; }
+            var dx = event.clientX - startX;
+            var dy = event.clientY - startY;
+            startX = null;
+            startY = null;
+            if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)) { return; }
+            moveTo(current + (dx < 0 ? 1 : -1));
+        });
+
+        hero.addEventListener('focusin', function () {
+            if (!isPaused) { stopAutoplay(true); }
+        });
+        hero.addEventListener('focusout', function (event) {
+            if (hero.contains(event.relatedTarget) || isPaused) { return; }
+            scheduleAutoplay(true);
+        });
+
+        reducedMotion.addEventListener('change', function () {
+            if (!reducedMotion.matches && !isPaused) {
+                scheduleAutoplay(true);
+                return;
+            }
+            stopAutoplay(true);
+        });
 
         setActive(current);
-        startAutoplay();
+        setPaused(false);
     });
 });
 
